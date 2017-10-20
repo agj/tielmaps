@@ -7974,7 +7974,14 @@ var _user$project$Main$view = function (model) {
 								_0: _elm_lang$html$Html$text('+'),
 								_1: {ctor: '[]'}
 							}),
-						_1: {ctor: '[]'}
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$div,
+								{ctor: '[]'},
+								{ctor: '[]'}),
+							_1: {ctor: '[]'}
+						}
 					}
 				}
 			}

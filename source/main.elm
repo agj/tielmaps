@@ -20,4 +20,5 @@ view model =
     , button [ onClick Decrement ] [ text "-" ]
     , div [] [ text (toString model) ]
     , button [ onClick Increment ] [ text "+" ]
+    , div [] [ a]
     ]
