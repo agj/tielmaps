@@ -1,4 +1,5 @@
-import Html exposing (Html, button, div, text)
+import Html exposing (Html, button, div, text, a, img)
+import Html.Attributes exposing (href, alt)
 import Html.Events exposing (onClick)
 
 main =
@@ -20,5 +21,10 @@ view model =
     , button [ onClick Decrement ] [ text "-" ]
     , div [] [ text (toString model) ]
     , button [ onClick Increment ] [ text "+" ]
-    , div [] [ a]
+    , div [] [ a 
+                  [ href "https://glitch.com/edit/#!/remix/elm-sample-app"
+                  , alt "Remix On Glitch"
+                  ] 
+                [ img [] ] 
+              ]
     ]
