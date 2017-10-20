@@ -5,11 +5,11 @@
   "main": "server.js",
   "scripts": {
     "prestart": "elm-make source/main.elm --output public/elm.js",
-    "start": "node server.js"
+    "start": "npm run prestart && node server.js"
   },
   "dependencies": {
     "express": "^4.16.2",
-    "elm": "^2.0.0"
+    "elm": "0.18.0"
   },
   "engines": {
     "node": "8.x"
