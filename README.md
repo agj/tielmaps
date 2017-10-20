@@ -5,10 +5,12 @@ The Counter example from the [Elm documentation](https://guide.elm-lang.org/) in
 
 Steps to Get Here
 
-1. add elm to the package.json
-1. open the console and check to make sure elm-repl works
-1. added `source/counter.elm` to project
-1. ran `elm-make source/counter.elm --output=views/counter.html`
-1. deleted generated `elm-stuff` folder
+* add elm to the package.json
+* open the console and check to make sure elm-repl works
+* added `source/main.elm` to project
+* updated `package.json` to run `npm prestart` on start and modified `prestart` to run `elm-make source/main.elm --output=public/elm.js`
+* modified `index.html` to reference `elm.js` and start the Main module in it with `var main = Elm.Main.fullscreen();`
+* added watch.json to resta
+* added `elm-stuff` folder to `.gitignore` so it doesn't pollute the file list (left `exact-dependencies.json` visible)
 
 \ ゜o゜)ノ

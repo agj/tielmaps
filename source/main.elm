@@ -16,8 +16,8 @@ update msg model =
 
 view model =
   div []
-    [ text "Counter"" ]
-    [ button [ onClick Decrement ] [ text "-" ]
+    [ div [] [ text "Counter" ]
+    , button [ onClick Decrement ] [ text "-" ]
     , div [] [ text (toString model) ]
     , button [ onClick Increment ] [ text "+" ]
     ]
