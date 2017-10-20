@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "prestart": "elm-make source/main.elm --output public/elm.js",
-    "start": "npm run prestart && node server.js"
+    "start": "node server.js"
   },
   "dependencies": {
     "express": "^4.16.2",
