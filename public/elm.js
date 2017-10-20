@@ -8346,7 +8346,11 @@ var _user$project$Main$view = function (model) {
 											ctor: '::',
 											_0: A2(
 												_elm_lang$html$Html$img,
-												{ctor: '[]'},
+												{
+													ctor: '::',
+													_0: _elm_lang$html$Html_Attributes$src('https://cdn.glitch.com/2703baf2-b643-4da7-ab91-7ee2a2d00b5b%2Fremix-button.svg'),
+													_1: {ctor: '[]'}
+												},
 												{ctor: '[]'}),
 											_1: {ctor: '[]'}
 										}),
