@@ -4,7 +4,7 @@
   "description": "What am I about?",
   "main": "server.js",
   "scripts": {
-    "prestart": ""
+    "prestart": "elm-make source/main.elm --output public/elm.js",
     "start": "npm run prestart && node server.js"
   },
   "dependencies": {
