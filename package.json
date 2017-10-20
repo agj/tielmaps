@@ -4,11 +4,12 @@
   "description": "What am I about?",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "prestart": ""
+    "start": "npm run prestart && node server.js"
   },
   "dependencies": {
     "express": "^4.16.2",
-    "elm": "^0.18.0"
+    "elm": "^2.0.0"
   },
   "engines": {
     "node": "8.x"
