@@ -10,7 +10,8 @@
   "dependencies": {
     "express": "^4.16.3",
     "elm": "^2.0.0",
-    "elm-upgrade": "0.19.2"
+    "elm-upgrade": "0.19.2",
+    "elm-format": "^0.8.0"
   },
   "engines": {
     "node": "8.x"
