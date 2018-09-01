@@ -1,12 +1,13 @@
 module Main exposing (Msg(..), main, update, view)
 
+import Browser
 import Html exposing (Html, a, button, div, img, text)
 import Html.Attributes exposing (alt, href, src)
 import Html.Events exposing (onClick)
 
 
 main =
-    Html.beginnerProgram { model = 0, view = view, update = update }
+    Browser.sandbox { model = 0, view = view, update = update }
 
 
 type Msg
@@ -27,7 +28,7 @@ view model =
     div []
         [ div [] [ text "Counter" ]
         , button [ onClick Decrement ] [ text "-" ]
-        , div [] [ text (toString model) ]
+        , div [] [ text (String.fromInt model) ]
         , button [ onClick Increment ] [ text "+" ]
         , div []
             [ a
