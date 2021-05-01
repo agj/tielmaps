@@ -6,7 +6,7 @@
     "prestart": "node run build"
   },
   "dependencies": {
-    "express": "^4.16.3",
+    "express": "^4.17.1",
     "elm": "0.19.1-5",
     "elm-format": "~0.8.5"
   },
