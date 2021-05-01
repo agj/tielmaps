@@ -4,20 +4,16 @@
   "description": "What am I about?",
   "main": "server.js",
   "scripts": {
-    "prestart": "elm make source/main.elm --output public/elm.js",
+    "prestart": "elm make source/Main.elm --output public/elm.js",
     "start": "npm run prestart && node server.js"
   },
   "dependencies": {
     "express": "^4.16.3",
-    "elm": "0.19.0-bugfix2",
-    "elm-upgrade": "0.19.2",
-    "elm-format": "^0.8.0"
+    "elm": "~0.19.1",
+    "elm-format": "~0.8.5"
   },
   "engines": {
-    "node": "8.x"
-  },
-  "repository": {
-    "url": "https://glitch.com/edit/#!/welcome-project"
+    "node": "16.x"
   },
   "license": "MIT",
   "keywords": [
