@@ -2,8 +2,9 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "build": "elm make source/elm/Main.elm --output public/elm.js && cp -f source/html/* public/",
-    "prestart": "node run build"
+    "prestart": "node run build",
+    "build": "parcel build index.html",
+    "develop": "parcel index.html"
   },
   "dependencies": {
     "express": "^4.17.1",
