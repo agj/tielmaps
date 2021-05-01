@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "start": "node server.js",
+    "start": "node run build && node server.js",
     "prestart": "node run build",
     "build": "parcel build index.html",
     "develop": "parcel index.html"
