@@ -1,25 +1,17 @@
 {
-  "name": "my-glitch-app",
-  "version": "0.0.1",
-  "description": "What am I about?",
   "main": "server.js",
   "scripts": {
-    "prestart": "elm make source/Main.elm --output public/elm.js",
-    "start": "npm run prestart && node server.js"
+    "start": "node server.js",
+    "build": "elm make source/elm/Main.elm --output public/elm.js && cp -f source/html/**/* public/",
+    "prestart": "node run build"
   },
   "dependencies": {
     "express": "^4.16.3",
-    "elm": "~0.19.1",
+    "elm": "0.19.1",
     "elm-format": "~0.8.5"
   },
   "engines": {
     "node": "16.x"
   },
-  "license": "MIT",
-  "keywords": [
-    "node",
-    "glitch",
-    "express",
-    "elm"
-  ]
+  "license": "MIT"
 }
