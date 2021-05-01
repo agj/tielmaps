@@ -2,16 +2,16 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "build": "elm make source/elm/Main.elm --output public/elm.js && cp -f source/html/**/* public/",
+    "build": "elm make source/elm/Main.elm --output public/elm.js && cp -f source/html/* public/",
     "prestart": "node run build"
   },
   "dependencies": {
     "express": "^4.16.3",
-    "elm": "0.19.1",
+    "elm": "0.19.1-5",
     "elm-format": "~0.8.5"
   },
   "engines": {
-    "node": "16.x"
+    "node": "14.x"
   },
   "license": "MIT"
 }
