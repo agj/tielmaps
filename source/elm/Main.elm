@@ -49,7 +49,7 @@ init flags =
       }
     , paintCanvas
         (Bitmap.encode
-            (Bitmap.create 32 32
+            (Bitmap.empty 32 32
                 |> Bitmap.paintPixel 0 0 True
                 |> Bitmap.paintPixel 1 1 True
                 |> Bitmap.paintPixel 2 2 True

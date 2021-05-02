@@ -8,8 +8,8 @@ type Bitmap
     = Bitmap Int Int (Array Bool)
 
 
-create : Int -> Int -> Bitmap
-create w h =
+empty : Int -> Int -> Bitmap
+empty w h =
     Bitmap w h (Array.initialize (w * h) (always False))
 
 
