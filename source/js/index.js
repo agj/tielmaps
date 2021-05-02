@@ -11,6 +11,9 @@ const app = Elm.Main.init({
 });
 
 app.ports.paintCanvas.subscribe(({ width, height, pixels }) => {
+  const canvas = document.getElementById("canvas");
+  const ctx = canvas.getContext("2d");
+
   const imageData = ctx.createImageData(width, height);
   for (let x = 0; x < width; ++x) {
     for (let y = 0; y < height; ++y) {
@@ -22,8 +25,6 @@ app.ports.paintCanvas.subscribe(({ width, height, pixels }) => {
     }
   }
 
-  const canvas = document.getElementById("canvas");
-  const ctx = canvas.getContext("2d");
   ctx.putImageData(imageData, 0, 0);
 });
 
