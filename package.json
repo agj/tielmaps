@@ -2,7 +2,7 @@
   "scripts": {
     "start": "node server.js",
     "prestart": "node run build",
-    "build": "parcel build source/html/index.html",
+    "build": "parcel build source/html/index.html --public-url ./",
     "develop": "parcel source/html/index.html"
   },
   "dependencies": {
