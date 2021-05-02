@@ -1,9 +1,9 @@
 {
   "scripts": {
-    "start": "node run build && node server.js",
+    "start": "node server.js",
     "prestart": "node run build",
-    "build": "parcel build index.html",
-    "develop": "parcel index.html"
+    "build": "parcel build source/html/index.html",
+    "develop": "parcel source/html/index.html"
   },
   "dependencies": {
     "elm": "0.19.1-5",

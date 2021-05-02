@@ -1,38 +1,113 @@
 module Main exposing (Msg(..), main, update, view)
 
 import Browser
-import Html exposing (Html, a, button, div, img, text)
-import Html.Attributes exposing (alt, href, src)
-import Html.Events exposing (onClick)
+import Browser.Events
+import Html.Styled exposing (Html, canvas, div, text, toUnstyled)
+import Html.Styled.Attributes exposing (height, width)
+import Levers
+import Time
+import Viewport exposing (Viewport)
 
-type alias Model = Int
 
-init : Model
-init =
-  0
 
+-- MAIN
+
+
+main : Program Flags Model Msg
 main =
-    Browser.sandbox { init = init, view = view, update = update }
+    Browser.document
+        { init = init
+        , view = view
+        , update = update
+        , subscriptions = subscriptions
+        }
+
+
+
+-- MODEL
+
+
+type alias Model =
+    { ready : Bool
+    }
+
+
+
+-- INIT
+
+
+type alias Flags =
+    { viewport : Viewport
+    }
+
+
+init : Flags -> ( Model, Cmd Msg )
+init flags =
+    ( { ready = True
+      }
+    , Cmd.none
+    )
+
+
+
+-- UPDATE
 
 
 type Msg
-    = Increment
-    | Decrement
+    = Ticked Time.Posix
+    | Resized Viewport
+    | NoOp
 
-update : Msg -> Model -> Model
+
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
+    let
+        ignore =
+            ( model, Cmd.none )
+    in
     case msg of
-        Increment ->
-            model + 1
+        Ticked _ ->
+            ignore
 
-        Decrement ->
-            model - 1
+        Resized { width, height } ->
+            ignore
 
-view : Model -> Html Msg
+        NoOp ->
+            ignore
+
+
+
+-- VIEW
+
+
+view : Model -> Browser.Document Msg
 view model =
+    { title = "Elm platformer"
+    , body =
+        [ mainView model |> toUnstyled
+        ]
+    }
+
+
+mainView : Model -> Html Msg
+mainView model =
     div []
-        [ div [] [ text "Test! :/" ]
-        , button [ onClick Decrement ] [ text "-" ]
-        , div [] [ text (String.fromInt model) ]
-        , button [ onClick Increment ] [ text "+" ]
+        [ canvas
+            [ width 32
+            , height 32
+            ]
+            []
+        , text "bla"
+        ]
+
+
+
+-- SUBSCRIPTIONS
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.batch
+        [ Browser.Events.onResize (\w h -> Resized (Viewport w h))
+        , Time.every (toFloat Levers.framesPerSecond) Ticked
         ]
