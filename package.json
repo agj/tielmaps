@@ -6,13 +6,17 @@
     "develop": "parcel index.html"
   },
   "dependencies": {
-    "express": "^4.17.1",
     "elm": "0.19.1-5",
     "elm-format": "~0.8.5",
-    "parcel": "^1.12.4"
+    "express": "^4.17.1",
+    "parcel": "1.12.3"
   },
   "engines": {
     "node": "14.x"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "elm-hot": "^1.1.6",
+    "node-elm-compiler": "^5.0.6"
+  }
 }

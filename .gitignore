@@ -1,5 +1,7 @@
 
-dist/
+dist
 
-node-modules/
-elm-stuff/
+elm-stuff
+node_modules
+.vscode
+.cache
