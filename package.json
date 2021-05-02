@@ -12,7 +12,7 @@
     "parcel": "1.12.3"
   },
   "engines": {
-    "node": "14.x"
+    "node": ">=14.x"
   },
   "license": "MIT",
   "devDependencies": {
