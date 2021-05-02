@@ -1,8 +1,8 @@
 port module Main exposing (Msg(..), main, update, view)
 
+import Bitmap
 import Browser
 import Browser.Events
-import Canvas
 import Html.Styled exposing (Html, canvas, div, text, toUnstyled)
 import Html.Styled.Attributes exposing (height, id, width)
 import Json.Encode as E
@@ -48,11 +48,11 @@ init flags =
     ( { ready = True
       }
     , paintCanvas
-        (Canvas.encode
-            (Canvas.create 32 32
-                |> Canvas.paintPixel 0 0 True
-                |> Canvas.paintPixel 1 1 True
-                |> Canvas.paintPixel 2 2 True
+        (Bitmap.encode
+            (Bitmap.create 32 32
+                |> Bitmap.paintPixel 0 0 True
+                |> Bitmap.paintPixel 1 1 True
+                |> Bitmap.paintPixel 2 2 True
             )
         )
     )
