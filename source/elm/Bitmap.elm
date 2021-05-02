@@ -1,4 +1,13 @@
-module Bitmap exposing (..)
+module Bitmap exposing
+    ( Bitmap
+    , empty
+    , encode
+    , fromString
+    , height
+    , paintPixel
+    , pixel
+    , width
+    )
 
 import Array exposing (Array)
 import Json.Encode as Encode exposing (Value)
