@@ -26,7 +26,7 @@ app.ports.paintCanvas.subscribe(({ width, height, pixels }) => {
     }
   }
 
-  ctx.putImageData(imageData, 8, 8);
+  ctx.putImageData(imageData, 0, 0);
 });
 
 const getPixel = (width, x, y, pixels) => {
