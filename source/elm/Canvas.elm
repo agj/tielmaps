@@ -30,7 +30,7 @@ height (Canvas _ h _) =
 pixel : Int -> Int -> Canvas -> Maybe Bool
 pixel x y (Canvas w h pixels) =
     pixels
-        |> Array.get (pos h x y)
+        |> Array.get (pos w x y)
 
 
 encode : Canvas -> Value
@@ -49,7 +49,7 @@ encode (Canvas w h pixels) =
 paintPixel : Int -> Int -> Bool -> Canvas -> Canvas
 paintPixel x y on (Canvas w h pixels) =
     pixels
-        |> Array.set (pos h x y) on
+        |> Array.set (pos w x y) on
         |> Canvas w h
 
 
@@ -58,8 +58,8 @@ paintPixel x y on (Canvas w h pixels) =
 
 
 pos : Int -> Int -> Int -> Int
-pos h x y =
-    (h * y) + x
+pos w x y =
+    x + (w * y)
 
 
 boolEncoder : Bool -> Value

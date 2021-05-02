@@ -17,17 +17,18 @@ app.ports.paintCanvas.subscribe(({ width, height, pixels }) => {
   const imageData = ctx.createImageData(width, height);
   for (let x = 0; x < width; ++x) {
     for (let y = 0; y < height; ++y) {
-      const cur = getPixel(height, x, y, pixels);
-      imageData.data[x * 4 + 0] = cur * 255; // red
-      imageData.data[x * 4 + 1] = cur * 255; // green
-      imageData.data[x * 4 + 2] = cur * 255; // blue
-      imageData.data[x * 4 + 3] = 255; // alpha
+      const offset = x * 4 + width * 4 * y;
+      const pixelOn = 1 - getPixel(width, x, y, pixels);
+      imageData.data[offset + 0] = pixelOn * 0xff; // red
+      imageData.data[offset + 1] = pixelOn * 0xff; // green
+      imageData.data[offset + 2] = pixelOn * 0xff; // blue
+      imageData.data[offset + 3] = 0xff; // alpha
     }
   }
 
-  ctx.putImageData(imageData, 0, 0);
+  ctx.putImageData(imageData, 8, 8);
 });
 
-const getPixel = (height, x, y, pixels) => {
-  return pixels[height * y + x];
+const getPixel = (width, x, y, pixels) => {
+  return pixels[x + width * y];
 };
