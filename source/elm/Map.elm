@@ -1,7 +1,9 @@
-module Map exposing (Map, empty, height, setTile, tile, toBitmap, width)
+module Map exposing (Map, empty, fromString, height, setTile, tile, toBitmap, width)
 
 import Array exposing (Array)
 import Bitmap exposing (Bitmap)
+import Dict exposing (Dict)
+import Maybe.Extra as Maybe
 
 
 type Map
@@ -11,6 +13,50 @@ type Map
 empty : Int -> Int -> Int -> Int -> Map
 empty w h tileW tileH =
     Map ( w, h ) ( tileW, tileH ) (Array.initialize (w * h) (always (Bitmap.empty tileW tileH)))
+
+
+fromString : Dict Char Bitmap -> String -> Maybe Map
+fromString tiles str =
+    let
+        rawLines =
+            str
+                |> String.lines
+                |> List.map removeSpaces
+                |> List.filter (not << String.isEmpty)
+
+        w =
+            rawLines
+                |> List.map String.length
+                |> List.foldl max 0
+
+        h =
+            List.length rawLines
+
+        lines =
+            rawLines
+                |> List.map (String.padRight w '.')
+
+        toTile ch =
+            Dict.get ch tiles
+    in
+    case Dict.values tiles of
+        t :: _ ->
+            let
+                tw =
+                    Bitmap.width t
+
+                th =
+                    Bitmap.height t
+            in
+            lines
+                |> List.map (String.toList >> List.map toTile)
+                |> List.foldr (++) []
+                |> Maybe.combine
+                |> Maybe.map Array.fromList
+                |> Maybe.map (Map ( w, h ) ( tw, th ))
+
+        _ ->
+            Nothing
 
 
 
@@ -91,3 +137,8 @@ toBitmap ((Map ( w, h ) ( tw, th ) _) as map) =
 pos : Int -> Int -> Int -> Int
 pos w x y =
     x + (w * y)
+
+
+removeSpaces : String -> String
+removeSpaces =
+    String.filter (\ch -> ch /= ' ')

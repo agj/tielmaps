@@ -3,11 +3,12 @@ port module Main exposing (Msg(..), main, update, view)
 import Bitmap exposing (Bitmap)
 import Browser
 import Browser.Events
+import Dict
 import Html.Styled exposing (Html, canvas, div, text, toUnstyled)
 import Html.Styled.Attributes exposing (height, id, width)
 import Json.Encode as E
 import Levers
-import Map
+import Map exposing (Map)
 import Time
 import Viewport exposing (Viewport)
 
@@ -54,17 +55,35 @@ init flags =
             --     |> Bitmap.paintBitmap 8 8 testBitmap
             --     |> Bitmap.paintBitmap -8 -8 testBitmap
             -- )
-            (Map.empty 4 4 8 8
-                |> Map.setTile 0 0 testTile
-                |> Map.setTile 1 1 testTile
-                |> Map.setTile 1 0 testTile
-                |> Map.setTile 2 2 testTile
-                |> Map.setTile 3 0 testTile
-                |> Map.setTile 1 3 testTile
-                |> Map.toBitmap
-            )
+            -- (Map.empty 4 4 8 8
+            --     |> Map.setTile 0 0 testTile
+            --     |> Map.setTile 1 1 testTile
+            --     |> Map.setTile 1 0 testTile
+            --     |> Map.setTile 2 2 testTile
+            --     |> Map.setTile 3 0 testTile
+            --     |> Map.setTile 1 3 testTile
+            --     |> Map.toBitmap
+            -- )
+            (testMap |> Map.toBitmap)
         )
     )
+
+
+testMap : Map
+testMap =
+    """
+? . . .
+. ? . .
+. . ? .
+? . . ?
+"""
+        |> Map.fromString
+            (Dict.fromList
+                [ ( '.', emptyTile )
+                , ( '?', testTile )
+                ]
+            )
+        |> Maybe.withDefault (Map.empty 0 0 0 0)
 
 
 testBitmap : Bitmap
@@ -101,6 +120,21 @@ testTile =
 # # # # # # . .
 # # # # # # # .
 # # # # # # # #
+"""
+        |> Bitmap.fromString
+
+
+emptyTile : Bitmap
+emptyTile =
+    """
+. . . . . . . .
+. . . . . . . .
+. . . . . . . .
+. . . . . . . .
+. . . . . . . .
+. . . . . . . .
+. . . . . . . .
+. . . . . . . .
 """
         |> Bitmap.fromString
 
