@@ -7,6 +7,7 @@ import Html.Styled exposing (Html, canvas, div, text, toUnstyled)
 import Html.Styled.Attributes exposing (height, id, width)
 import Json.Encode as E
 import Levers
+import Map
 import Time
 import Viewport exposing (Viewport)
 
@@ -49,9 +50,18 @@ init flags =
       }
     , paintCanvas
         (Bitmap.encode
-            (testBitmap
-                |> Bitmap.paintBitmap 8 8 testBitmap
-                |> Bitmap.paintBitmap -8 -8 testBitmap
+            -- (testBitmap
+            --     |> Bitmap.paintBitmap 8 8 testBitmap
+            --     |> Bitmap.paintBitmap -8 -8 testBitmap
+            -- )
+            (Map.empty 4 4 8 8
+                |> Map.setTile 0 0 testTile
+                |> Map.setTile 1 1 testTile
+                |> Map.setTile 1 0 testTile
+                |> Map.setTile 2 2 testTile
+                |> Map.setTile 3 0 testTile
+                |> Map.setTile 1 3 testTile
+                |> Map.toBitmap
             )
         )
     )
@@ -76,6 +86,21 @@ testBitmap =
 . . . . . . . . . . . . . . . .
 . . . . . . . . . . . . . . . .
 . . . . . . . . . . . . . . . .
+"""
+        |> Bitmap.fromString
+
+
+testTile : Bitmap
+testTile =
+    """
+# . . . . . . .
+# # . . . . . .
+# # # . . . . .
+# # # # . . . .
+# # # # # . . .
+# # # # # # . .
+# # # # # # # .
+# # # # # # # #
 """
         |> Bitmap.fromString
 
