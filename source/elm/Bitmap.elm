@@ -13,6 +13,51 @@ empty w h =
     Bitmap w h (Array.initialize (w * h) (always False))
 
 
+{-| Takes a specially formatted string and converts it into a Bitmap. Here's an example:
+
+    """
+    . . . . .
+    . # . . .
+    . # . . .
+    . # # # .
+    . . . . .
+    """
+
+This will produce a 5 × 5 Bitmap with a black L in the middle.
+The spaces are ignored, the dots mark white pixels, and any other character marks black pixels.
+
+-}
+fromString : String -> Bitmap
+fromString str =
+    let
+        rawLines =
+            str
+                |> String.lines
+                |> List.map removeSpaces
+                |> List.filter (not << String.isEmpty)
+
+        w =
+            rawLines
+                |> List.map String.length
+                |> List.foldl max 0
+
+        h =
+            List.length rawLines
+
+        lines =
+            rawLines
+                |> List.map (String.padRight w '.')
+
+        toBool ch =
+            ch /= ' ' && ch /= '.'
+    in
+    lines
+        |> List.map (String.toList >> List.map toBool)
+        |> List.foldr (++) []
+        |> Array.fromList
+        |> Bitmap w h
+
+
 
 -- ACCESSORS
 
@@ -69,3 +114,8 @@ boolEncoder value =
 
     else
         Encode.int 0
+
+
+removeSpaces : String -> String
+removeSpaces =
+    String.filter (\ch -> ch /= ' ')

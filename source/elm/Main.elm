@@ -1,6 +1,6 @@
 port module Main exposing (Msg(..), main, update, view)
 
-import Bitmap
+import Bitmap exposing (Bitmap)
 import Browser
 import Browser.Events
 import Html.Styled exposing (Html, canvas, div, text, toUnstyled)
@@ -47,15 +47,31 @@ init : Flags -> ( Model, Cmd Msg )
 init flags =
     ( { ready = True
       }
-    , paintCanvas
-        (Bitmap.encode
-            (Bitmap.empty 32 32
-                |> Bitmap.paintPixel 0 0 True
-                |> Bitmap.paintPixel 1 1 True
-                |> Bitmap.paintPixel 2 2 True
-            )
-        )
+    , paintCanvas (Bitmap.encode testBitmap)
     )
+
+
+testBitmap : Bitmap
+testBitmap =
+    """
+. . . . . . . . . . . . . . . .
+. . . . . . . . . . . . . . . .
+. . . . . . . . . . . . . . . .
+. . . . . . . . . . . . . . . .
+. . . . # . . . . . # . . . . .
+. . . . . # . . . # . . . . . .
+. . . . # # # # # # # . . . . .
+. . . # # . # # # . # # . . . .
+. . # # # # # # # # # # # . . .
+. . # . # # # # # # # . # . . .
+. . # . # . . . . . # . # . . .
+. . . . . # # . # # . . . . . .
+. . . . . . . . . . . . . . . .
+. . . . . . . . . . . . . . . .
+. . . . . . . . . . . . . . . .
+. . . . . . . . . . . . . . . .
+"""
+        |> Bitmap.fromString
 
 
 
