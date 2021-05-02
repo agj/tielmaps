@@ -4,6 +4,7 @@ module Bitmap exposing
     , encode
     , fromString
     , height
+    , paintBitmap
     , paintPixel
     , pixel
     , width
@@ -105,6 +106,63 @@ paintPixel x y on (Bitmap w h pixels) =
     pixels
         |> Array.set (pos w x y) on
         |> Bitmap w h
+
+
+paintBitmap : Int -> Int -> Bitmap -> Bitmap -> Bitmap
+paintBitmap x y source target =
+    let
+        sourceW =
+            width source
+
+        sourceH =
+            height source
+
+        targetW =
+            width target
+
+        targetH =
+            height target
+
+        iterator row col bm =
+            let
+                nextRow =
+                    if row >= sourceW - 1 then
+                        0
+
+                    else
+                        row + 1
+
+                nextCol =
+                    if nextRow == 0 then
+                        col + 1
+
+                    else
+                        col
+
+                value =
+                    pixel row col source
+                        |> Maybe.withDefault False
+
+                setX =
+                    x + row
+
+                setY =
+                    y + col
+
+                newBm =
+                    if setX < targetW && setY < targetH && setX >= 0 && setY >= 0 then
+                        paintPixel setX setY value bm
+
+                    else
+                        bm
+            in
+            if nextCol >= sourceH then
+                newBm
+
+            else
+                iterator nextRow nextCol newBm
+    in
+    iterator 0 0 target
 
 
 

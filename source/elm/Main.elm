@@ -47,7 +47,13 @@ init : Flags -> ( Model, Cmd Msg )
 init flags =
     ( { ready = True
       }
-    , paintCanvas (Bitmap.encode testBitmap)
+    , paintCanvas
+        (Bitmap.encode
+            (testBitmap
+                |> Bitmap.paintBitmap 8 8 testBitmap
+                |> Bitmap.paintBitmap -8 -8 testBitmap
+            )
+        )
     )
 
 
