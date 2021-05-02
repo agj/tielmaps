@@ -13,6 +13,37 @@ empty w h tileW tileH =
     Map ( w, h ) ( tileW, tileH ) (Array.initialize (w * h) (always (Bitmap.empty tileW tileH)))
 
 
+
+-- ACCESSORS
+
+
+width : Map -> Int
+width (Map ( w, _ ) _ _) =
+    w
+
+
+height : Map -> Int
+height (Map ( _, h ) _ _) =
+    h
+
+
+tile : Int -> Int -> Map -> Maybe Bitmap
+tile x y (Map ( w, _ ) _ tiles) =
+    tiles
+        |> Array.get (pos w x y)
+
+
+
+-- SETTERS
+
+
+setTile : Int -> Int -> Bitmap -> Map -> Map
+setTile x y bm (Map (( w, _ ) as size) tileSize tiles) =
+    tiles
+        |> Array.set (pos w x y) bm
+        |> Map size tileSize
+
+
 toBitmap : Map -> Bitmap
 toBitmap ((Map ( w, h ) ( tw, th ) _) as map) =
     let
@@ -51,37 +82,6 @@ toBitmap ((Map ( w, h ) ( tw, th ) _) as map) =
     in
     Bitmap.empty (w * tw) (h * th)
         |> iterator 0 0
-
-
-
--- ACCESSORS
-
-
-width : Map -> Int
-width (Map ( w, _ ) _ _) =
-    w
-
-
-height : Map -> Int
-height (Map ( _, h ) _ _) =
-    h
-
-
-tile : Int -> Int -> Map -> Maybe Bitmap
-tile x y (Map ( w, _ ) _ tiles) =
-    tiles
-        |> Array.get (pos w x y)
-
-
-
--- SETTERS
-
-
-setTile : Int -> Int -> Bitmap -> Map -> Map
-setTile x y bm (Map (( w, _ ) as size) tileSize tiles) =
-    tiles
-        |> Array.set (pos w x y) bm
-        |> Map size tileSize
 
 
 
