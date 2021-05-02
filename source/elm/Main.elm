@@ -1,9 +1,11 @@
-module Main exposing (Msg(..), main, update, view)
+port module Main exposing (Msg(..), main, update, view)
 
 import Browser
 import Browser.Events
+import Canvas
 import Html.Styled exposing (Html, canvas, div, text, toUnstyled)
-import Html.Styled.Attributes exposing (height, width)
+import Html.Styled.Attributes exposing (height, id, width)
+import Json.Encode as E
 import Levers
 import Time
 import Viewport exposing (Viewport)
@@ -45,7 +47,14 @@ init : Flags -> ( Model, Cmd Msg )
 init flags =
     ( { ready = True
       }
-    , Cmd.none
+    , paintCanvas
+        (Canvas.encode
+            (Canvas.create 32 32
+                |> Canvas.paintPixel 0 0 True
+                |> Canvas.paintPixel 1 1 True
+                |> Canvas.paintPixel 2 2 True
+            )
+        )
     )
 
 
@@ -93,7 +102,8 @@ mainView : Model -> Html Msg
 mainView model =
     div []
         [ canvas
-            [ width 32
+            [ id "canvas"
+            , width 32
             , height 32
             ]
             []
@@ -111,3 +121,10 @@ subscriptions model =
         [ Browser.Events.onResize (\w h -> Resized (Viewport w h))
         , Time.every (toFloat Levers.framesPerSecond) Ticked
         ]
+
+
+
+-- PORTS
+
+
+port paintCanvas : E.Value -> Cmd msg
