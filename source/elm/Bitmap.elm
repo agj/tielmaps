@@ -7,6 +7,10 @@ module Bitmap exposing
     , paintBitmap
     , paintPixel
     , pixel
+    , rotate180
+    , rotateClockwise
+    , rotateCounterClockwise
+    , transform
     , width
     )
 
@@ -102,10 +106,14 @@ encode (Bitmap w h pixels) =
 
 
 paintPixel : Int -> Int -> Bool -> Bitmap -> Bitmap
-paintPixel x y on (Bitmap w h pixels) =
-    pixels
-        |> Array.set (pos w x y) on
-        |> Bitmap w h
+paintPixel x y on ((Bitmap w h pixels) as bm) =
+    if x < w && y < h && x >= 0 && y >= 0 then
+        pixels
+            |> Array.set (pos w x y) on
+            |> Bitmap w h
+
+    else
+        bm
 
 
 paintBitmap : Int -> Int -> Bitmap -> Bitmap -> Bitmap
@@ -163,6 +171,66 @@ paintBitmap x y source target =
                 iterator nextRow nextCol newBm
     in
     iterator 0 0 target
+
+
+rotateClockwise : Bitmap -> Bitmap
+rotateClockwise ((Bitmap w _ _) as bm) =
+    bm
+        |> transform
+            (\x y -> ( w - y - 1, x ))
+
+
+rotateCounterClockwise : Bitmap -> Bitmap
+rotateCounterClockwise ((Bitmap _ h _) as bm) =
+    bm
+        |> transform
+            (\x y -> ( y, h - x - 1 ))
+
+
+rotate180 : Bitmap -> Bitmap
+rotate180 ((Bitmap w h _) as bm) =
+    bm
+        |> transform
+            (\x y -> ( w - x - 1, h - y - 1 ))
+
+
+transform : (Int -> Int -> ( Int, Int )) -> Bitmap -> Bitmap
+transform fn ((Bitmap w h _) as bitmap) =
+    let
+        iterator x y bm =
+            let
+                nextX =
+                    if x >= w - 1 then
+                        0
+
+                    else
+                        x + 1
+
+                nextY =
+                    if nextX == 0 then
+                        y + 1
+
+                    else
+                        y
+
+                ( tx, ty ) =
+                    fn x y
+
+                newBm =
+                    paintPixel
+                        tx
+                        ty
+                        (pixel x y bitmap |> Maybe.withDefault False)
+                        bm
+            in
+            if nextY >= h then
+                newBm
+
+            else
+                iterator nextX nextY newBm
+    in
+    empty w h
+        |> iterator 0 0
 
 
 
