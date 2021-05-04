@@ -103,7 +103,6 @@ mainView model =
             , height 500
             ]
             []
-        , text "bla"
         ]
 
 
