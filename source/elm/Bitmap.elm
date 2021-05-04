@@ -36,6 +36,7 @@ empty w h =
     . # # # .
     . . . . .
     """
+        |> Bitmap.fromString
 
 This will produce a 5 × 5 Bitmap with a black L in the middle.
 The spaces are ignored, the dots mark white pixels, and any other character marks black pixels.

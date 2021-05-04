@@ -15,6 +15,27 @@ empty w h tileW tileH =
     Map ( w, h ) ( tileW, tileH ) (Array.initialize (w * h) (always (Bitmap.empty tileW tileH)))
 
 
+{-| Takes a specially formatted string and a Dict of Char to tile (Bitmap) mappings,
+and converts them into a Map. Here's an example:
+
+    """
+    . . . .
+    . A B .
+    . B A .
+    . . . .
+    """
+        |> Map.fromString
+            (Dict.fromList
+                [ ( '.', emptyTile )
+                , ( 'A', tileA )
+                , ( 'B', tileB )
+                ]
+            )
+
+This will produce a 4 × 4 tiles Map.
+Note that spaces are always ignored.
+
+-}
 fromString : Dict Char Bitmap -> String -> Maybe Map
 fromString tiles str =
     let
