@@ -99,8 +99,8 @@ mainView model =
     div []
         [ canvas
             [ id "canvas"
-            , width 32
-            , height 32
+            , width 500
+            , height 500
             ]
             []
         , text "bla"
