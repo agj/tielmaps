@@ -1,18 +1,24 @@
-module Map exposing (Map, empty, fromString, height, setTile, tile, toBitmap, width)
+module Map exposing (Map, empty8x8Tile, fromString, height, setTile, tile, toBitmap, width)
 
 import Array exposing (Array)
 import Bitmap exposing (Bitmap)
 import Dict exposing (Dict)
 import Maybe.Extra as Maybe
+import Size exposing (Size8x8)
+import Tile exposing (Tile)
 
 
-type Map
+type Map tileSize
     = Map ( Int, Int ) ( Int, Int ) (Array Bitmap)
 
 
-empty : Int -> Int -> Int -> Int -> Map
-empty w h tileW tileH =
-    Map ( w, h ) ( tileW, tileH ) (Array.initialize (w * h) (always (Bitmap.empty tileW tileH)))
+empty8x8Tile : Int -> Int -> Map Size8x8
+empty8x8Tile w h =
+    let
+        make tileW tileH =
+            Map ( w, h ) ( tileW, tileH ) (Array.initialize (w * h) (always (Bitmap.empty tileW tileH)))
+    in
+    make 8 8
 
 
 {-| Takes a specially formatted string and a Dict of Char to tile (Bitmap) mappings,
@@ -36,7 +42,7 @@ This will produce a 4 × 4 tiles Map.
 Note that spaces are always ignored.
 
 -}
-fromString : Dict Char Bitmap -> String -> Maybe Map
+fromString : Dict Char (Tile a) -> String -> Maybe (Map a)
 fromString tiles str =
     let
         rawLines =
@@ -63,16 +69,20 @@ fromString tiles str =
     case Dict.values tiles of
         t :: _ ->
             let
+                bm =
+                    Tile.bitmap t
+
                 tw =
-                    Bitmap.width t
+                    Bitmap.width bm
 
                 th =
-                    Bitmap.height t
+                    Bitmap.height bm
             in
             lines
                 |> List.map (String.toList >> List.map toTile)
                 |> List.foldr (++) []
                 |> Maybe.combine
+                |> Maybe.map (List.map Tile.bitmap)
                 |> Maybe.map Array.fromList
                 |> Maybe.map (Map ( w, h ) ( tw, th ))
 
@@ -84,17 +94,17 @@ fromString tiles str =
 -- ACCESSORS
 
 
-width : Map -> Int
+width : Map a -> Int
 width (Map ( w, _ ) _ _) =
     w
 
 
-height : Map -> Int
+height : Map a -> Int
 height (Map ( _, h ) _ _) =
     h
 
 
-tile : Int -> Int -> Map -> Maybe Bitmap
+tile : Int -> Int -> Map a -> Maybe Bitmap
 tile x y (Map ( w, _ ) _ tiles) =
     tiles
         |> Array.get (pos w x y)
@@ -104,14 +114,14 @@ tile x y (Map ( w, _ ) _ tiles) =
 -- SETTERS
 
 
-setTile : Int -> Int -> Bitmap -> Map -> Map
-setTile x y bm (Map (( w, _ ) as size) tileSize tiles) =
+setTile : Int -> Int -> Tile a -> Map a -> Map a
+setTile x y t (Map (( w, _ ) as size) tileSize tiles) =
     tiles
-        |> Array.set (pos w x y) bm
+        |> Array.set (pos w x y) (Tile.bitmap t)
         |> Map size tileSize
 
 
-toBitmap : Map -> Bitmap
+toBitmap : Map a -> Bitmap
 toBitmap ((Map ( w, h ) ( tw, th ) _) as map) =
     let
         iterator row col bm =
