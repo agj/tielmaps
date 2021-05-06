@@ -9,6 +9,9 @@ import Js
 import Levers
 import Map exposing (Map)
 import Maps
+import Size exposing (Size8x8)
+import Sprite exposing (Sprite)
+import Sprites
 import Time
 import Viewport exposing (Viewport)
 
@@ -32,7 +35,8 @@ main =
 
 
 type alias Model =
-    { ready : Bool
+    { map : Map Size8x8
+    , character : Sprite Size8x8
     }
 
 
@@ -47,10 +51,10 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
-    ( { ready = True
+    ( { map = Maps.testMap
+      , character = Sprites.runningCharacter
       }
-    , Js.paintCanvas
-        (Maps.testMap |> Map.toBitmap)
+    , Cmd.none
     )
 
 
@@ -72,7 +76,12 @@ update msg model =
     in
     case msg of
         Ticked _ ->
-            ignore
+            ( { model | character = Sprite.tick model.character }
+            , Js.paintCanvas
+                (Map.toBitmap model.map
+                    |> Bitmap.paintBitmap 0 0 (Sprite.bitmap model.character)
+                )
+            )
 
         Resized { width, height } ->
             ignore
