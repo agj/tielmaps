@@ -9,7 +9,8 @@ import Tile exposing (Tile)
 
 runningCharacter : Sprite Size8x8
 runningCharacter =
-    [ """
+    Sprite.animated
+        ("""
     # # # # # # # #
     # . . . . . . #
     # . . # . # . #
@@ -19,8 +20,9 @@ runningCharacter =
     . # # . . . . #
     . . . . . . . .
     """
-        |> frame 2
-    , """
+            |> frame 1
+        )
+        [ """
     . . . . . . . .
     # # # # # # # #
     # . . . . . . #
@@ -30,8 +32,8 @@ runningCharacter =
     . . # . . . # .
     . . # . . . # .
     """
-        |> frame 2
-    , """
+            |> frame 1
+        , """
     # # # # # # # #
     # . . . . . . #
     # . . # . # . #
@@ -41,8 +43,8 @@ runningCharacter =
     . . . # # . . .
     . . . . . . . .
     """
-        |> frame 2
-    , """
+            |> frame 1
+        , """
     . . . . . . . .
     # # # # # # # #
     # . . . . . . #
@@ -52,9 +54,8 @@ runningCharacter =
     . . # . . . # .
     . . # . . . # .
     """
-        |> frame 2
-    ]
-        |> Sprite.animated
+            |> frame 1
+        ]
 
 
 
