@@ -1,6 +1,18 @@
 # Elm platformer (temporary name)
 
-This is a work in progress by **agj** that aims to eventually become a barebones pixel platformer video game made in Elm. The idea is for it to be an easy to hack codebase, for anyone interested in making their own platformer but doesn't know where to start, or for game makers interested in Elm in particular who want a working example, or for those interested in purely functional languages in general and want to see how a game can be structured under that paradigm.
+This is a work in progress by **agj** that aims to eventually become a barebones pixel platformer video game made in [Elm][elm]. The idea is for it to be an easy to hack codebase, for anyone interested in making their own platformer but doesn't know where to start, or for game makers interested in Elm in particular who want a working example, or for those interested in purely functional languages in general and want to see how a game can be structured under that paradigm.
+
+[elm]: https://elm-lang.org/
+[node]: https://nodejs.org/
+[parcel]: https://parceljs.org/
+
+## Developing
+
+You'll need [Node][node] 14 or higher. After cloning this repository, go to the directory in a terminal and run `npm install`.
+
+The project uses [Parcel][parcel] to bundle everything up. Running the `npm run build` command will create the output HTML and JS files in the `dist/` folder.
+
+To develop, running `npm run develop` will run a development server that you can access by entering in your browser the address that gets output in the terminal. Any changes you make to the files will automatically be reflected in the webpage (many times a reload will still be necessary, though). Press ctrl+C in the terminal to stop the server.
 
 ## License
 
