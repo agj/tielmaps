@@ -3,6 +3,7 @@
     "start": "node server.js",
     "prestart": "node run build",
     "build": "parcel build source/html/index.html --public-url ./",
+    "prebuild": "rm -rf dist",
     "develop": "parcel source/html/index.html",
     "deploy": "gh-pages -d dist",
     "predeploy": "npm run build"
