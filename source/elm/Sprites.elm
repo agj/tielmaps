@@ -20,7 +20,7 @@ runningCharacter =
     . # # . . . . #
     . . . . . . . .
     """
-            |> frame 1
+            |> frame 2
         )
         [ """
     . . . . . . . .
@@ -43,7 +43,7 @@ runningCharacter =
     . . . # # . . .
     . . . . . . . .
     """
-            |> frame 1
+            |> frame 2
         , """
     . . . . . . . .
     # # # # # # # #
