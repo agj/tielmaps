@@ -4,6 +4,7 @@ import Avatar exposing (Avatar)
 import Bitmap exposing (Bitmap)
 import Browser
 import Browser.Events
+import Collider
 import Css exposing (alignItems, backgroundColor, center, display, displayFlex, hsl, justifyContent, margin, padding, pc, pct, property, px, scale, transform)
 import Css.Global exposing (global, selector)
 import Html.Styled exposing (Html, canvas, div, text, toUnstyled)
@@ -82,13 +83,19 @@ update msg model =
     in
     case msg of
         Ticked _ ->
-            ( { model | character = Avatar.tick model.character }
+            let
+                newCharacter =
+                    model.character
+                        |> Avatar.tick
+                        |> Collider.collideAvatar model.screen
+            in
+            ( { model | character = newCharacter }
             , Js.paintCanvas
                 (Map.toBitmap (Screen.map model.screen)
                     |> Bitmap.paintBitmap
-                        (Avatar.x model.character)
-                        (Avatar.y model.character)
-                        (Avatar.bitmap model.character)
+                        (Avatar.x newCharacter)
+                        (Avatar.y newCharacter)
+                        (Avatar.bitmap newCharacter)
                 )
             )
 

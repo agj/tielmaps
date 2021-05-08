@@ -5,6 +5,8 @@ module Screen exposing
     , error22x22
     , make22x22
     , map
+    , tileHeight
+    , tileWidth
     )
 
 import CollisionLayer exposing (CollisionLayer)
@@ -76,6 +78,16 @@ map (Screen { map_ }) =
 collisionLayer : Screen a b -> CollisionLayer
 collisionLayer (Screen { collisionLayer_ }) =
     collisionLayer_
+
+
+tileWidth : Screen a b -> Int
+tileWidth (Screen { tileWidth_ }) =
+    tileWidth_
+
+
+tileHeight : Screen a b -> Int
+tileHeight (Screen { tileHeight_ }) =
+    tileHeight_
 
 
 

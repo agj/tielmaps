@@ -42,7 +42,8 @@ height (CollisionLayer _ h _) =
     h
 
 
-getAt : Int -> Int -> CollisionLayer -> Maybe Bool
+getAt : Int -> Int -> CollisionLayer -> Bool
 getAt x y (CollisionLayer w _ collisions) =
     collisions
         |> Array.get (Helper.pos w x y)
+        |> Maybe.withDefault False

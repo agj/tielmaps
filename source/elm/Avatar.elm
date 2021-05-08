@@ -10,6 +10,7 @@ module Avatar exposing
 
 import Bitmap exposing (Bitmap)
 import CollisionLayer exposing (CollisionLayer)
+import Screen exposing (Screen)
 import Sprite exposing (Sprite)
 
 
@@ -50,9 +51,30 @@ tick (Avatar ({ sprite_, y_ } as data)) =
         }
 
 
-collide : CollisionLayer -> Avatar a -> Avatar a
-collide coll (Avatar data) =
-    Avatar data
+collide : ({ left : Int, right : Int, top : Int, bottom : Int } -> Bool) -> Avatar b -> Avatar b
+collide collider (Avatar ({ x_, y_, collidedX_, collidedY_, width_, height_ } as data)) =
+    let
+        collided =
+            collider
+                { left = x_
+                , right = x_ + width_
+                , top = y_
+                , bottom = y_ + height_
+                }
+    in
+    if Debug.log "collided" collided then
+        Avatar
+            { data
+                | x_ = collidedX_
+                , y_ = collidedY_
+            }
+
+    else
+        Avatar
+            { data
+                | collidedX_ = x_
+                , collidedY_ = y_
+            }
 
 
 bitmap : Avatar a -> Bitmap
