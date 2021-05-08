@@ -10,8 +10,9 @@ import Html.Styled.Attributes exposing (css, height, id, style, width)
 import Js
 import Levers
 import Map exposing (Map)
-import Maps
-import Size exposing (Size8x8)
+import Screen exposing (Screen)
+import Screens
+import Size exposing (Size22x22, Size8x8)
 import Sprite exposing (Sprite)
 import Sprites
 import Time
@@ -37,7 +38,7 @@ main =
 
 
 type alias Model =
-    { map : Map Size8x8
+    { screen : Screen Size22x22 Size8x8
     , character : Sprite Size8x8
     , scale : Int
     }
@@ -54,7 +55,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
-    ( { map = Maps.testMap
+    ( { screen = Screens.testScreen
       , character = Sprites.runningCharacter
       , scale = getScale flags.viewport
       }
@@ -82,7 +83,7 @@ update msg model =
         Ticked _ ->
             ( { model | character = Sprite.tick model.character }
             , Js.paintCanvas
-                (Map.toBitmap model.map
+                (Map.toBitmap (Screen.map model.screen)
                     |> Bitmap.paintBitmap 0 0 (Sprite.bitmap model.character)
                 )
             )
