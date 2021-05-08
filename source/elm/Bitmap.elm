@@ -15,6 +15,7 @@ module Bitmap exposing
     )
 
 import Array exposing (Array)
+import Helper
 import Json.Encode as Encode exposing (Value)
 
 
@@ -45,32 +46,13 @@ The spaces are ignored, the dots mark white pixels, and any other character mark
 fromString : String -> Bitmap
 fromString str =
     let
-        rawLines =
-            str
-                |> String.lines
-                |> List.map removeSpaces
-                |> List.filter (not << String.isEmpty)
+        mapper ch =
+            ch /= '.'
 
-        w =
-            rawLines
-                |> List.map String.length
-                |> List.foldl max 0
-
-        h =
-            List.length rawLines
-
-        lines =
-            rawLines
-                |> List.map (String.padRight w '.')
-
-        toBool ch =
-            ch /= ' ' && ch /= '.'
+        r =
+            Helper.stringToArray mapper str
     in
-    lines
-        |> List.map (String.toList >> List.map toBool)
-        |> List.foldr (++) []
-        |> Array.fromList
-        |> Bitmap w h
+    Bitmap r.width r.height r.array
 
 
 
@@ -90,7 +72,7 @@ height (Bitmap _ h _) =
 pixel : Int -> Int -> Bitmap -> Maybe Bool
 pixel x y (Bitmap w h pixels) =
     pixels
-        |> Array.get (pos w x y)
+        |> Array.get (Helper.pos w x y)
 
 
 encode : Bitmap -> Value
@@ -110,7 +92,7 @@ paintPixel : Int -> Int -> Bool -> Bitmap -> Bitmap
 paintPixel x y on ((Bitmap w h pixels) as bm) =
     if x < w && y < h && x >= 0 && y >= 0 then
         pixels
-            |> Array.set (pos w x y) on
+            |> Array.set (Helper.pos w x y) on
             |> Bitmap w h
 
     else
@@ -238,11 +220,6 @@ transform fn ((Bitmap w h _) as bitmap) =
 -- INTERNAL
 
 
-pos : Int -> Int -> Int -> Int
-pos w x y =
-    x + (w * y)
-
-
 boolEncoder : Bool -> Value
 boolEncoder value =
     if value then
@@ -250,8 +227,3 @@ boolEncoder value =
 
     else
         Encode.int 0
-
-
-removeSpaces : String -> String
-removeSpaces =
-    String.filter (\ch -> ch /= ' ')

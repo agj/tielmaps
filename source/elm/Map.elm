@@ -3,6 +3,7 @@ module Map exposing (Map, empty8x8Tile, fromString, height, setTile, tile, toBit
 import Array exposing (Array)
 import Bitmap exposing (Bitmap)
 import Dict exposing (Dict)
+import Helper
 import Maybe.Extra as Maybe
 import Size exposing (Size8x8)
 import Tile exposing (Tile)
@@ -44,28 +45,6 @@ Note that spaces are always ignored.
 -}
 fromString : Dict Char (Tile a) -> String -> Maybe (Map a)
 fromString tiles str =
-    let
-        rawLines =
-            str
-                |> String.lines
-                |> List.map removeSpaces
-                |> List.filter (not << String.isEmpty)
-
-        w =
-            rawLines
-                |> List.map String.length
-                |> List.foldl max 0
-
-        h =
-            List.length rawLines
-
-        lines =
-            rawLines
-                |> List.map (String.padRight w '.')
-
-        toTile ch =
-            Dict.get ch tiles
-    in
     case Dict.values tiles of
         t :: _ ->
             let
@@ -77,14 +56,17 @@ fromString tiles str =
 
                 th =
                     Bitmap.height bm
+
+                mapper ch =
+                    Dict.get ch tiles
+                        |> Maybe.map Tile.bitmap
+
+                r =
+                    Helper.stringToArray mapper str
             in
-            lines
-                |> List.map (String.toList >> List.map toTile)
-                |> List.foldr (++) []
-                |> Maybe.combine
-                |> Maybe.map (List.map Tile.bitmap)
-                |> Maybe.map Array.fromList
-                |> Maybe.map (Map ( w, h ) ( tw, th ))
+            r.array
+                |> Maybe.combineArray
+                |> Maybe.map (Map ( r.width, r.height ) ( tw, th ))
 
         _ ->
             Nothing
@@ -107,7 +89,7 @@ height (Map ( _, h ) _ _) =
 tile : Int -> Int -> Map a -> Maybe Bitmap
 tile x y (Map ( w, _ ) _ tiles) =
     tiles
-        |> Array.get (pos w x y)
+        |> Array.get (Helper.pos w x y)
 
 
 
@@ -117,7 +99,7 @@ tile x y (Map ( w, _ ) _ tiles) =
 setTile : Int -> Int -> Tile a -> Map a -> Map a
 setTile x y t (Map (( w, _ ) as size) tileSize tiles) =
     tiles
-        |> Array.set (pos w x y) (Tile.bitmap t)
+        |> Array.set (Helper.pos w x y) (Tile.bitmap t)
         |> Map size tileSize
 
 
@@ -159,17 +141,3 @@ toBitmap ((Map ( w, h ) ( tw, th ) _) as map) =
     in
     Bitmap.empty (w * tw) (h * th)
         |> iterator 0 0
-
-
-
--- INTERNAL
-
-
-pos : Int -> Int -> Int -> Int
-pos w x y =
-    x + (w * y)
-
-
-removeSpaces : String -> String
-removeSpaces =
-    String.filter (\ch -> ch /= ' ')
