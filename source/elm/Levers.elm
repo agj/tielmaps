@@ -8,9 +8,9 @@ framesPerSecond =
 
 width : Int
 width =
-    176
+    22 * 8
 
 
 height : Int
 height =
-    176
+    22 * 8
