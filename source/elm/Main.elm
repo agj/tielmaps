@@ -1,5 +1,6 @@
 module Main exposing (Msg(..), main, update, view)
 
+import Avatar exposing (Avatar)
 import Bitmap exposing (Bitmap)
 import Browser
 import Browser.Events
@@ -39,7 +40,7 @@ main =
 
 type alias Model =
     { screen : Screen Size22x22 Size8x8
-    , character : Sprite Size8x8
+    , character : Avatar Size8x8
     , scale : Int
     }
 
@@ -56,7 +57,7 @@ type alias Flags =
 init : Flags -> ( Model, Cmd Msg )
 init flags =
     ( { screen = Screens.testScreen
-      , character = Sprites.runningCharacter
+      , character = Avatar.make Sprites.runningCharacter
       , scale = getScale flags.viewport
       }
     , Cmd.none
@@ -81,10 +82,13 @@ update msg model =
     in
     case msg of
         Ticked _ ->
-            ( { model | character = Sprite.tick model.character }
+            ( { model | character = Avatar.tick model.character }
             , Js.paintCanvas
                 (Map.toBitmap (Screen.map model.screen)
-                    |> Bitmap.paintBitmap 0 0 (Sprite.bitmap model.character)
+                    |> Bitmap.paintBitmap
+                        (Avatar.x model.character)
+                        (Avatar.y model.character)
+                        (Avatar.bitmap model.character)
                 )
             )
 
