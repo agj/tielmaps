@@ -1,4 +1,4 @@
-import { Bitmap, Elm, Pixel } from "../elm/Main";
+import { Bitmap, Elm, Pixel } from "../elm/Main.elm";
 
 const app = Elm.Main.init({
   node: document.getElementById("elm"),
