@@ -3,7 +3,9 @@ module Tile exposing
     , bitmap
     , empty8x8
     , error8x8
+    , height
     , make8x8
+    , width
     )
 
 import Bitmap exposing (Bitmap)
@@ -51,6 +53,16 @@ error8x8 =
 bitmap : Tile a -> Bitmap
 bitmap (Tile bm) =
     bm
+
+
+width : Tile a -> Int
+width (Tile bm) =
+    Bitmap.width bm
+
+
+height : Tile a -> Int
+height (Tile bm) =
+    Bitmap.height bm
 
 
 

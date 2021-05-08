@@ -2,8 +2,10 @@ module Sprite exposing
     ( Sprite
     , animated
     , bitmap
+    , height
     , static
     , tick
+    , width
     )
 
 import Bitmap exposing (Bitmap)
@@ -13,26 +15,43 @@ import Tile exposing (Tile)
 
 
 type Sprite size
+    = Sprite
+        { width_ : Int
+        , height_ : Int
+        , animation : Animation size
+        }
+
+
+type Animation size
     = Static Bitmap
     | Animated Int (Nonempty (Frame size))
 
 
 static : Tile a -> Sprite a
 static tile =
-    Static (Tile.bitmap tile)
+    Sprite
+        { width_ = Tile.width tile
+        , height_ = Tile.height tile
+        , animation = Static (Tile.bitmap tile)
+        }
 
 
 animated : Frame a -> List (Frame a) -> Sprite a
 animated firstFrame frames =
-    Animated 0
-        (Nonempty.singleton firstFrame
-            |> Nonempty.replaceTail frames
-        )
+    Sprite
+        { width_ = Frame.width firstFrame
+        , height_ = Frame.height firstFrame
+        , animation =
+            Animated 0
+                (Nonempty.singleton firstFrame
+                    |> Nonempty.replaceTail frames
+                )
+        }
 
 
 tick : Sprite a -> Sprite a
-tick sprite =
-    case sprite of
+tick ((Sprite state) as sprite) =
+    case state.animation of
         Static _ ->
             sprite
 
@@ -42,21 +61,31 @@ tick sprite =
                     ticks + 1
             in
             if newTicks >= totalTicks frames then
-                Animated 0 frames
+                Sprite { state | animation = Animated 0 frames }
 
             else
-                Animated newTicks frames
+                Sprite { state | animation = Animated newTicks frames }
 
 
 bitmap : Sprite a -> Bitmap
-bitmap sprite =
-    case sprite of
+bitmap (Sprite { animation }) =
+    case animation of
         Static bm ->
             bm
 
         Animated ticks frames ->
             currentFrame ticks frames
                 |> Frame.bitmap
+
+
+width : Sprite a -> Int
+width (Sprite { width_ }) =
+    width_
+
+
+height : Sprite a -> Int
+height (Sprite { height_ }) =
+    height_
 
 
 

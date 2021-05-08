@@ -1,4 +1,15 @@
-module Map exposing (Map, empty8x8Tile, fromString, height, setTile, tile, toBitmap, width)
+module Map exposing
+    ( Map
+    , empty8x8Tile
+    , fromString
+    , height
+    , setTile
+    , tile
+    , tileHeight
+    , tileWidth
+    , toBitmap
+    , width
+    )
 
 import Array exposing (Array)
 import Bitmap exposing (Bitmap)
@@ -10,14 +21,26 @@ import Tile exposing (Tile)
 
 
 type Map tileSize
-    = Map ( Int, Int ) ( Int, Int ) (Array Bitmap)
+    = Map
+        { width_ : Int
+        , height_ : Int
+        , tileWidth_ : Int
+        , tileHeight_ : Int
+        , bitmaps : Array Bitmap
+        }
 
 
 empty8x8Tile : Int -> Int -> Map Size8x8
 empty8x8Tile w h =
     let
         make tileW tileH =
-            Map ( w, h ) ( tileW, tileH ) (Array.initialize (w * h) (always (Bitmap.empty tileW tileH)))
+            Map
+                { width_ = w
+                , height_ = h
+                , tileWidth_ = tileW
+                , tileHeight_ = tileH
+                , bitmaps = Array.initialize (w * h) (always (Bitmap.empty tileW tileH))
+                }
     in
     make 8 8
 
@@ -63,10 +86,19 @@ fromString tiles str =
 
                 r =
                     Helper.stringToArray mapper str
+
+                toMap bitmaps =
+                    Map
+                        { width_ = r.width
+                        , height_ = r.height
+                        , tileWidth_ = tw
+                        , tileHeight_ = th
+                        , bitmaps = bitmaps
+                        }
             in
             r.array
                 |> Maybe.combineArray
-                |> Maybe.map (Map ( r.width, r.height ) ( tw, th ))
+                |> Maybe.map toMap
 
         _ ->
             Nothing
@@ -77,19 +109,29 @@ fromString tiles str =
 
 
 width : Map a -> Int
-width (Map ( w, _ ) _ _) =
-    w
+width (Map { width_ }) =
+    width_
 
 
 height : Map a -> Int
-height (Map ( _, h ) _ _) =
-    h
+height (Map { height_ }) =
+    height_
+
+
+tileWidth : Map a -> Int
+tileWidth (Map { tileWidth_ }) =
+    tileWidth_
+
+
+tileHeight : Map a -> Int
+tileHeight (Map { tileHeight_ }) =
+    tileHeight_
 
 
 tile : Int -> Int -> Map a -> Maybe Bitmap
-tile x y (Map ( w, _ ) _ tiles) =
-    tiles
-        |> Array.get (Helper.pos w x y)
+tile x y (Map { width_, bitmaps }) =
+    bitmaps
+        |> Array.get (Helper.pos width_ x y)
 
 
 
@@ -97,19 +139,23 @@ tile x y (Map ( w, _ ) _ tiles) =
 
 
 setTile : Int -> Int -> Tile a -> Map a -> Map a
-setTile x y t (Map (( w, _ ) as size) tileSize tiles) =
-    tiles
-        |> Array.set (Helper.pos w x y) (Tile.bitmap t)
-        |> Map size tileSize
+setTile x y t (Map ({ width_, bitmaps } as state)) =
+    let
+        toMap bms =
+            Map { state | bitmaps = bms }
+    in
+    bitmaps
+        |> Array.set (Helper.pos width_ x y) (Tile.bitmap t)
+        |> toMap
 
 
 toBitmap : Map a -> Bitmap
-toBitmap ((Map ( w, h ) ( tw, th ) _) as map) =
+toBitmap ((Map { width_, height_, tileWidth_, tileHeight_ }) as map) =
     let
         iterator row col bm =
             let
                 nextRow =
-                    if row >= w - 1 then
+                    if row >= width_ - 1 then
                         0
 
                     else
@@ -128,16 +174,16 @@ toBitmap ((Map ( w, h ) ( tw, th ) _) as map) =
                 newBm =
                     case curTile of
                         Just ct ->
-                            Bitmap.paintBitmap (tw * row) (th * col) ct bm
+                            Bitmap.paintBitmap (tileWidth_ * row) (tileHeight_ * col) ct bm
 
                         Nothing ->
                             bm
             in
-            if nextCol >= h then
+            if nextCol >= height_ then
                 newBm
 
             else
                 iterator nextRow nextCol newBm
     in
-    Bitmap.empty (w * tw) (h * th)
+    Bitmap.empty (width_ * tileWidth_) (height_ * tileHeight_)
         |> iterator 0 0
