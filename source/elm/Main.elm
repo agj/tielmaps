@@ -10,6 +10,9 @@ import Css.Global exposing (global, selector)
 import Html.Styled exposing (Html, canvas, div, text, toUnstyled)
 import Html.Styled.Attributes exposing (css, height, id, style, width)
 import Js
+import Json.Decode as D
+import Key exposing (Key)
+import Keys exposing (Keys)
 import Levers
 import Map exposing (Map)
 import Screen exposing (Screen)
@@ -42,6 +45,7 @@ main =
 type alias Model =
     { screen : Screen Size22x22 Size8x8
     , character : Avatar Size8x8
+    , keys : Keys
     , scale : Int
     }
 
@@ -59,6 +63,7 @@ init : Flags -> ( Model, Cmd Msg )
 init flags =
     ( { screen = Screens.testScreen
       , character = Avatar.make Sprites.runningCharacter
+      , keys = Keys.empty
       , scale = getScale flags.viewport
       }
     , Cmd.none
@@ -72,6 +77,8 @@ init flags =
 type Msg
     = Ticked Time.Posix
     | Resized Viewport
+    | PressedKey Key
+    | ReleasedKey Key
     | NoOp
 
 
@@ -84,8 +91,20 @@ update msg model =
     case msg of
         Ticked _ ->
             let
+                moveCharacter avatar =
+                    case Keys.direction model.keys of
+                        Keys.Left ->
+                            Avatar.moveLeft avatar
+
+                        Keys.Right ->
+                            Avatar.moveRight avatar
+
+                        Keys.Static ->
+                            avatar
+
                 newCharacter =
                     model.character
+                        |> moveCharacter
                         |> Avatar.tick
                         |> Collider.collideAvatar model.screen
             in
@@ -97,6 +116,16 @@ update msg model =
                         (Avatar.y newCharacter)
                         (Avatar.bitmap newCharacter)
                 )
+            )
+
+        PressedKey key ->
+            ( { model | keys = Keys.press key model.keys }
+            , Cmd.none
+            )
+
+        ReleasedKey key ->
+            ( { model | keys = Keys.release key model.keys }
+            , Cmd.none
             )
 
         Resized viewport ->
@@ -168,7 +197,23 @@ subscriptions model =
     Sub.batch
         [ Browser.Events.onResize (\w h -> Resized (Viewport w h))
         , Time.every (toFloat Levers.framesPerSecond) Ticked
+        , Browser.Events.onKeyDown (decodeKeyWith PressedKey)
+        , Browser.Events.onKeyUp (decodeKeyWith ReleasedKey)
         ]
+
+
+decodeKeyWith : (Key -> Msg) -> D.Decoder Msg
+decodeKeyWith msg =
+    Key.decodeEvent
+        |> D.map
+            (\maybeKey ->
+                case maybeKey of
+                    Just key ->
+                        msg key
+
+                    Nothing ->
+                        NoOp
+            )
 
 
 
