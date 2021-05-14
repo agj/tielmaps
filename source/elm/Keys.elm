@@ -63,4 +63,4 @@ release key (Keys state) =
             Keys { state | direction_ = Static }
 
         Key.Jump ->
-            Keys { state | jumping_ = True }
+            Keys { state | jumping_ = False }

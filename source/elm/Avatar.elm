@@ -2,6 +2,7 @@ module Avatar exposing
     ( Avatar
     , bitmap
     , collide
+    , jump
     , make
     , moveLeft
     , moveRight
@@ -64,12 +65,9 @@ moveRight avatar =
     moveX 3 avatar
 
 
-moveX : Int -> Avatar a -> Avatar a
-moveX amount (Avatar ({ x_ } as data)) =
-    Avatar
-        { data
-            | x_ = x_ + amount
-        }
+jump : Avatar a -> Avatar a
+jump avatar =
+    moveY -6 avatar
 
 
 collide : Collider.Callback -> Avatar b -> Avatar b
@@ -107,3 +105,17 @@ x (Avatar { x_ }) =
 y : Avatar a -> Int
 y (Avatar { y_ }) =
     y_
+
+
+
+-- INTERNAL
+
+
+moveX : Int -> Avatar a -> Avatar a
+moveX amount (Avatar ({ x_ } as data)) =
+    Avatar { data | x_ = x_ + amount }
+
+
+moveY : Int -> Avatar a -> Avatar a
+moveY amount (Avatar ({ y_ } as data)) =
+    Avatar { data | y_ = y_ + amount }
