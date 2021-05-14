@@ -1,3 +1,9 @@
+/**
+ * This file provides Typescript types that describe the interface with Elm.
+ * It's mostly been jacked from https://github.com/Punie/elm-typescript-starter
+ *
+ */
+
 // Elm entrypoint
 
 export namespace Elm {
@@ -15,6 +21,15 @@ export type Config = {
   readonly flags: Flags;
 };
 
+export type Ports = {
+  readonly command: Cmd<Action>;
+};
+
+export type Cmd<T> = {
+  subscribe(callback: (value: T) => void): void;
+  unsubscribe(callback: (value: T) => void): void;
+};
+
 // Flags
 
 export type Flags = {
@@ -24,17 +39,6 @@ export type Flags = {
 export type Viewport = {
   readonly width: number;
   readonly height: number;
-};
-
-// Ports
-
-export type Ports = {
-  readonly command: Cmd<Action>;
-};
-
-export type Cmd<T> = {
-  subscribe(callback: (value: T) => void): void;
-  unsubscribe(callback: (value: T) => void): void;
 };
 
 // Actions
