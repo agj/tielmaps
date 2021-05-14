@@ -88,13 +88,13 @@ getAbc { x, y, width, height, prevX, prevY } =
             ( x, y )
 
         topRight =
-            ( x + width, y )
+            ( x + width - 1, y )
 
         bottomLeft =
-            ( x, y + height )
+            ( x, y + height - 1 )
 
         bottomRight =
-            ( x + width, y + height )
+            ( x + width - 1, y + height - 1 )
     in
     if movingRight && movingDown then
         { a = topRight
