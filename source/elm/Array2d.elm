@@ -11,6 +11,10 @@ type Array2d a
         }
 
 
+
+-- CONSTRUCTION
+
+
 repeat : Int -> Int -> a -> Array2d a
 repeat width_ height_ item =
     Array2d
@@ -47,6 +51,10 @@ fromList width_ filler list =
         }
 
 
+
+-- ACCESSORS
+
+
 get : Int -> Int -> Array2d a -> Maybe a
 get x y (Array2d { width_, height_, array }) =
     if x < width_ && y < height_ then
@@ -54,15 +62,6 @@ get x y (Array2d { width_, height_, array }) =
 
     else
         Nothing
-
-
-set : Int -> Int -> a -> Array2d a -> Array2d a
-set x y item ((Array2d ({ width_, height_, array } as data)) as array2d) =
-    if x < width_ && y < height_ then
-        Array2d { data | array = Array.set (pos width_ x y) item array }
-
-    else
-        array2d
 
 
 width : Array2d a -> Int
@@ -73,6 +72,19 @@ width (Array2d { width_ }) =
 height : Array2d a -> Int
 height (Array2d { height_ }) =
     height_
+
+
+
+-- MODIFICATION
+
+
+set : Int -> Int -> a -> Array2d a -> Array2d a
+set x y item ((Array2d ({ width_, height_, array } as data)) as array2d) =
+    if x < width_ && y < height_ then
+        Array2d { data | array = Array.set (pos width_ x y) item array }
+
+    else
+        array2d
 
 
 toUnidimensional : Array2d a -> Array a
