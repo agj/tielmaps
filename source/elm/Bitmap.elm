@@ -29,16 +29,19 @@ type Bitmap
 {-| Takes a specially formatted string and converts it into a Bitmap. Here's an example:
 
     """
-    . . . . .
-    . # . . .
-    . # . . .
-    . # # # .
-    . . . . .
+    / / / / / /
+    / █ █ █ █ /
+    / █ . . █ /
+    / █ . . █ /
+    / █ █ █ █ /
+    / / / / / /
     """
-        |> Bitmap.fromString
+        |> Bitmap.fromString Bitmap.Color.defaultMap
 
-This will produce a 5 × 5 Bitmap with a black L in the middle.
-The spaces are ignored, the dots mark white pixels, and any other character marks black pixels.
+This will produce a 6 × 6 Bitmap with a square in the middle,
+drawn with a dark outline and light color fill, and surrounded by transparent pixels.
+The spaces are always ignored, but the other characters need to be specified
+by passing a Bitmap.Color.ColorMap which defines which character is which color.
 
 -}
 fromString : ColorMap -> String -> Maybe Bitmap
