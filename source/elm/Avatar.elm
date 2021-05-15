@@ -27,6 +27,9 @@ type Position
     | Jumping Int
 
 
+{-| Identifies when jumping is valid.
+This is to avoid having the avatar constantly hop around while the jump button is being held.
+-}
 type CanJumpStatus
     = CanJump
     | CannotJump
@@ -81,19 +84,25 @@ tick keys (Avatar ({ sprite_, y_, x_, position } as data)) =
                     y_ + Levers.gravity
 
         newPosition =
+            -- The next position is always either Jumping or Falling.
+            -- It's set as OnGround only when colliding against the floor!
             if Keys.jumping keys then
                 case position of
                     OnGround CanJump ->
                         Jumping 0
 
-                    OnGround CannotJump ->
-                        position
-
                     Falling _ ->
+                        -- Jump key is being held--let's make sure
+                        -- we don't immediately jump again after landing!
                         Falling CannotJump
 
+                    OnGround CannotJump ->
+                        -- We're still holding the jump key
+                        -- after landing, so no jump yet!
+                        position
+
                     Jumping ticks ->
-                        if ticks < 10 then
+                        if ticks < Levers.jumpDuration then
                             Jumping (ticks + 1)
 
                         else
@@ -102,13 +111,17 @@ tick keys (Avatar ({ sprite_, y_, x_, position } as data)) =
             else
                 case position of
                     OnGround _ ->
+                        -- Was on the ground and the jump key isn't held,
+                        -- so now we're sure we can jump later!
                         Falling CanJump
+
+                    Jumping _ ->
+                        -- Started falling after a jump, so should not jump
+                        -- until touching the ground.
+                        Falling CannotJump
 
                     Falling _ ->
                         position
-
-                    Jumping _ ->
-                        Falling CannotJump
     in
     Avatar
         { data
@@ -148,6 +161,7 @@ collide collider (Avatar ({ x_, y_, prevX, prevY, width_, height_, position } as
                             OnGround canJumpStatus
 
                         Jumping _ ->
+                            -- Normally, this should never occur.
                             OnGround CannotJump
 
                 else
