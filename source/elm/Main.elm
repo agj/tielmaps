@@ -3,6 +3,7 @@ module Main exposing (Msg(..), main, update, view)
 import Assets.Screens as Screens
 import Assets.Sprites as Sprites
 import Avatar exposing (Avatar)
+import Avatar.Padding as Padding exposing (zero)
 import Bitmap exposing (Bitmap)
 import Browser
 import Browser.Events
@@ -63,7 +64,13 @@ init : Flags -> ( Model, Cmd Msg )
 init flags =
     ( { screen = Screens.testScreen
       , character =
-            Avatar.fromSprite Sprites.runningCharacter
+            Avatar.fromSprite
+                { zero
+                    | left = 1
+                    , right = 1
+                    , top = 2
+                }
+                Sprites.runningCharacter
                 |> Avatar.reposition (1 * Levers.tileWidth) (1 * Levers.tileHeight)
       , keys = Keys.empty
       , scale = getScale flags.viewport

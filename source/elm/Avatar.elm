@@ -9,6 +9,7 @@ module Avatar exposing
     , y
     )
 
+import Avatar.Padding exposing (Padding)
 import Bitmap exposing (Bitmap)
 import Collider.Callback as Collider
 import CollisionLayer exposing (CollisionLayer)
@@ -44,6 +45,7 @@ type alias Data a =
     , prevY : Int
     , width_ : Int
     , height_ : Int
+    , padding : Padding
     , motion : Motion
     }
 
@@ -52,8 +54,12 @@ type alias Data a =
 -- CREATION
 
 
-fromSprite : Sprite a -> Avatar a
-fromSprite spr =
+{-| Creates an Avatar from a Sprite.
+You also need to supply a Padding, which defines
+how far into the Sprite should the collision box be calculated.
+-}
+fromSprite : Padding -> Sprite a -> Avatar a
+fromSprite padding spr =
     Avatar
         { sprite_ = spr
         , x_ = 0
@@ -62,6 +68,7 @@ fromSprite spr =
         , prevY = 0
         , width_ = Sprite.width spr
         , height_ = Sprite.height spr
+        , padding = padding
         , motion = Falling CanJump
         }
 
@@ -166,7 +173,7 @@ tick keys (Avatar ({ sprite_, y_, x_, motion } as data)) =
 {-| Moves the Avatar to a new point given its x and y coordinates.
 -}
 reposition : Int -> Int -> Avatar a -> Avatar a
-reposition newX newY (Avatar ({ x_, y_, prevX, prevY, motion } as data)) =
+reposition newX newY (Avatar data) =
     Avatar
         { data
             | x_ = newX
@@ -181,17 +188,23 @@ It should normally be called from within `Collider.collideAvatar`,
 which you should call every tick after calling `tick`.
 -}
 collide : Collider.Callback -> Avatar b -> Avatar b
-collide collider (Avatar ({ x_, y_, prevX, prevY, width_, height_, motion } as data)) =
+collide collider (Avatar ({ x_, y_, prevX, prevY, width_, height_, motion, padding } as data)) =
     let
-        ( newX, newY ) =
+        ( newXPre, newYPre ) =
             collider
-                { x = x_
-                , y = y_
-                , prevX = prevX
-                , prevY = prevY
-                , width = width_
-                , height = height_
+                { x = x_ + padding.left
+                , y = y_ + padding.top
+                , prevX = prevX + padding.left
+                , prevY = prevY + padding.top
+                , width = width_ - padding.left - padding.right
+                , height = height_ - padding.top - padding.bottom
                 }
+
+        newX =
+            newXPre - padding.left
+
+        newY =
+            newYPre - padding.top
     in
     Avatar
         { data
