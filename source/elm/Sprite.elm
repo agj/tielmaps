@@ -101,17 +101,21 @@ currentFrame : Int -> Nonempty (Frame a) -> Frame a
 currentFrame ticks frames =
     let
         iterate n f fs =
-            if n >= ticks then
+            let
+                currentFrameDuration =
+                    Frame.duration f
+            in
+            if n < currentFrameDuration then
                 f
 
             else
                 case fs of
                     f2 :: fs2 ->
-                        iterate (n + Frame.duration f) f2 fs2
+                        iterate (n - currentFrameDuration) f2 fs2
 
                     [] ->
                         f
     in
-    iterate 0
+    iterate ticks
         (Nonempty.head frames)
         (Nonempty.tail frames)
