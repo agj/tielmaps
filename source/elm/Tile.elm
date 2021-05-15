@@ -32,17 +32,7 @@ make8x8 bm =
 
 error8x8 : Tile Size8x8
 error8x8 =
-    """
-# . . . . . . #
-. # . . . . # .
-. . # . . # . .
-. . . # # . . .
-. . . # # . . .
-. . # . . # . .
-. # . . . . # .
-# . . . . . . #
-"""
-        |> Bitmap.fromString
+    Bitmap.error
         |> Tile
 
 

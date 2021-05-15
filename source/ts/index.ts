@@ -29,11 +29,13 @@ const paintCanvas = ({ width, height, pixels }: Bitmap) => {
       for (let x = 0; x < width; ++x) {
         for (let y = 0; y < height; ++y) {
           const offset = x * 4 + width * 4 * y;
-          const pixelOn = 1 - getPixel(width, x, y, pixels);
-          imageData.data[offset + 0] = pixelOn * 0xff; // red
-          imageData.data[offset + 1] = pixelOn * 0xff; // green
-          imageData.data[offset + 2] = pixelOn * 0xff; // blue
-          imageData.data[offset + 3] = 0xff; // alpha
+          const pixel = getPixel(width, x, y, pixels);
+          const rgb = pixel === 1 ? 0xff : 0x00;
+          const alpha = pixel === -1 ? 0x00 : 0xff;
+          imageData.data[offset + 0] = rgb; // red
+          imageData.data[offset + 1] = rgb; // green
+          imageData.data[offset + 2] = rgb; // blue
+          imageData.data[offset + 3] = alpha; // alpha
         }
       }
 
@@ -48,5 +50,5 @@ const getPixel = (
   y: number,
   pixels: Array<Pixel>
 ): Pixel => {
-  return pixels[x + width * y] ?? 0;
+  return pixels[x + width * y] ?? -1;
 };

@@ -58,4 +58,7 @@ export type Bitmap = {
   readonly pixels: Array<Pixel>;
 };
 
-export type Pixel = 0 | 1;
+export type Pixel =
+  | 0 // Dark
+  | 1 // Light
+  | -1; // Transparent

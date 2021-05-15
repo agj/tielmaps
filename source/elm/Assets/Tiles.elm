@@ -1,6 +1,7 @@
 module Assets.Tiles exposing (..)
 
 import Bitmap exposing (Bitmap)
+import Bitmap.Color as Color
 import Size exposing (Size8x8)
 import Tile exposing (Tile)
 
@@ -17,7 +18,8 @@ empty =
 . . . . . . . .
 . . . . . . . .
 """
-        |> Bitmap.fromString
+        |> Bitmap.fromString Color.defaultMap
+        |> Maybe.withDefault Bitmap.error
         |> toTile
 
 
@@ -33,7 +35,8 @@ solid =
 █ █ █ █ █ █ █ █
 █ █ █ █ █ █ █ █
 """
-        |> Bitmap.fromString
+        |> Bitmap.fromString Color.defaultMap
+        |> Maybe.withDefault Bitmap.error
         |> toTile
 
 
@@ -80,7 +83,8 @@ bottomLeftSlantBitmap =
 █ █ █ █ █ █ █ .
 █ █ █ █ █ █ █ █
 """
-        |> Bitmap.fromString
+        |> Bitmap.fromString Color.defaultMap
+        |> Maybe.withDefault Bitmap.error
 
 
 toTile : Bitmap -> Tile Size8x8

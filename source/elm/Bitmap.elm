@@ -2,6 +2,7 @@ module Bitmap exposing
     ( Bitmap
     , empty
     , encode
+    , error
     , fromString
     , height
     , paintBitmap
@@ -15,17 +16,14 @@ module Bitmap exposing
     )
 
 import Array exposing (Array)
+import Bitmap.Color as Color exposing (Color(..), ColorMap)
 import Helper
 import Json.Encode as Encode exposing (Value)
+import Maybe.Extra as Maybe
 
 
 type Bitmap
-    = Bitmap Int Int (Array Bool)
-
-
-empty : Int -> Int -> Bitmap
-empty w h =
-    Bitmap w h (Array.initialize (w * h) (always False))
+    = Bitmap Int Int (Array Color)
 
 
 {-| Takes a specially formatted string and converts it into a Bitmap. Here's an example:
@@ -43,16 +41,51 @@ This will produce a 5 × 5 Bitmap with a black L in the middle.
 The spaces are ignored, the dots mark white pixels, and any other character marks black pixels.
 
 -}
-fromString : String -> Bitmap
-fromString str =
+fromString : ColorMap -> String -> Maybe Bitmap
+fromString cMap str =
     let
         mapper ch =
-            ch /= '.'
+            if ch == cMap.dark then
+                Just Dark
+
+            else if ch == cMap.light then
+                Just Light
+
+            else if ch == cMap.transparent then
+                Just Transparent
+
+            else
+                Nothing
 
         r =
             Helper.stringToArray mapper str
     in
-    Bitmap r.width r.height r.array
+    Maybe.combineArray r.array
+        |> Maybe.map
+            (\arr ->
+                Bitmap r.width r.height arr
+            )
+
+
+empty : Int -> Int -> Bitmap
+empty w h =
+    Bitmap w h (Array.initialize (w * h) (always Light))
+
+
+error : Bitmap
+error =
+    """
+█ . . . . . . █
+. █ . . . . █ .
+. . █ . . █ . .
+. . . █ █ . . .
+. . . █ █ . . .
+. . █ . . █ . .
+. █ . . . . █ .
+█ . . . . . . █
+"""
+        |> fromString Color.defaultMap
+        |> Maybe.withDefault (empty 8 8)
 
 
 
@@ -69,7 +102,7 @@ height (Bitmap _ h _) =
     h
 
 
-pixel : Int -> Int -> Bitmap -> Maybe Bool
+pixel : Int -> Int -> Bitmap -> Maybe Color
 pixel x y (Bitmap w h pixels) =
     pixels
         |> Array.get (Helper.pos w x y)
@@ -80,7 +113,7 @@ encode (Bitmap w h pixels) =
     Encode.object
         [ ( "width", w |> Encode.int )
         , ( "height", h |> Encode.int )
-        , ( "pixels", pixels |> Encode.array boolEncoder )
+        , ( "pixels", pixels |> Encode.array colorEncoder )
         ]
 
 
@@ -88,11 +121,11 @@ encode (Bitmap w h pixels) =
 -- SETTERS
 
 
-paintPixel : Int -> Int -> Bool -> Bitmap -> Bitmap
-paintPixel x y on ((Bitmap w h pixels) as bm) =
+paintPixel : Int -> Int -> Color -> Bitmap -> Bitmap
+paintPixel x y color ((Bitmap w h pixels) as bm) =
     if x < w && y < h && x >= 0 && y >= 0 then
         pixels
-            |> Array.set (Helper.pos w x y) on
+            |> Array.set (Helper.pos w x y) color
             |> Bitmap w h
 
     else
@@ -132,7 +165,7 @@ paintBitmap x y source target =
 
                 value =
                     pixel row col source
-                        |> Maybe.withDefault False
+                        |> Maybe.withDefault Transparent
 
                 setX =
                     x + row
@@ -203,7 +236,7 @@ transform fn ((Bitmap w h _) as bitmap) =
                     paintPixel
                         tx
                         ty
-                        (pixel x y bitmap |> Maybe.withDefault False)
+                        (pixel x y bitmap |> Maybe.withDefault Transparent)
                         bm
             in
             if nextY >= h then
@@ -220,10 +253,15 @@ transform fn ((Bitmap w h _) as bitmap) =
 -- INTERNAL
 
 
-boolEncoder : Bool -> Value
-boolEncoder value =
-    if value then
-        Encode.int 1
+colorEncoder : Color -> Value
+colorEncoder value =
+    Encode.int <|
+        case value of
+            Dark ->
+                0
 
-    else
-        Encode.int 0
+            Light ->
+                1
+
+            Transparent ->
+                -1

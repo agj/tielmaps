@@ -1,6 +1,7 @@
 module Assets.Sprites exposing (..)
 
 import Bitmap exposing (Bitmap)
+import Bitmap.Color as Color
 import Size exposing (Size8x8)
 import Sprite exposing (Sprite)
 import Sprite.Frame as Frame exposing (Frame)
@@ -65,8 +66,9 @@ runningCharacter =
 frame : Int -> String -> Frame Size8x8
 frame n str =
     str
-        |> Bitmap.fromString
-        |> toTile
+        |> Bitmap.fromString Color.defaultMap
+        |> Maybe.map toTile
+        |> Maybe.withDefault Tile.error8x8
         |> Frame.make n
 
 
