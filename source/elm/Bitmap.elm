@@ -15,7 +15,7 @@ module Bitmap exposing
     , width
     )
 
-import Array exposing (Array)
+import Array2d exposing (Array2d)
 import Bitmap.Color as Color exposing (Color(..), ColorMap)
 import Helper
 import Json.Encode as Encode exposing (Value)
@@ -23,7 +23,7 @@ import Maybe.Extra as Maybe
 
 
 type Bitmap
-    = Bitmap Int Int (Array Color)
+    = Bitmap Int Int (Array2d Color)
 
 
 {-| Takes a specially formatted string and converts it into a Bitmap. Here's an example:
@@ -60,19 +60,19 @@ fromString cMap str =
             else
                 Nothing
 
-        r =
-            Helper.stringToArray mapper str
+        maybeResult =
+            Helper.stringToArray2d mapper Transparent str
     in
-    Maybe.combineArray r.array
+    maybeResult
         |> Maybe.map
-            (\arr ->
-                Bitmap r.width r.height arr
+            (\r ->
+                Bitmap r.width r.height r.array2d
             )
 
 
 empty : Int -> Int -> Bitmap
 empty w h =
-    Bitmap w h (Array.initialize (w * h) (always Transparent))
+    Bitmap w h (Array2d.repeat w h Transparent)
 
 
 error : Bitmap
@@ -108,15 +108,19 @@ height (Bitmap _ h _) =
 pixel : Int -> Int -> Bitmap -> Maybe Color
 pixel x y (Bitmap w h pixels) =
     pixels
-        |> Array.get (Helper.pos w x y)
+        |> Array2d.get x y
 
 
 encode : Bitmap -> Value
 encode (Bitmap w h pixels) =
     Encode.object
-        [ ( "width", w |> Encode.int )
-        , ( "height", h |> Encode.int )
-        , ( "pixels", pixels |> Encode.array colorEncoder )
+        [ ( "width", Encode.int w )
+        , ( "height", Encode.int h )
+        , ( "pixels"
+          , pixels
+                |> Array2d.toUnidimensional
+                |> Encode.array colorEncoder
+          )
         ]
 
 
@@ -128,7 +132,7 @@ paintPixel : Int -> Int -> Color -> Bitmap -> Bitmap
 paintPixel x y color ((Bitmap w h pixels) as bm) =
     if x < w && y < h && x >= 0 && y >= 0 then
         pixels
-            |> Array.set (Helper.pos w x y) color
+            |> Array2d.set x y color
             |> Bitmap w h
 
     else
