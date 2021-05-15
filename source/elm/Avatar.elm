@@ -2,10 +2,7 @@ module Avatar exposing
     ( Avatar
     , bitmap
     , collide
-    , jump
     , make
-    , moveLeft
-    , moveRight
     , tick
     , x
     , y
@@ -14,6 +11,8 @@ module Avatar exposing
 import Bitmap exposing (Bitmap)
 import Collider.Callback as Collider
 import CollisionLayer exposing (CollisionLayer)
+import Keys exposing (Keys)
+import Levers
 import Screen exposing (Screen)
 import Sprite exposing (Sprite)
 
@@ -22,14 +21,21 @@ type Avatar a
     = Avatar (Data a)
 
 
+type Position
+    = OnGround
+    | Falling
+    | Jumping Int
+
+
 type alias Data a =
     { sprite_ : Sprite a
     , x_ : Int
     , y_ : Int
-    , prevX_ : Int
-    , prevY_ : Int
+    , prevX : Int
+    , prevY : Int
     , width_ : Int
     , height_ : Int
+    , position : Position
     }
 
 
@@ -39,46 +45,73 @@ make spr =
         { sprite_ = spr
         , x_ = 0
         , y_ = 0
-        , prevX_ = 0
-        , prevY_ = 0
+        , prevX = 0
+        , prevY = 0
         , width_ = Sprite.width spr
         , height_ = Sprite.height spr
+        , position = Falling
         }
 
 
-tick : Avatar a -> Avatar a
-tick (Avatar ({ sprite_, y_ } as data)) =
+tick : Keys -> Avatar a -> Avatar a
+tick keys (Avatar ({ sprite_, y_, x_, position } as data)) =
+    let
+        newX =
+            case Keys.direction keys of
+                Keys.Static ->
+                    x_
+
+                Keys.Left ->
+                    x_ - Levers.runSpeed
+
+                Keys.Right ->
+                    x_ + Levers.runSpeed
+
+        newY =
+            case newPosition of
+                Jumping _ ->
+                    y_ - Levers.jumpSpeed
+
+                _ ->
+                    y_ + Levers.gravity
+
+        newPosition =
+            if Keys.jumping keys then
+                case position of
+                    OnGround ->
+                        Jumping 0
+
+                    Falling ->
+                        position
+
+                    Jumping ticks ->
+                        if ticks < 10 then
+                            Jumping (ticks + 1)
+
+                        else
+                            Falling
+
+            else
+                Falling
+    in
     Avatar
         { data
             | sprite_ = Sprite.tick sprite_
-            , y_ = y_ + 3
+            , x_ = newX
+            , y_ = newY
+            , position = newPosition
         }
 
 
-moveLeft : Avatar a -> Avatar a
-moveLeft avatar =
-    moveX -3 avatar
-
-
-moveRight : Avatar a -> Avatar a
-moveRight avatar =
-    moveX 3 avatar
-
-
-jump : Avatar a -> Avatar a
-jump avatar =
-    moveY -6 avatar
-
-
 collide : Collider.Callback -> Avatar b -> Avatar b
-collide collider (Avatar ({ x_, y_, prevX_, prevY_, width_, height_ } as data)) =
+collide collider (Avatar ({ x_, y_, prevX, prevY, width_, height_, position } as data)) =
     let
         ( newX, newY ) =
             collider
                 { x = x_
                 , y = y_
-                , prevX = prevX_
-                , prevY = prevY_
+                , prevX = prevX
+                , prevY = prevY
                 , width = width_
                 , height = height_
                 }
@@ -87,8 +120,14 @@ collide collider (Avatar ({ x_, y_, prevX_, prevY_, width_, height_ } as data)) 
         { data
             | x_ = newX
             , y_ = newY
-            , prevX_ = newX
-            , prevY_ = newY
+            , prevX = newX
+            , prevY = newY
+            , position =
+                if newY < y_ then
+                    OnGround
+
+                else
+                    position
         }
 
 
@@ -114,8 +153,3 @@ y (Avatar { y_ }) =
 moveX : Int -> Avatar a -> Avatar a
 moveX amount (Avatar ({ x_ } as data)) =
     Avatar { data | x_ = x_ + amount }
-
-
-moveY : Int -> Avatar a -> Avatar a
-moveY amount (Avatar ({ y_ } as data)) =
-    Avatar { data | y_ = y_ + amount }

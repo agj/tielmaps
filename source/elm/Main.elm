@@ -91,29 +91,9 @@ update msg model =
     case msg of
         Ticked _ ->
             let
-                jumpCharacter avatar =
-                    if Keys.jumping model.keys then
-                        Avatar.jump avatar
-
-                    else
-                        avatar
-
-                moveCharacter avatar =
-                    case Keys.direction model.keys of
-                        Keys.Left ->
-                            Avatar.moveLeft avatar
-
-                        Keys.Right ->
-                            Avatar.moveRight avatar
-
-                        Keys.Static ->
-                            avatar
-
                 newCharacter =
                     model.character
-                        |> jumpCharacter
-                        |> moveCharacter
-                        |> Avatar.tick
+                        |> Avatar.tick model.keys
                         |> Collider.collideAvatar model.screen
             in
             ( { model | character = newCharacter }
