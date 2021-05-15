@@ -100,7 +100,15 @@ tick keys (Avatar ({ sprite_, y_, x_, position } as data)) =
                             Falling CannotJump
 
             else
-                Falling CanJump
+                case position of
+                    OnGround _ ->
+                        Falling CanJump
+
+                    Falling _ ->
+                        position
+
+                    Jumping _ ->
+                        Falling CannotJump
     in
     Avatar
         { data
