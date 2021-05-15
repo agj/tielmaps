@@ -153,6 +153,7 @@ collide collider (Avatar ({ x_, y_, prevX, prevY, width_, height_, position } as
             , prevY = newY
             , position =
                 if newY < y_ then
+                    -- Collider bounced us back up.
                     case position of
                         OnGround canJumpStatus ->
                             OnGround canJumpStatus
@@ -163,6 +164,10 @@ collide collider (Avatar ({ x_, y_, prevX, prevY, width_, height_, position } as
                         Jumping _ ->
                             -- Normally, this should never occur.
                             OnGround CannotJump
+
+                else if newY > y_ then
+                    -- Collider bounced us back down.
+                    Falling CannotJump
 
                 else
                     position
