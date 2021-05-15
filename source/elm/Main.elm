@@ -62,7 +62,9 @@ type alias Flags =
 init : Flags -> ( Model, Cmd Msg )
 init flags =
     ( { screen = Screens.testScreen
-      , character = Avatar.make Sprites.runningCharacter
+      , character =
+            Avatar.make Sprites.runningCharacter
+                |> Avatar.reposition 8 8
       , keys = Keys.empty
       , scale = getScale flags.viewport
       }
