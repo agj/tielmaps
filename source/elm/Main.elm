@@ -12,6 +12,7 @@ import Css exposing (alignItems, backgroundColor, center, display, displayFlex, 
 import Css.Global exposing (global, selector)
 import Html.Styled exposing (Html, canvas, div, text, toUnstyled)
 import Html.Styled.Attributes exposing (css, height, id, style, width)
+import Html.Styled.Lazy exposing (lazy)
 import Js
 import Json.Decode as D
 import Key exposing (Key)
@@ -143,24 +144,29 @@ view model =
     { title = "Elm platformer"
     , body =
         List.map toUnstyled <|
-            [ global
-                [ selector "body, html"
-                    [ margin (px 0)
-                    , padding (px 0)
-                    , Css.height (pct 100)
-                    ]
-                , selector "canvas"
-                    [ property "image-rendering" "crisp-edges"
-                    , property "image-rendering" "pixelated"
-                    ]
-                ]
-            , mainView model
+            [ globalStyles
+            , lazy mainView model.scale
             ]
     }
 
 
-mainView : Model -> Html Msg
-mainView model =
+globalStyles : Html Msg
+globalStyles =
+    global
+        [ selector "body, html"
+            [ margin (px 0)
+            , padding (px 0)
+            , Css.height (pct 100)
+            ]
+        , selector "canvas"
+            [ property "image-rendering" "crisp-edges"
+            , property "image-rendering" "pixelated"
+            ]
+        ]
+
+
+mainView : Int -> Html Msg
+mainView scale_ =
     div
         [ css
             [ displayFlex
@@ -178,7 +184,7 @@ mainView model =
             , width Levers.screenWidth
             , height Levers.screenHeight
             , css
-                [ transform (scale (toFloat model.scale))
+                [ transform (scale (toFloat scale_))
                 ]
             ]
             []
