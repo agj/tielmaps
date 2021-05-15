@@ -1,6 +1,14 @@
-module Collider.Callback exposing (Callback, Position)
+module Collider.Callback exposing
+    ( Callback
+    , Position
+    )
+
+{-| -}
 
 
+{-| Position information that a moving object can supply,
+for collision detection purposes.
+-}
 type alias Position =
     { x : Int
     , y : Int
@@ -11,6 +19,9 @@ type alias Position =
     }
 
 
+{-| Returns new coordinates for the moving object after doing collision detection
+against the provided position information.
+-}
 type alias Callback =
     Position -> Point
 

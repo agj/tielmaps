@@ -29,20 +29,22 @@ type alias Point =
     ( Int, Int )
 
 
+{-| Generates a Callback function to provide a moving object in order to check for collisions.
+-}
 collider : CollisionLayer -> Int -> Int -> Callback
 collider collisionLayer tileWidth tileHeight ({ x, y, prevX, prevY, width, height } as avatar) =
     let
-        { a, b, c } =
-            getAbc avatar
+        { checkXPoint, checkYPoint, needsChecksPoint } =
+            getPointsToCheck avatar
 
         stopX =
-            checkSolidAtPoint collisionLayer tileWidth tileHeight a
+            pointCollided collisionLayer tileWidth tileHeight checkXPoint
 
         stopY =
-            checkSolidAtPoint collisionLayer tileWidth tileHeight b
+            pointCollided collisionLayer tileWidth tileHeight checkYPoint
 
         needsFurtherChecks =
-            checkSolidAtPoint collisionLayer tileWidth tileHeight c
+            pointCollided collisionLayer tileWidth tileHeight needsChecksPoint
     in
     if stopX || stopY || needsFurtherChecks then
         let
@@ -75,8 +77,11 @@ collider collisionLayer tileWidth tileHeight ({ x, y, prevX, prevY, width, heigh
         ( x, y )
 
 
-getAbc : Position -> { a : Point, b : Point, c : Point }
-getAbc { x, y, width, height, prevX, prevY } =
+{-| Returns three corner points that can be collision-checked against a CollisionLayer to know
+if the moving object needs to stop moving on the x or y axis.
+-}
+getPointsToCheck : Position -> { checkXPoint : Point, checkYPoint : Point, needsChecksPoint : Point }
+getPointsToCheck { x, y, width, height, prevX, prevY } =
     let
         movingRight =
             goingPositive x prevX
@@ -97,35 +102,38 @@ getAbc { x, y, width, height, prevX, prevY } =
             ( x + width - 1, y + height - 1 )
     in
     if movingRight && movingDown then
-        { a = topRight
-        , b = bottomLeft
-        , c = bottomRight
+        { checkXPoint = topRight
+        , checkYPoint = bottomLeft
+        , needsChecksPoint = bottomRight
         }
 
     else if movingRight && not movingDown then
-        { a = bottomRight
-        , b = topLeft
-        , c = topRight
+        { checkXPoint = bottomRight
+        , checkYPoint = topLeft
+        , needsChecksPoint = topRight
         }
 
     else if not movingRight && movingDown then
-        { a = topLeft
-        , b = bottomRight
-        , c = bottomLeft
+        { checkXPoint = topLeft
+        , checkYPoint = bottomRight
+        , needsChecksPoint = bottomLeft
         }
 
     else
-        { a = bottomLeft
-        , b = topRight
-        , c = topLeft
+        { checkXPoint = bottomLeft
+        , checkYPoint = topRight
+        , needsChecksPoint = topLeft
         }
 
 
-checkSolidAtPoint : CollisionLayer -> Int -> Int -> Point -> Bool
-checkSolidAtPoint coll tw th ( x, y ) =
+pointCollided : CollisionLayer -> Int -> Int -> Point -> Bool
+pointCollided coll tw th ( x, y ) =
     CollisionLayer.getAt (x // tw) (y // th) coll
 
 
+{-| After a collision, the position needs to be corrected on one or two axes.
+This function provides that offset for one of the axes.
+-}
 getAxisCorrection : Int -> Int -> Int -> Int -> Int
 getAxisCorrection posNow posPrev avSize tileSize =
     if goingPositive posNow posPrev then
@@ -135,6 +143,9 @@ getAxisCorrection posNow posPrev avSize tileSize =
         tileSize - modBy tileSize posNow
 
 
+{-| When colliding directly against an edge, we need to know whether to stop movement
+on the x or y axes. True is x, False is y.
+-}
 shouldStopXNotY : Position -> Int -> Int -> Bool
 shouldStopXNotY { x, y, prevX, prevY, width, height } tw th =
     let
@@ -156,5 +167,6 @@ shouldStopAxis posNow posPrev avSize tileSize =
     (posNow + avSize) // tileSize /= (posPrev + avSize) // tileSize
 
 
+goingPositive : Int -> Int -> Bool
 goingPositive current previous =
     current - previous > 0
