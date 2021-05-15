@@ -90,7 +90,7 @@ tick keys (Avatar ({ sprite_, y_, x_, position } as data)) =
                         position
 
                     Falling _ ->
-                        position
+                        Falling CannotJump
 
                     Jumping ticks ->
                         if ticks < 10 then
