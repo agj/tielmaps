@@ -64,7 +64,7 @@ init flags =
     ( { screen = Screens.testScreen
       , character =
             Avatar.make Sprites.runningCharacter
-                |> Avatar.reposition 8 8
+                |> Avatar.reposition (1 * Levers.tileWidth) (1 * Levers.tileHeight)
       , keys = Keys.empty
       , scale = getScale flags.viewport
       }
@@ -168,8 +168,8 @@ mainView model =
         ]
         [ canvas
             [ id "canvas"
-            , width Levers.width
-            , height Levers.height
+            , width Levers.screenWidth
+            , height Levers.screenHeight
             , css
                 [ transform (scale (toFloat model.scale))
                 ]
@@ -214,9 +214,9 @@ getScale : Viewport -> Int
 getScale { width, height } =
     let
         scaleX =
-            width // Levers.width
+            width // Levers.screenWidth
 
         scaleY =
-            height // Levers.height
+            height // Levers.screenHeight
     in
     min scaleX scaleY

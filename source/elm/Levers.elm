@@ -14,14 +14,24 @@ framesPerSecond =
     30
 
 
-width : Int
-width =
-    22 * 8
+tileWidth : Int
+tileWidth =
+    8
 
 
-height : Int
-height =
-    22 * 8
+tileHeight : Int
+tileHeight =
+    8
+
+
+screenWidth : Int
+screenWidth =
+    22 * tileWidth
+
+
+screenHeight : Int
+screenHeight =
+    22 * tileHeight
 
 
 gravity : FramesPerSecond
