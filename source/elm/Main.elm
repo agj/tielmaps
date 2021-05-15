@@ -63,7 +63,7 @@ init : Flags -> ( Model, Cmd Msg )
 init flags =
     ( { screen = Screens.testScreen
       , character =
-            Avatar.make Sprites.runningCharacter
+            Avatar.fromSprite Sprites.runningCharacter
                 |> Avatar.reposition (1 * Levers.tileWidth) (1 * Levers.tileHeight)
       , keys = Keys.empty
       , scale = getScale flags.viewport
