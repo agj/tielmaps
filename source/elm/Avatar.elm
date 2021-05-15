@@ -3,6 +3,7 @@ module Avatar exposing
     , bitmap
     , collide
     , make
+    , reposition
     , tick
     , x
     , y
@@ -58,6 +59,17 @@ make spr =
         , width_ = Sprite.width spr
         , height_ = Sprite.height spr
         , position = Falling CanJump
+        }
+
+
+reposition : Int -> Int -> Avatar a -> Avatar a
+reposition newX newY (Avatar ({ x_, y_, prevX, prevY, position } as data)) =
+    Avatar
+        { data
+            | x_ = newX
+            , y_ = newY
+            , prevX = newX
+            , prevY = newY
         }
 
 
