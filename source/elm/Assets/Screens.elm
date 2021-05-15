@@ -1,11 +1,11 @@
-module Screens exposing (testScreen)
+module Assets.Screens exposing (testScreen)
 
+import Assets.Tiles as Tiles
 import CollisionLayer exposing (CollisionLayer)
 import Dict
 import Screen exposing (Screen)
 import Size exposing (Size22x22, Size8x8)
 import Tilemap exposing (Tilemap)
-import Tiles
 
 
 testScreen : Screen Size22x22 Size8x8

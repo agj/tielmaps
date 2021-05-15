@@ -1,4 +1,4 @@
-module Tiles exposing (..)
+module Assets.Tiles exposing (..)
 
 import Bitmap exposing (Bitmap)
 import Size exposing (Size8x8)

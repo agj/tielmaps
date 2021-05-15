@@ -1,4 +1,4 @@
-module Sprites exposing (..)
+module Assets.Sprites exposing (..)
 
 import Bitmap exposing (Bitmap)
 import Size exposing (Size8x8)

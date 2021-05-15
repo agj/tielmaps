@@ -1,5 +1,7 @@
 module Main exposing (Msg(..), main, update, view)
 
+import Assets.Screens as Screens
+import Assets.Sprites as Sprites
 import Avatar exposing (Avatar)
 import Bitmap exposing (Bitmap)
 import Browser
@@ -15,10 +17,8 @@ import Key exposing (Key)
 import Keys exposing (Keys)
 import Levers
 import Screen exposing (Screen)
-import Screens
 import Size exposing (Size22x22, Size8x8)
 import Sprite exposing (Sprite)
-import Sprites
 import Tilemap exposing (Tilemap)
 import Time
 import Viewport exposing (Viewport)
