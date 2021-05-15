@@ -2,16 +2,16 @@ module Screens exposing (testScreen)
 
 import CollisionLayer exposing (CollisionLayer)
 import Dict
-import Map exposing (Map)
 import Screen exposing (Screen)
 import Size exposing (Size22x22, Size8x8)
+import Tilemap exposing (Tilemap)
 import Tiles
 
 
 testScreen : Screen Size22x22 Size8x8
 testScreen =
     Screen.make22x22
-        testMap
+        testTilemap
         testCollisionLayer
         |> Maybe.withDefault Screen.error22x22
 
@@ -20,8 +20,8 @@ testScreen =
 -- INTERNAL
 
 
-mapString : String
-mapString =
+tilemapString : String
+tilemapString =
     """
 . . . . . . . . . . . . . . . . . . . . . .
 . . . . . . . . . . . . . . . . . . . . . .
@@ -48,10 +48,10 @@ mapString =
 """
 
 
-testMap : Map Size8x8
-testMap =
-    mapString
-        |> Map.fromString
+testTilemap : Tilemap Size8x8
+testTilemap =
+    tilemapString
+        |> Tilemap.fromString
             (Dict.fromList
                 [ ( '.', Tiles.empty )
                 , ( '█', Tiles.solid )
@@ -61,10 +61,10 @@ testMap =
                 , ( '◢', Tiles.bottomRightSlant )
                 ]
             )
-        |> Maybe.withDefault (Map.empty8x8Tile 0 0)
+        |> Maybe.withDefault (Tilemap.empty8x8Tile 0 0)
 
 
 testCollisionLayer : CollisionLayer
 testCollisionLayer =
-    mapString
+    tilemapString
         |> CollisionLayer.fromString [ '█' ]

@@ -4,33 +4,33 @@ module Screen exposing
     , empty22x22
     , error22x22
     , make22x22
-    , map
     , tileHeight
     , tileWidth
+    , tilemap
     )
 
 import CollisionLayer exposing (CollisionLayer)
 import Dict
-import Map exposing (Map)
 import Size exposing (Size22x22, Size8x8)
 import Tile
+import Tilemap exposing (Tilemap)
 
 
 type Screen mapSize tileSize
     = Screen
-        { map_ : Map tileSize
+        { tilemap_ : Tilemap tileSize
         , collisionLayer_ : CollisionLayer
         , tileWidth_ : Int
         , tileHeight_ : Int
         }
 
 
-make22x22 : Map a -> CollisionLayer -> Maybe (Screen Size22x22 a)
+make22x22 : Tilemap a -> CollisionLayer -> Maybe (Screen Size22x22 a)
 make22x22 m coll =
     if
-        Map.width m
+        Tilemap.width m
             == 22
-            && Map.height m
+            && Tilemap.height m
             == 22
             && CollisionLayer.width coll
             == 22
@@ -39,10 +39,10 @@ make22x22 m coll =
     then
         Just
             (Screen
-                { map_ = m
+                { tilemap_ = m
                 , collisionLayer_ = coll
-                , tileWidth_ = Map.tileWidth m
-                , tileHeight_ = Map.tileHeight m
+                , tileWidth_ = Tilemap.tileWidth m
+                , tileHeight_ = Tilemap.tileHeight m
                 }
             )
 
@@ -53,7 +53,7 @@ make22x22 m coll =
 empty22x22 : Screen Size22x22 Size8x8
 empty22x22 =
     Screen
-        { map_ = Map.empty8x8Tile 22 22
+        { tilemap_ = Tilemap.empty8x8Tile 22 22
         , collisionLayer_ = CollisionLayer.empty 22 22
         , tileWidth_ = 8
         , tileHeight_ = 8
@@ -63,16 +63,16 @@ empty22x22 =
 error22x22 : Screen Size22x22 Size8x8
 error22x22 =
     Screen
-        { map_ = errorMap
+        { tilemap_ = errorTilemap
         , collisionLayer_ = CollisionLayer.empty 22 22
         , tileWidth_ = 8
         , tileHeight_ = 8
         }
 
 
-map : Screen a b -> Map b
-map (Screen { map_ }) =
-    map_
+tilemap : Screen a b -> Tilemap b
+tilemap (Screen { tilemap_ }) =
+    tilemap_
 
 
 collisionLayer : Screen a b -> CollisionLayer
@@ -94,8 +94,8 @@ tileHeight (Screen { tileHeight_ }) =
 -- INTERNAL
 
 
-errorMap : Map Size8x8
-errorMap =
+errorTilemap : Tilemap Size8x8
+errorTilemap =
     """
 # # # # # # # # # # # # # # # # # # # # # #
 # # # # # # # # # # # # # # # # # # # # # #
@@ -120,9 +120,9 @@ errorMap =
 # # # # # # # # # # # # # # # # # # # # # #
 # # # # # # # # # # # # # # # # # # # # # #
 """
-        |> Map.fromString
+        |> Tilemap.fromString
             (Dict.fromList
                 [ ( '#', Tile.error8x8 )
                 ]
             )
-        |> Maybe.withDefault (Map.empty8x8Tile 0 0)
+        |> Maybe.withDefault (Tilemap.empty8x8Tile 0 0)

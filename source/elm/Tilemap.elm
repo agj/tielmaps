@@ -1,5 +1,5 @@
-module Map exposing
-    ( Map
+module Tilemap exposing
+    ( Tilemap
     , empty8x8Tile
     , fromString
     , height
@@ -20,8 +20,8 @@ import Size exposing (Size8x8)
 import Tile exposing (Tile)
 
 
-type Map tileSize
-    = Map
+type Tilemap tileSize
+    = Tilemap
         { width_ : Int
         , height_ : Int
         , tileWidth_ : Int
@@ -30,11 +30,11 @@ type Map tileSize
         }
 
 
-empty8x8Tile : Int -> Int -> Map Size8x8
+empty8x8Tile : Int -> Int -> Tilemap Size8x8
 empty8x8Tile w h =
     let
         make tileW tileH =
-            Map
+            Tilemap
                 { width_ = w
                 , height_ = h
                 , tileWidth_ = tileW
@@ -66,7 +66,7 @@ This will produce a 4 × 4 tiles Map.
 Note that spaces are always ignored.
 
 -}
-fromString : Dict Char (Tile a) -> String -> Maybe (Map a)
+fromString : Dict Char (Tile a) -> String -> Maybe (Tilemap a)
 fromString tiles str =
     case Dict.values tiles of
         t :: _ ->
@@ -87,8 +87,8 @@ fromString tiles str =
                 r =
                     Helper.stringToArray mapper str
 
-                toMap bitmaps =
-                    Map
+                toTilemap bitmaps =
+                    Tilemap
                         { width_ = r.width
                         , height_ = r.height
                         , tileWidth_ = tw
@@ -98,7 +98,7 @@ fromString tiles str =
             in
             r.array
                 |> Maybe.combineArray
-                |> Maybe.map toMap
+                |> Maybe.map toTilemap
 
         _ ->
             Nothing
@@ -108,28 +108,28 @@ fromString tiles str =
 -- ACCESSORS
 
 
-width : Map a -> Int
-width (Map { width_ }) =
+width : Tilemap a -> Int
+width (Tilemap { width_ }) =
     width_
 
 
-height : Map a -> Int
-height (Map { height_ }) =
+height : Tilemap a -> Int
+height (Tilemap { height_ }) =
     height_
 
 
-tileWidth : Map a -> Int
-tileWidth (Map { tileWidth_ }) =
+tileWidth : Tilemap a -> Int
+tileWidth (Tilemap { tileWidth_ }) =
     tileWidth_
 
 
-tileHeight : Map a -> Int
-tileHeight (Map { tileHeight_ }) =
+tileHeight : Tilemap a -> Int
+tileHeight (Tilemap { tileHeight_ }) =
     tileHeight_
 
 
-tile : Int -> Int -> Map a -> Maybe Bitmap
-tile x y (Map { width_, bitmaps }) =
+tile : Int -> Int -> Tilemap a -> Maybe Bitmap
+tile x y (Tilemap { width_, bitmaps }) =
     bitmaps
         |> Array.get (Helper.pos width_ x y)
 
@@ -138,19 +138,19 @@ tile x y (Map { width_, bitmaps }) =
 -- SETTERS
 
 
-setTile : Int -> Int -> Tile a -> Map a -> Map a
-setTile x y t (Map ({ width_, bitmaps } as state)) =
+setTile : Int -> Int -> Tile a -> Tilemap a -> Tilemap a
+setTile x y t (Tilemap ({ width_, bitmaps } as state)) =
     let
         toMap bms =
-            Map { state | bitmaps = bms }
+            Tilemap { state | bitmaps = bms }
     in
     bitmaps
         |> Array.set (Helper.pos width_ x y) (Tile.bitmap t)
         |> toMap
 
 
-toBitmap : Map a -> Bitmap
-toBitmap ((Map { width_, height_, tileWidth_, tileHeight_ }) as map) =
+toBitmap : Tilemap a -> Bitmap
+toBitmap ((Tilemap { width_, height_, tileWidth_, tileHeight_ }) as tilemap) =
     let
         iterator row col bm =
             let
@@ -169,7 +169,7 @@ toBitmap ((Map { width_, height_, tileWidth_, tileHeight_ }) as map) =
                         col
 
                 curTile =
-                    tile row col map
+                    tile row col tilemap
 
                 newBm =
                     case curTile of

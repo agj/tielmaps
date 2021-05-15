@@ -14,12 +14,12 @@ import Json.Decode as D
 import Key exposing (Key)
 import Keys exposing (Keys)
 import Levers
-import Map exposing (Map)
 import Screen exposing (Screen)
 import Screens
 import Size exposing (Size22x22, Size8x8)
 import Sprite exposing (Sprite)
 import Sprites
+import Tilemap exposing (Tilemap)
 import Time
 import Viewport exposing (Viewport)
 
@@ -98,7 +98,7 @@ update msg model =
             in
             ( { model | character = newCharacter }
             , Js.paintCanvas
-                (Map.toBitmap (Screen.map model.screen)
+                (Tilemap.toBitmap (Screen.tilemap model.screen)
                     |> Bitmap.paintBitmap
                         (Avatar.x newCharacter)
                         (Avatar.y newCharacter)
