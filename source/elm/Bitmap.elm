@@ -69,7 +69,7 @@ fromString cMap str =
 
 empty : Int -> Int -> Bitmap
 empty w h =
-    Bitmap w h (Array.initialize (w * h) (always Light))
+    Bitmap w h (Array.initialize (w * h) (always Transparent))
 
 
 error : Bitmap
@@ -163,7 +163,7 @@ paintBitmap x y source target =
                     else
                         col
 
-                value =
+                color =
                     pixel row col source
                         |> Maybe.withDefault Transparent
 
@@ -174,8 +174,8 @@ paintBitmap x y source target =
                     y + col
 
                 newBm =
-                    if setX < targetW && setY < targetH && setX >= 0 && setY >= 0 then
-                        paintPixel setX setY value bm
+                    if color /= Transparent && setX < targetW && setY < targetH && setX >= 0 && setY >= 0 then
+                        paintPixel setX setY color bm
 
                     else
                         bm
