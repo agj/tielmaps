@@ -22,9 +22,14 @@ type Avatar a
 
 
 type Position
-    = OnGround
-    | Falling
+    = OnGround CanJumpStatus
+    | Falling CanJumpStatus
     | Jumping Int
+
+
+type CanJumpStatus
+    = CanJump
+    | CannotJump
 
 
 type alias Data a =
@@ -49,7 +54,7 @@ make spr =
         , prevY = 0
         , width_ = Sprite.width spr
         , height_ = Sprite.height spr
-        , position = Falling
+        , position = Falling CanJump
         }
 
 
@@ -78,10 +83,13 @@ tick keys (Avatar ({ sprite_, y_, x_, position } as data)) =
         newPosition =
             if Keys.jumping keys then
                 case position of
-                    OnGround ->
+                    OnGround CanJump ->
                         Jumping 0
 
-                    Falling ->
+                    OnGround CannotJump ->
+                        position
+
+                    Falling _ ->
                         position
 
                     Jumping ticks ->
@@ -89,10 +97,10 @@ tick keys (Avatar ({ sprite_, y_, x_, position } as data)) =
                             Jumping (ticks + 1)
 
                         else
-                            Falling
+                            Falling CannotJump
 
             else
-                Falling
+                Falling CanJump
     in
     Avatar
         { data
@@ -124,7 +132,15 @@ collide collider (Avatar ({ x_, y_, prevX, prevY, width_, height_, position } as
             , prevY = newY
             , position =
                 if newY < y_ then
-                    OnGround
+                    case position of
+                        OnGround canJumpStatus ->
+                            OnGround canJumpStatus
+
+                        Falling canJumpStatus ->
+                            OnGround canJumpStatus
+
+                        Jumping _ ->
+                            OnGround CannotJump
 
                 else
                     position
