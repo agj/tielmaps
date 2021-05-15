@@ -21,7 +21,7 @@ runningCharacter =
     █ █ / / / / █ /
     / / / / / / / /
     """
-            |> frame 2
+            |> frame 4
         )
         [ """
     / / / / / / / /
@@ -33,7 +33,7 @@ runningCharacter =
     / █ / / / █ / /
     / █ / / / █ / /
     """
-            |> frame 1
+            |> frame 4
         , """
     █ █ █ █ █ █ █ █
     █ . . . . . . █
@@ -44,7 +44,7 @@ runningCharacter =
     / / █ █ / / / /
     / / / / / / / /
     """
-            |> frame 2
+            |> frame 4
         , """
     / / / / / / / /
     █ █ █ █ █ █ █ █
@@ -55,7 +55,7 @@ runningCharacter =
     / █ / / / █ / /
     / █ / / / █ / /
     """
-            |> frame 1
+            |> frame 4
         ]
 
 
