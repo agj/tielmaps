@@ -3,6 +3,8 @@ module Array2dTest exposing (..)
 import Array
 import Array2d
 import Expect
+import Fuzz
+import Random
 import Test exposing (..)
 
 
@@ -13,39 +15,43 @@ import Test exposing (..)
 repeat : Test
 repeat =
     describe "repeat"
-        [ test "Returns an Array2d prefilled with the filler value and of the specified dimensions" <|
-            \_ ->
-                Array2d.repeat 3 2 ()
+        [ fuzz2 negativeOrZero negativeOrZero "Returns an empty Array2d with zero or negative numbers" <|
+            \w h ->
+                Array2d.repeat w h ()
+                    |> Expect.equal Array2d.empty
+        , fuzz2 oneOrGreater oneOrGreater "Returns an Array2d prefilled with the filler value and of the specified dimensions" <|
+            \w h ->
+                Array2d.repeat w h ()
                     |> Expect.equal
-                        (Array2d.fromList 3 () [ (), (), (), (), (), () ])
+                        (Array2d.fromList w () (List.repeat (w * h) ()))
         ]
 
 
 fromList : Test
 fromList =
     describe "fromList"
-        [ test "Returns an Array2d of the expected size" <|
-            \_ ->
-                [ False, False, False, True ]
-                    |> Array2d.fromList 2 True
+        [ fuzz2 negativeOrZero smallPositiveInt "Returns an empty Array2d with zero or negative numbers" <|
+            \w listLength ->
+                List.repeat listLength False
+                    |> Array2d.fromList w True
+                    |> Expect.equal Array2d.empty
+        , fuzz2 oneOrGreater oneOrGreater "Returns an Array2d of the expected size" <|
+            \w h ->
+                List.repeat (w * h) False
+                    |> Array2d.fromList w True
                     |> Expect.all
-                        [ Array2d.width >> Expect.equal 2
-                        , Array2d.height >> Expect.equal 2
+                        [ Array2d.width >> Expect.equal w
+                        , Array2d.height >> Expect.equal h
                         ]
-        , test "Fills the Array2d to complete the last row" <|
-            \_ ->
-                [ False, False, False ]
-                    |> Array2d.fromList 2 True
+        , fuzz2 twoOrGreater oneOrGreater "Fills the Array2d to complete the last row" <|
+            \w h ->
+                List.repeat (w * h - 1) False
+                    |> Array2d.fromList w True
                     |> Expect.all
-                        [ Array2d.height >> Expect.equal 2
-                        , Array2d.get 1 1 >> Expect.equal (Just True)
+                        [ Array2d.height >> Expect.equal h
+                        , Array2d.get (w - 1) (h - 1) >> Expect.equal (Just True)
                         ]
         ]
-
-
-initialArray2d =
-    [ False, False, False, False, False, True ]
-        |> Array2d.fromList 3 True
 
 
 
@@ -132,3 +138,32 @@ toUnidimensional =
                     |> Expect.equal
                         (Array.fromList initialList)
         ]
+
+
+
+-- UTILITIES
+
+
+initialArray2d =
+    [ False, False, False, False, False, True ]
+        |> Array2d.fromList 3 True
+
+
+positiveInt =
+    Fuzz.intRange 0 99
+
+
+smallPositiveInt =
+    Fuzz.intRange 0 10
+
+
+oneOrGreater =
+    Fuzz.intRange 1 99
+
+
+twoOrGreater =
+    Fuzz.intRange 2 99
+
+
+negativeOrZero =
+    Fuzz.intRange Random.minInt 0
