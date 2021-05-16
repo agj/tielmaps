@@ -5,6 +5,7 @@ import Array2d exposing (Array2d)
 import Expect
 import Fuzz exposing (Fuzzer)
 import Random
+import Shrink
 import Test exposing (..)
 
 
@@ -135,17 +136,13 @@ set =
 toUnidimensional : Test
 toUnidimensional =
     describe "toUnidimensional"
-        [ test "Returns a plan Array with the values" <|
-            \_ ->
-                let
-                    initialList =
-                        [ 0, 1, 2, 3 ]
-                in
-                initialList
-                    |> Array2d.fromList 2 9
+        [ fuzz listAndDimensions "Returns a plan Array with the values" <|
+            \( list, w, _ ) ->
+                list
+                    |> Array2d.fromList w 0
                     |> Array2d.toUnidimensional
                     |> Expect.equal
-                        (Array.fromList initialList)
+                        (Array.fromList list)
         ]
 
 
@@ -208,3 +205,30 @@ sizeAndInvalidPos2 =
         [ Fuzz.tuple ( sizeAndPos, sizeAndInvalidPos )
         , Fuzz.tuple ( sizeAndInvalidPos, sizeAndPos )
         ]
+
+
+listAndDimensions : Fuzzer ( List Int, Int, Int )
+listAndDimensions =
+    Fuzz.custom
+        randomListAndDimensions
+        Shrink.noShrink
+
+
+randomListAndDimensions : Random.Generator ( List Int, Int, Int )
+randomListAndDimensions =
+    Random.pair randomSize randomSize
+        |> Random.andThen
+            (\( w, h ) ->
+                randomList (w * h)
+                    |> Random.map (\list -> ( list, w, h ))
+            )
+
+
+randomList : Int -> Random.Generator (List Int)
+randomList length =
+    Random.list length (Random.int 0 99)
+
+
+randomSize : Random.Generator Int
+randomSize =
+    Random.int 1 99
