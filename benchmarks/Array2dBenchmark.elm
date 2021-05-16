@@ -13,10 +13,14 @@ main =
 suite : Benchmark
 suite =
     describe "Array2d.set"
-        [ benchmark "something" <|
+        [ benchmark "100×100" <|
             \_ ->
-                initialArray2d
+                array100x100
                     |> Array2d.set 50 50 True
+        , benchmark "1000×1000" <|
+            \_ ->
+                array1000x1000
+                    |> Array2d.set 500 500 True
         ]
 
 
@@ -24,6 +28,11 @@ suite =
 -- UTILITIES
 
 
-initialArray2d : Array2d Bool
-initialArray2d =
+array100x100 : Array2d Bool
+array100x100 =
     Array2d.repeat 100 100 False
+
+
+array1000x1000 : Array2d Bool
+array1000x1000 =
+    Array2d.repeat 1000 1000 False
