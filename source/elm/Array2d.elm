@@ -36,7 +36,7 @@ empty =
 
 repeat : Int -> Int -> a -> Array2d a
 repeat width_ height_ item =
-    if width_ <= 0 || height_ <= 0 then
+    if isInvalidSize width_ || isInvalidSize height_ then
         empty
 
     else
@@ -49,7 +49,7 @@ repeat width_ height_ item =
 
 fromList : Int -> a -> List a -> Array2d a
 fromList width_ filler list =
-    if width_ <= 0 then
+    if isInvalidSize width_ then
         empty
 
     else
@@ -90,7 +90,7 @@ fromList width_ filler list =
 
 get : Int -> Int -> Array2d a -> Maybe a
 get x y (Array2d { width_, height_, array }) =
-    if x < width_ && y < height_ then
+    if areValidCoords x y width_ height_ then
         Array.get (pos width_ x y) array
 
     else
@@ -113,7 +113,7 @@ height (Array2d { height_ }) =
 
 set : Int -> Int -> a -> Array2d a -> Array2d a
 set x y item ((Array2d ({ width_, height_, array } as data)) as array2d) =
-    if x < width_ && y < height_ then
+    if areValidCoords x y width_ height_ then
         Array2d { data | array = Array.set (pos width_ x y) item array }
 
     else
@@ -134,10 +134,11 @@ pos w x y =
     x + (w * y)
 
 
-fixWH : Int -> Int -> ( Int, Int )
-fixWH w h =
-    if w <= 0 || h <= 0 then
-        ( 0, 0 )
+isInvalidSize : Int -> Bool
+isInvalidSize n =
+    n <= 0
 
-    else
-        ( w, h )
+
+areValidCoords : Int -> Int -> Int -> Int -> Bool
+areValidCoords x y w h =
+    x >= 0 && y >= 0 && x < w && y < h

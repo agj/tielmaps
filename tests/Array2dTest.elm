@@ -63,18 +63,15 @@ get =
     describe "get"
         [ test "Returns the item at that position" <|
             \_ ->
-                initialArray2d
+                [ False, False, False, False, False, True ]
+                    |> Array2d.fromList 3 False
                     |> Array2d.get 2 1
                     |> Expect.equal (Just True)
-        , test "Returns Nothing when out of bounds" <|
-            \_ ->
-                initialArray2d
-                    |> Expect.all
-                        [ Array2d.get 0 2 >> Expect.equal Nothing
-                        , Array2d.get 3 0 >> Expect.equal Nothing
-                        , Array2d.get -1 0 >> Expect.equal Nothing
-                        , Array2d.get 2 -3 >> Expect.equal Nothing
-                        ]
+        , fuzz sizeAndInvalidPos2 "Returns Nothing when out of bounds" <|
+            \( ( w, x ), ( h, y ) ) ->
+                Array2d.repeat w h False
+                    |> Array2d.get x y
+                    |> Expect.equal Nothing
         ]
 
 
@@ -123,15 +120,15 @@ set =
                     |> Array2d.set x y True
                     |> Array2d.get x y
                     |> Expect.equal (Just True)
-        , test "Ignores out of bounds points" <|
-            \_ ->
-                initialArray2d
-                    |> Expect.all
-                        [ Array2d.set 3 0 True
-                            >> Expect.equal initialArray2d
-                        , Array2d.set 0 2 True
-                            >> Expect.equal initialArray2d
-                        ]
+        , fuzz sizeAndInvalidPos2 "Ignores out of bounds points" <|
+            \( ( w, x ), ( h, y ) ) ->
+                let
+                    array2d =
+                        Array2d.repeat w h False
+                in
+                array2d
+                    |> Array2d.set x y True
+                    |> Expect.equal array2d
         ]
 
 
@@ -154,12 +151,6 @@ toUnidimensional =
 
 
 -- UTILITIES
-
-
-initialArray2d : Array2d Bool
-initialArray2d =
-    [ False, False, False, False, False, True ]
-        |> Array2d.fromList 3 True
 
 
 positiveInt : Fuzzer Int
@@ -190,6 +181,30 @@ negativeOrZero =
 sizeAndPos : Fuzzer ( Int, Int )
 sizeAndPos =
     Fuzz.map2
-        (\w fraction -> ( w, floor (toFloat w * (fraction * 0.99999999999999)) ))
+        (\size fraction -> ( size, floor (toFloat size * (fraction * 0.99999999999999)) ))
         oneOrGreater
         Fuzz.percentage
+
+
+sizeAndInvalidPos : Fuzzer ( Int, Int )
+sizeAndInvalidPos =
+    Fuzz.map2
+        (\size pos ->
+            ( size
+            , if pos >= 0 then
+                pos + size
+
+              else
+                pos
+            )
+        )
+        oneOrGreater
+        Fuzz.int
+
+
+sizeAndInvalidPos2 : Fuzzer ( ( Int, Int ), ( Int, Int ) )
+sizeAndInvalidPos2 =
+    Fuzz.oneOf
+        [ Fuzz.tuple ( sizeAndPos, sizeAndInvalidPos )
+        , Fuzz.tuple ( sizeAndInvalidPos, sizeAndPos )
+        ]
