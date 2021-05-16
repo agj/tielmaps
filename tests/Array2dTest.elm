@@ -1,9 +1,9 @@
 module Array2dTest exposing (..)
 
 import Array
-import Array2d
+import Array2d exposing (Array2d)
 import Expect
-import Fuzz
+import Fuzz exposing (Fuzzer)
 import Random
 import Test exposing (..)
 
@@ -72,6 +72,8 @@ get =
                     |> Expect.all
                         [ Array2d.get 0 2 >> Expect.equal Nothing
                         , Array2d.get 3 0 >> Expect.equal Nothing
+                        , Array2d.get -1 0 >> Expect.equal Nothing
+                        , Array2d.get 2 -3 >> Expect.equal Nothing
                         ]
         ]
 
@@ -79,22 +81,32 @@ get =
 width : Test
 width =
     describe "width"
-        [ test "Returns the width of the Array2d" <|
+        [ test "Returns zero when Array2d is empty" <|
             \_ ->
-                initialArray2d
+                Array2d.empty
                     |> Array2d.width
-                    |> Expect.equal 3
+                    |> Expect.equal 0
+        , fuzz2 oneOrGreater oneOrGreater "Returns the width of the Array2d" <|
+            \w h ->
+                Array2d.repeat w h True
+                    |> Array2d.width
+                    |> Expect.equal w
         ]
 
 
 height : Test
 height =
     describe "height"
-        [ test "Returns the height of the Array2d" <|
+        [ test "Returns zero when Array2d is empty" <|
             \_ ->
-                initialArray2d
+                Array2d.empty
                     |> Array2d.height
-                    |> Expect.equal 2
+                    |> Expect.equal 0
+        , fuzz2 oneOrGreater oneOrGreater "Returns the height of the Array2d" <|
+            \w h ->
+                Array2d.repeat w h True
+                    |> Array2d.height
+                    |> Expect.equal h
         ]
 
 
@@ -105,12 +117,12 @@ height =
 set : Test
 set =
     describe "set"
-        [ test "Sets the item at that position" <|
-            \_ ->
-                initialArray2d
-                    |> Array2d.set 1 0 True
-                    |> Expect.equal
-                        (Array2d.fromList 3 False [ False, True, False, False, False, True ])
+        [ fuzz2 sizeAndPos sizeAndPos "Sets the item at that position" <|
+            \( w, x ) ( h, y ) ->
+                Array2d.repeat w h False
+                    |> Array2d.set x y True
+                    |> Array2d.get x y
+                    |> Expect.equal (Just True)
         , test "Ignores out of bounds points" <|
             \_ ->
                 initialArray2d
@@ -144,26 +156,40 @@ toUnidimensional =
 -- UTILITIES
 
 
+initialArray2d : Array2d Bool
 initialArray2d =
     [ False, False, False, False, False, True ]
         |> Array2d.fromList 3 True
 
 
+positiveInt : Fuzzer Int
 positiveInt =
     Fuzz.intRange 0 99
 
 
+smallPositiveInt : Fuzzer Int
 smallPositiveInt =
     Fuzz.intRange 0 10
 
 
+oneOrGreater : Fuzzer Int
 oneOrGreater =
     Fuzz.intRange 1 99
 
 
+twoOrGreater : Fuzzer Int
 twoOrGreater =
     Fuzz.intRange 2 99
 
 
+negativeOrZero : Fuzzer Int
 negativeOrZero =
     Fuzz.intRange Random.minInt 0
+
+
+sizeAndPos : Fuzzer ( Int, Int )
+sizeAndPos =
+    Fuzz.map2
+        (\w fraction -> ( w, floor (toFloat w * (fraction * 0.99999999999999)) ))
+        oneOrGreater
+        Fuzz.percentage
