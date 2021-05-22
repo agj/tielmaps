@@ -141,7 +141,7 @@ update msg model =
 
 view : Model -> Browser.Document Msg
 view model =
-    { title = "Elm platformer"
+    { title = "Tielmaps"
     , body =
         List.map toUnstyled <|
             [ globalStyles
