@@ -1,4 +1,4 @@
-# Elm platformer (temporary name)
+# Tielmaps
 
 I started this (still early-stages) project to sate my curiosity. I wanted to learn more about the [Elm][elm] language, and try making a web browser-runnable, barebones pixel platformer basically from the ground up, while focusing on its core elements. The idea of designing the pixel art and levels by writing “ASCII art” sounded really fun, like how the limitations of coding on old home computers was (probably) like. Making it monochrome also arose from the idea of reducing things to their minimal essence. I didn't wanna make a complex game, just a technical foundation that could foreseeably be expanded upon in future projects, either by myself or any others.
 
