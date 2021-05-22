@@ -28,5 +28,6 @@
     "node-elm-compiler": "^5.0.6",
     "typescript": "^4.2.4"
   },
-  "type": "module"
+  "type": "module",
+  "private": true
 }
