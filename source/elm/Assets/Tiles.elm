@@ -9,15 +9,15 @@ import Tile exposing (Tile)
 empty : Tile Size8x8
 empty =
     """
-. . . . . . . .
-. . . . . . . .
-. . . . . . . .
-. . . . . . . .
-. . . . . . . .
-. . . . . . . .
-. . . . . . . .
-. . . . . . . .
-"""
+    . . . . . . . .
+    . . . . . . . .
+    . . . . . . . .
+    . . . . . . . .
+    . . . . . . . .
+    . . . . . . . .
+    . . . . . . . .
+    . . . . . . . .
+    """
         |> Bitmap.fromString Color.defaultMap
         |> Maybe.withDefault Bitmap.error
         |> toTile
@@ -26,44 +26,54 @@ empty =
 solid : Tile Size8x8
 solid =
     """
-█ █ █ █ █ █ █ █
-█ █ █ █ █ █ █ █
-█ █ █ █ █ █ █ █
-█ █ █ █ █ █ █ █
-█ █ █ █ █ █ █ █
-█ █ █ █ █ █ █ █
-█ █ █ █ █ █ █ █
-█ █ █ █ █ █ █ █
-"""
+    █ █ █ █ █ █ █ █
+    █ █ █ █ █ █ █ █
+    █ █ █ █ █ █ █ █
+    █ █ █ █ █ █ █ █
+    █ █ █ █ █ █ █ █
+    █ █ █ █ █ █ █ █
+    █ █ █ █ █ █ █ █
+    █ █ █ █ █ █ █ █
+    """
         |> Bitmap.fromString Color.defaultMap
         |> Maybe.withDefault Bitmap.error
         |> toTile
 
 
-bottomLeftSlant : Tile Size8x8
-bottomLeftSlant =
-    bottomLeftSlantBitmap
+hollow : Tile Size8x8
+hollow =
+    """
+    . █ █ █ █ █ █ .
+    █ . . . . . . █
+    █ . . . . . . █
+    █ . . . . . . █
+    █ . . . . . . █
+    █ . . . . . . █
+    █ . . . . . . █
+    . █ █ █ █ █ █ .
+    """
+        |> Bitmap.fromString Color.defaultMap
+        |> Maybe.withDefault Bitmap.error
         |> toTile
 
 
-bottomRightSlant : Tile Size8x8
-bottomRightSlant =
-    bottomLeftSlantBitmap
-        |> Bitmap.rotateCounterClockwise
+topLeftCurvedSolid : Tile Size8x8
+topLeftCurvedSolid =
+    topLeftCurvedSolidBitmap
         |> toTile
 
 
-topLeftSlant : Tile Size8x8
-topLeftSlant =
-    bottomLeftSlantBitmap
+topRightCurvedSolid : Tile Size8x8
+topRightCurvedSolid =
+    topLeftCurvedSolidBitmap
         |> Bitmap.rotateClockwise
         |> toTile
 
 
-topRightSlant : Tile Size8x8
-topRightSlant =
-    bottomLeftSlantBitmap
-        |> Bitmap.rotate180
+bottomLeftCurvedSolid : Tile Size8x8
+bottomLeftCurvedSolid =
+    topLeftCurvedSolidBitmap
+        |> Bitmap.rotateCounterClockwise
         |> toTile
 
 
@@ -71,18 +81,18 @@ topRightSlant =
 -- PRIVATE
 
 
-bottomLeftSlantBitmap : Bitmap
-bottomLeftSlantBitmap =
+topLeftCurvedSolidBitmap : Bitmap
+topLeftCurvedSolidBitmap =
     """
-█ . . . . . . .
-█ █ . . . . . .
-█ █ █ . . . . .
-█ █ █ █ . . . .
-█ █ █ █ █ . . .
-█ █ █ █ █ █ . .
-█ █ █ █ █ █ █ .
-█ █ █ █ █ █ █ █
-"""
+    . █ █ █ █ █ █ █
+    █ █ █ █ █ █ █ █
+    █ █ █ █ █ █ █ █
+    █ █ █ █ █ █ █ █
+    █ █ █ █ █ █ █ █
+    █ █ █ █ █ █ █ █
+    █ █ █ █ █ █ █ █
+    █ █ █ █ █ █ █ █
+    """
         |> Bitmap.fromString Color.defaultMap
         |> Maybe.withDefault Bitmap.error
 

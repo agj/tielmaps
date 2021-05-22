@@ -48,23 +48,58 @@ tilemapString =
 """
 
 
+tilemapString2 : String
+tilemapString2 =
+    """
+█ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █
+█ . . . . . . . . . . . . . . . . . . . . █
+█ . . . . . . . . . . . . . . . . . . . . █
+█ . . . . . . . . . . . . . . . . . . . . █
+█ . . . . . . . . . . . . . . . . . . . . █
+█ . . . . . . . . . . . . . . . . . . . . █
+█ . . . . . . . . . . . . . . . . . . . . █
+█ . . . . . . . . . . . . . . . . . . . . █
+█ . . . . . . . . . . . . . . . . . . . . █
+█ . . . . . . . . . . . . . . . . . . . . █
+█ . . . . . . . ╮ . . . . . . . . . . . . █
+█ . . . . . . . █ ╮ . . . . . . . . . . . █
+█ ░ ░ . . . . . █ █ ╮ . . . . . . . . . . █
+█ . . . . . . . █ █ █ ╮ . . . . . . . . . █
+█ . . . . . ░ ░ █ █ █ █ ╮ . . . . . . . ╭ █
+█ . . ░ ░ . . . ╰ █ █ █ █ ╮ . . . . . ╭ █ █
+█ . . . . . . . . . . . . . . . . . ╭ █ █ █
+█ . . . . . . ░ ░ . . . . . . . . ╭ █ █ █ █
+█ . . ░ ░ . . . . . . . . . . . ╭ █ █ █ █ █
+█ . . . . . . . . . . . . . . ╭ █ █ █ █ █ █
+█ . . . . . . . . . . . . . ╭ █ █ █ █ █ █ █
+█ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █
+"""
+
+
 testTilemap : Tilemap Size8x8
 testTilemap =
-    tilemapString
-        |> Tilemap.fromString
-            (Dict.fromList
-                [ ( '.', Tiles.empty )
-                , ( '█', Tiles.solid )
-                , ( '◤', Tiles.topLeftSlant )
-                , ( '◥', Tiles.topRightSlant )
-                , ( '◣', Tiles.bottomLeftSlant )
-                , ( '◢', Tiles.bottomRightSlant )
-                ]
-            )
+    tilemapString2
+        |> Tilemap.fromString charTiles
         |> Maybe.withDefault (Tilemap.empty8x8Tile 0 0)
 
 
 testCollisionLayer : CollisionLayer
 testCollisionLayer =
-    tilemapString
-        |> CollisionLayer.fromString [ '█' ]
+    tilemapString2
+        |> CollisionLayer.fromString
+            (Dict.keys charTiles |> List.filter ((/=) '.'))
+
+
+
+-- INTERNAL
+
+
+charTiles =
+    Dict.fromList
+        [ ( '.', Tiles.empty )
+        , ( '█', Tiles.solid )
+        , ( '░', Tiles.hollow )
+        , ( '╭', Tiles.topLeftCurvedSolid )
+        , ( '╮', Tiles.topRightCurvedSolid )
+        , ( '╰', Tiles.bottomLeftCurvedSolid )
+        ]
