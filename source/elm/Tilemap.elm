@@ -8,6 +8,7 @@ module Tilemap exposing
     , tileHeight
     , tileWidth
     , toBitmap
+    , toBitmapMemoized
     , width
     )
 
@@ -27,6 +28,7 @@ type Tilemap tileSize
         , tileWidth_ : Int
         , tileHeight_ : Int
         , bitmaps : Array Bitmap
+        , bitmapMemo : Maybe Bitmap
         }
 
 
@@ -40,6 +42,7 @@ empty8x8Tile w h =
                 , tileWidth_ = tileW
                 , tileHeight_ = tileH
                 , bitmaps = Array.initialize (w * h) (always (Bitmap.empty tileW tileH))
+                , bitmapMemo = Nothing
                 }
     in
     make 8 8
@@ -94,6 +97,7 @@ fromString tiles str =
                         , tileWidth_ = tw
                         , tileHeight_ = th
                         , bitmaps = bitmaps
+                        , bitmapMemo = Nothing
                         }
             in
             r.array
@@ -187,3 +191,17 @@ toBitmap ((Tilemap { width_, height_, tileWidth_, tileHeight_ }) as tilemap) =
     in
     Bitmap.empty (width_ * tileWidth_) (height_ * tileHeight_)
         |> iterator 0 0
+
+
+toBitmapMemoized : Tilemap a -> ( Bitmap, Tilemap a )
+toBitmapMemoized ((Tilemap ({ bitmapMemo } as state)) as tilemap) =
+    case bitmapMemo of
+        Just bitmap ->
+            ( bitmap, tilemap )
+
+        Nothing ->
+            let
+                bitmap =
+                    toBitmap tilemap
+            in
+            ( bitmap, Tilemap { state | bitmapMemo = Just bitmap } )
