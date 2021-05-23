@@ -105,10 +105,16 @@ update msg model =
                     model.character
                         |> Avatar.tick model.keys
                         |> Collider.collideAvatar model.screen
+
+                ( screenBm, newScreen ) =
+                    Screen.toBitmapMemoized model.screen
             in
-            ( { model | character = newCharacter }
+            ( { model
+                | character = newCharacter
+                , screen = newScreen
+              }
             , Js.paintCanvas
-                (Tilemap.toBitmap (Screen.tilemap model.screen)
+                (screenBm
                     |> Bitmap.paintBitmap
                         (Avatar.x newCharacter)
                         (Avatar.y newCharacter)

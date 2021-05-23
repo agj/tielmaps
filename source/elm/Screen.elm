@@ -7,8 +7,10 @@ module Screen exposing
     , tileHeight
     , tileWidth
     , tilemap
+    , toBitmapMemoized
     )
 
+import Bitmap exposing (Bitmap)
 import CollisionLayer exposing (CollisionLayer)
 import Dict
 import Size exposing (Size22x22, Size8x8)
@@ -88,6 +90,15 @@ tileWidth (Screen { tileWidth_ }) =
 tileHeight : Screen a b -> Int
 tileHeight (Screen { tileHeight_ }) =
     tileHeight_
+
+
+toBitmapMemoized : Screen a b -> ( Bitmap, Screen a b )
+toBitmapMemoized (Screen ({ tilemap_ } as state)) =
+    let
+        ( bitmap, newTilemap ) =
+            Tilemap.toBitmapMemoized tilemap_
+    in
+    ( bitmap, Screen { state | tilemap_ = newTilemap } )
 
 
 
