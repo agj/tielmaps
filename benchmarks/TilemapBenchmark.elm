@@ -1,6 +1,5 @@
 module TilemapBenchmark exposing (..)
 
-import Array2d exposing (Array2d)
 import Assets.Tiles as Tiles
 import Benchmark exposing (..)
 import Benchmark.Runner exposing (BenchmarkProgram, program)
