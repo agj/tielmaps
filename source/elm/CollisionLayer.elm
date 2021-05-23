@@ -8,28 +8,31 @@ module CollisionLayer exposing
     )
 
 import Array exposing (Array)
+import Array2d exposing (Array2d)
 import Helper
 
 
 type CollisionLayer
-    = CollisionLayer Int Int (Array Bool)
+    = CollisionLayer Int Int (Array2d Bool)
 
 
 empty : Int -> Int -> CollisionLayer
 empty w h =
-    CollisionLayer w h (Array.initialize (w * h) (always False))
+    CollisionLayer w h (Array2d.repeat w h False)
 
 
-fromString : List Char -> String -> CollisionLayer
+fromString : List Char -> String -> Maybe CollisionLayer
 fromString solids str =
     let
         mapper ch =
-            List.member ch solids
+            Just (List.member ch solids)
 
-        r =
-            Helper.stringToArray mapper str
+        mapped =
+            Helper.stringToArray2d mapper str
     in
-    CollisionLayer r.width r.height r.array
+    mapped
+        |> Maybe.map
+            (\r -> CollisionLayer r.width r.height r.array2d)
 
 
 width : CollisionLayer -> Int
@@ -45,5 +48,5 @@ height (CollisionLayer _ h _) =
 getAt : Int -> Int -> CollisionLayer -> Bool
 getAt x y (CollisionLayer w _ collisions) =
     collisions
-        |> Array.get (Helper.pos w x y)
+        |> Array2d.get x y
         |> Maybe.withDefault False

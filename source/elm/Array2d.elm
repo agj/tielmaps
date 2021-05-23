@@ -1,6 +1,7 @@
 module Array2d exposing
     ( Array2d
     , empty
+    , forceFromList
     , fromList
     , get
     , height
@@ -47,8 +48,34 @@ repeat width_ height_ item =
             }
 
 
-fromList : Int -> a -> List a -> Array2d a
-fromList width_ filler list =
+fromList : Int -> List a -> Maybe (Array2d a)
+fromList width_ list =
+    if isInvalidSize width_ then
+        Nothing
+
+    else
+        let
+            listLength =
+                List.length list
+
+            height_ =
+                listLength // width_
+        in
+        if remainderBy width_ listLength == 0 then
+            Just
+                (Array2d
+                    { width_ = width_
+                    , height_ = height_
+                    , array = Array.fromList list
+                    }
+                )
+
+        else
+            Nothing
+
+
+forceFromList : Int -> a -> List a -> Array2d a
+forceFromList width_ filler list =
     if isInvalidSize width_ then
         empty
 

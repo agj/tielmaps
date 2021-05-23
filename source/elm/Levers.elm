@@ -24,14 +24,24 @@ tileHeight =
     8
 
 
+screenWidthTiles : Int
+screenWidthTiles =
+    22
+
+
+screenHeightTiles : Int
+screenHeightTiles =
+    22
+
+
 screenWidth : Int
 screenWidth =
-    22 * tileWidth
+    screenWidthTiles * tileWidth
 
 
 screenHeight : Int
 screenHeight =
-    22 * tileHeight
+    screenHeightTiles * tileHeight
 
 
 gravity : FramesPerSecond

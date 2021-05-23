@@ -12,7 +12,7 @@ module Tilemap exposing
     , width
     )
 
-import Array exposing (Array)
+import Array2d exposing (Array2d)
 import Bitmap exposing (Bitmap)
 import Dict exposing (Dict)
 import Helper
@@ -27,7 +27,7 @@ type Tilemap tileSize
         , height_ : Int
         , tileWidth_ : Int
         , tileHeight_ : Int
-        , bitmaps : Array Bitmap
+        , bitmaps : Array2d Bitmap
         , bitmapMemo : Maybe Bitmap
         }
 
@@ -41,7 +41,7 @@ empty8x8Tile w h =
                 , height_ = h
                 , tileWidth_ = tileW
                 , tileHeight_ = tileH
-                , bitmaps = Array.initialize (w * h) (always (Bitmap.empty tileW tileH))
+                , bitmaps = Array2d.repeat w h (Bitmap.empty tileW tileH)
                 , bitmapMemo = Nothing
                 }
     in
@@ -57,7 +57,7 @@ and converts them into a Map. Here's an example:
     . B A .
     . . . .
     """
-        |> Map.fromString
+        |> Tilemap.fromString
             (Dict.fromList
                 [ ( '.', emptyTile )
                 , ( 'A', tileA )
@@ -65,7 +65,7 @@ and converts them into a Map. Here's an example:
                 ]
             )
 
-This will produce a 4 × 4 tiles Map.
+This will produce a 4 × 4 tiles Tilemap, wrapped in a Just if all's correct.
 Note that spaces are always ignored.
 
 -}
@@ -74,35 +74,31 @@ fromString tiles str =
     case Dict.values tiles of
         t :: _ ->
             let
-                bm =
-                    Tile.bitmap t
-
                 tw =
-                    Bitmap.width bm
+                    Tile.width t
 
                 th =
-                    Bitmap.height bm
+                    Tile.height t
 
                 mapper ch =
                     Dict.get ch tiles
                         |> Maybe.map Tile.bitmap
 
-                r =
-                    Helper.stringToArray mapper str
-
-                toTilemap bitmaps =
-                    Tilemap
-                        { width_ = r.width
-                        , height_ = r.height
-                        , tileWidth_ = tw
-                        , tileHeight_ = th
-                        , bitmaps = bitmaps
-                        , bitmapMemo = Nothing
-                        }
+                mapped =
+                    Helper.stringToArray2d mapper str
             in
-            r.array
-                |> Maybe.combineArray
-                |> Maybe.map toTilemap
+            mapped
+                |> Maybe.map
+                    (\r ->
+                        Tilemap
+                            { width_ = r.width
+                            , height_ = r.height
+                            , tileWidth_ = tw
+                            , tileHeight_ = th
+                            , bitmaps = r.array2d
+                            , bitmapMemo = Nothing
+                            }
+                    )
 
         _ ->
             Nothing
@@ -133,9 +129,9 @@ tileHeight (Tilemap { tileHeight_ }) =
 
 
 tile : Int -> Int -> Tilemap a -> Maybe Bitmap
-tile x y (Tilemap { width_, bitmaps }) =
+tile x y (Tilemap { bitmaps }) =
     bitmaps
-        |> Array.get (Helper.pos width_ x y)
+        |> Array2d.get x y
 
 
 
@@ -143,13 +139,13 @@ tile x y (Tilemap { width_, bitmaps }) =
 
 
 setTile : Int -> Int -> Tile a -> Tilemap a -> Tilemap a
-setTile x y t (Tilemap ({ width_, bitmaps } as state)) =
+setTile x y t (Tilemap ({ bitmaps } as state)) =
     let
         toMap bms =
             Tilemap { state | bitmaps = bms }
     in
     bitmaps
-        |> Array.set (Helper.pos width_ x y) (Tile.bitmap t)
+        |> Array2d.set x y (Tile.bitmap t)
         |> toMap
 
 

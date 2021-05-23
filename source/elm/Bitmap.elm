@@ -61,13 +61,11 @@ fromString cMap str =
                 Nothing
 
         maybeResult =
-            Helper.stringToArray2d mapper Transparent str
+            Helper.stringToArray2d mapper str
     in
     maybeResult
         |> Maybe.map
-            (\r ->
-                Bitmap r.width r.height r.array2d
-            )
+            (\r -> Bitmap r.width r.height r.array2d)
 
 
 empty : Int -> Int -> Bitmap

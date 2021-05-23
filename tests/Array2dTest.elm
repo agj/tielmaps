@@ -24,7 +24,7 @@ repeat =
             \w h ->
                 Array2d.repeat w h ()
                     |> Expect.equal
-                        (Array2d.fromList w () (List.repeat (w * h) ()))
+                        (Array2d.forceFromList w () (List.repeat (w * h) ()))
         ]
 
 
@@ -34,12 +34,12 @@ fromList =
         [ fuzz2 negativeOrZero smallPositiveInt "Returns an empty Array2d with zero or negative numbers" <|
             \w listLength ->
                 List.repeat listLength False
-                    |> Array2d.fromList w True
+                    |> Array2d.forceFromList w True
                     |> Expect.equal Array2d.empty
         , fuzz2 oneOrGreater oneOrGreater "Returns an Array2d of the expected size" <|
             \w h ->
                 List.repeat (w * h) False
-                    |> Array2d.fromList w True
+                    |> Array2d.forceFromList w True
                     |> Expect.all
                         [ Array2d.width >> Expect.equal w
                         , Array2d.height >> Expect.equal h
@@ -47,7 +47,7 @@ fromList =
         , fuzz2 twoOrGreater oneOrGreater "Fills the Array2d to complete the last row" <|
             \w h ->
                 List.repeat (w * h - 1) False
-                    |> Array2d.fromList w True
+                    |> Array2d.forceFromList w True
                     |> Expect.all
                         [ Array2d.height >> Expect.equal h
                         , Array2d.get (w - 1) (h - 1) >> Expect.equal (Just True)
@@ -65,7 +65,7 @@ get =
         [ test "Returns the item at that position" <|
             \_ ->
                 [ False, False, False, False, False, True ]
-                    |> Array2d.fromList 3 False
+                    |> Array2d.forceFromList 3 False
                     |> Array2d.get 2 1
                     |> Expect.equal (Just True)
         , fuzz sizeAndInvalidPos2 "Returns Nothing when out of bounds" <|
@@ -139,7 +139,7 @@ toUnidimensional =
         [ fuzz listAndDimensions "Returns a plan Array with the values" <|
             \( list, w, _ ) ->
                 list
-                    |> Array2d.fromList w 0
+                    |> Array2d.forceFromList w 0
                     |> Array2d.toUnidimensional
                     |> Expect.equal
                         (Array.fromList list)

@@ -3,6 +3,7 @@ module Assets.Screens exposing (testScreen)
 import Assets.Tiles as Tiles
 import CollisionLayer exposing (CollisionLayer)
 import Dict
+import Levers
 import Screen exposing (Screen)
 import Size exposing (Size22x22, Size8x8)
 import Tilemap exposing (Tilemap)
@@ -88,10 +89,7 @@ testCollisionLayer =
     tilemapString2
         |> CollisionLayer.fromString
             (Dict.keys charTiles |> List.filter ((/=) '.'))
-
-
-
--- INTERNAL
+        |> Maybe.withDefault (CollisionLayer.empty Levers.screenWidthTiles Levers.screenHeightTiles)
 
 
 charTiles =
