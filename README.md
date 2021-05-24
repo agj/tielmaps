@@ -20,7 +20,7 @@ The files are organized in this way:
 
 - `source/` holds all the source files.
   - `elm/` holds the Elm code that does all the magic. Start with the `Main.elm` file.
-  - `elm/Main.d.ts` is a Typescript types declaration file. Basically just makes the Elm code more understandable to the outside world.
+  - `elm/Main.d.ts` is a Typescript types declaration file. Basically just makes the Elm code more understandable to Typescript code.
   - `ts/index.ts` holds some wrapping Typescript code for the Elm stuff. The few lines of code that receive data from the Elm side and actually place pixels on the screen are here.
   - `html/index.html` is just the single HTML file that will hold all the other stuff.
 - `tests/` has some unit tests, not very important unless you care about those.
