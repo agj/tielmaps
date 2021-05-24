@@ -90,8 +90,8 @@ fromSprites padding sprs =
 
 
 bitmap : Avatar a -> Bitmap
-bitmap (Avatar { sprites_ }) =
-    Sprite.bitmap sprites_.runningRight
+bitmap avatar =
+    Sprite.bitmap (currentSprite avatar)
 
 
 x : Avatar a -> Int
@@ -112,7 +112,7 @@ y (Avatar { y_ }) =
 Takes care of gravity, jumping and left-right movement.
 -}
 tick : Keys -> Avatar a -> Avatar a
-tick keys (Avatar ({ sprites_, y_, x_, motion } as data)) =
+tick keys (Avatar ({ y_, x_, motion } as data)) =
     let
         newX =
             case Keys.direction keys of
@@ -175,11 +175,11 @@ tick keys (Avatar ({ sprites_, y_, x_, motion } as data)) =
     in
     Avatar
         { data
-            | sprites_ = { sprites_ | runningRight = Sprite.tick sprites_.runningRight }
-            , x_ = newX
+            | x_ = newX
             , y_ = newY
             , motion = newPosition
         }
+        |> mapCurrentSprite Sprite.tick
 
 
 {-| Moves the Avatar to a new point given its x and y coordinates.
@@ -244,4 +244,52 @@ collide collider (Avatar ({ x_, y_, prevX, prevY, width_, height_, motion, paddi
 
                 else
                     motion
+        }
+
+
+
+-- INTERNAL
+
+
+currentSprite : Avatar a -> Sprite a
+currentSprite (Avatar { sprites_, motion, x_, prevX }) =
+    case motion of
+        OnGround _ ->
+            if x_ == prevX then
+                sprites_.standing
+
+            else if x_ > prevX then
+                sprites_.runningLeft
+
+            else
+                sprites_.runningRight
+
+        Jumping _ ->
+            sprites_.jumping
+
+        Falling _ ->
+            sprites_.jumping
+
+
+mapCurrentSprite : (Sprite a -> Sprite a) -> Avatar a -> Avatar a
+mapCurrentSprite mapper (Avatar ({ sprites_, motion, x_, prevX } as data)) =
+    Avatar
+        { data
+            | sprites_ =
+                case motion of
+                    OnGround _ ->
+                        if x_ == prevX then
+                            { sprites_ | standing = mapper sprites_.standing }
+
+                        else if x_ > prevX then
+                            { sprites_ | runningLeft = mapper sprites_.runningLeft }
+
+                        else
+                            { sprites_ | runningRight = mapper sprites_.runningRight }
+
+                    Jumping _ ->
+                        { sprites_ | jumping = mapper sprites_.jumping }
+
+                    Falling _ ->
+                        { sprites_ | jumping = mapper sprites_.jumping }
         }
