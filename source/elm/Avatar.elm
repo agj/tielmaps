@@ -3,12 +3,14 @@ module Avatar exposing
     , bitmap
     , collide
     , fromSprite
+    , fromSprites
     , reposition
     , tick
     , x
     , y
     )
 
+import Avatar.AvatarSprites as AvatarSprites exposing (AvatarSprites)
 import Avatar.Padding exposing (Padding)
 import Bitmap exposing (Bitmap)
 import Collider.Callback as Collider
@@ -38,7 +40,7 @@ type CanJumpStatus
 
 
 type alias Data a =
-    { sprite_ : Sprite a
+    { sprites_ : AvatarSprites a
     , x_ : Int
     , y_ : Int
     , prevX : Int
@@ -54,20 +56,30 @@ type alias Data a =
 -- CREATION
 
 
-{-| Creates an Avatar from a Sprite.
+{-| Creates an Avatar from a single Sprite.
 You also need to supply a Padding, which defines
 how far into the Sprite should the collision box be calculated.
 -}
 fromSprite : Padding -> Sprite a -> Avatar a
 fromSprite padding spr =
+    fromSprites padding (AvatarSprites.single spr)
+
+
+{-| Creates an Avatar from a group of Sprites, an AvatarSprites record
+which defines a Sprite for each possible state the Avatar can be in.
+You also need to supply a Padding, which defines
+how far into the Sprite should the collision box be calculated.
+-}
+fromSprites : Padding -> AvatarSprites a -> Avatar a
+fromSprites padding sprs =
     Avatar
-        { sprite_ = spr
+        { sprites_ = sprs
         , x_ = 0
         , y_ = 0
         , prevX = 0
         , prevY = 0
-        , width_ = Sprite.width spr
-        , height_ = Sprite.height spr
+        , width_ = Sprite.width sprs.standing
+        , height_ = Sprite.height sprs.standing
         , padding = padding
         , motion = Falling CanJump
         }
@@ -78,8 +90,8 @@ fromSprite padding spr =
 
 
 bitmap : Avatar a -> Bitmap
-bitmap (Avatar { sprite_ }) =
-    Sprite.bitmap sprite_
+bitmap (Avatar { sprites_ }) =
+    Sprite.bitmap sprites_.runningRight
 
 
 x : Avatar a -> Int
@@ -100,7 +112,7 @@ y (Avatar { y_ }) =
 Takes care of gravity, jumping and left-right movement.
 -}
 tick : Keys -> Avatar a -> Avatar a
-tick keys (Avatar ({ sprite_, y_, x_, motion } as data)) =
+tick keys (Avatar ({ sprites_, y_, x_, motion } as data)) =
     let
         newX =
             case Keys.direction keys of
@@ -163,7 +175,7 @@ tick keys (Avatar ({ sprite_, y_, x_, motion } as data)) =
     in
     Avatar
         { data
-            | sprite_ = Sprite.tick sprite_
+            | sprites_ = { sprites_ | runningRight = Sprite.tick sprites_.runningRight }
             , x_ = newX
             , y_ = newY
             , motion = newPosition
