@@ -136,7 +136,7 @@ set =
 toUnidimensional : Test
 toUnidimensional =
     describe "toUnidimensional"
-        [ fuzz listAndDimensions "Returns a plan Array with the values" <|
+        [ fuzz listAndDimensions "Returns a plain Array with the values" <|
             \( list, w, _ ) ->
                 list
                     |> Array2d.forceFromList w 0
