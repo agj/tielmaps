@@ -140,13 +140,13 @@ tile x y (Tilemap { bitmaps }) =
 
 setTile : Int -> Int -> Tile a -> Tilemap a -> Tilemap a
 setTile x y t (Tilemap ({ bitmaps } as state)) =
-    let
-        toMap bms =
-            Tilemap { state | bitmaps = bms }
-    in
-    bitmaps
-        |> Array2d.set x y (Tile.bitmap t)
-        |> toMap
+    Tilemap
+        { state
+            | bitmaps =
+                bitmaps
+                    |> Array2d.set x y (Tile.bitmap t)
+            , bitmapMemo = Nothing
+        }
 
 
 toBitmap : Tilemap a -> Bitmap
