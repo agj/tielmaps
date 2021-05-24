@@ -14,7 +14,21 @@ So I wanna make this an easy to hack codebase, sensibly organized for easy compr
 [node]: https://nodejs.org/
 [parcel]: https://parceljs.org/
 
-## Developing
+## The code
+
+The files are organized in this way:
+
+- `source/` holds all the source files.
+  - `elm/` holds the Elm code that does all the magic. Start with the `Main.elm` file.
+  - `elm/Main.d.ts` is a Typescript types declaration file. Basically just makes the Elm code more understandable to the outside world.
+  - `ts/index.ts` holds some wrapping Typescript code for the Elm stuff. The few lines of code that receive data from the Elm side and actually place pixels on the screen are here.
+  - `html/index.html` is just the single HTML file that will hold all the other stuff.
+- `tests/` has some unit tests, not very important unless you care about those.
+- `benchmarks/` has some code that checks how fast or slow some code is—also not very important. This code is set up as a separate Elm project in its own folder.
+- `elm.json` has all the Elm configuration in it, like the packages this project depends on. It shouldn't be necessary to manipulate directly.
+- `package.json` has the Node configuration, also some package dependencies. Defines some scripts to simplify development (read more about that in the following section).
+
+## Hack it
 
 You'll need [Node][node] 14 or higher. After cloning this repository, go into that directory in a terminal and run `npm install`.
 
