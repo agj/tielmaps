@@ -3,10 +3,8 @@ module Array2dTest exposing (..)
 import Array
 import Array2d exposing (Array2d)
 import Expect
-import Fuzz exposing (Fuzzer)
-import Random
-import Shrink
 import Test exposing (..)
+import Utils exposing (..)
 
 
 
@@ -16,22 +14,29 @@ import Test exposing (..)
 repeat : Test
 repeat =
     describe "repeat"
-        [ fuzz2 negativeOrZero negativeOrZero "Returns an empty Array2d with zero or negative numbers" <|
-            \w h ->
+        [ fuzz zeroOrLessTwice "Result is empty for zero or negative numbers as dimensions" <|
+            \( w, h ) ->
                 Array2d.repeat w h ()
                     |> Expect.equal Array2d.empty
-        , fuzz2 oneOrGreater oneOrGreater "Returns an Array2d prefilled with the filler value and of the specified dimensions" <|
+        , fuzz2 oneOrGreater oneOrGreater "Result's width and height equal input dimensions" <|
             \w h ->
                 Array2d.repeat w h ()
-                    |> Expect.equal
-                        (Array2d.forceFromList w () (List.repeat (w * h) ()))
+                    |> Expect.all
+                        [ Array2d.width >> Expect.equal w
+                        , Array2d.height >> Expect.equal h
+                        ]
+        , fuzz2 sizeAndPos sizeAndPos "Any value from the result should equal the input value" <|
+            \( w, x ) ( h, y ) ->
+                Array2d.repeat w h ()
+                    |> Array2d.get x y
+                    |> Expect.equal (Just ())
         ]
 
 
 fromList : Test
 fromList =
     describe "fromList"
-        [ fuzz2 negativeOrZero smallPositiveInt "Returns an empty Array2d with zero or negative numbers" <|
+        [ fuzz2 zeroOrLess smallPositiveInt "Returns an empty Array2d with zero or negative numbers" <|
             \w listLength ->
                 List.repeat listLength False
                     |> Array2d.forceFromList w True
@@ -144,91 +149,3 @@ toUnidimensional =
                     |> Expect.equal
                         (Array.fromList list)
         ]
-
-
-
--- UTILITIES
-
-
-positiveInt : Fuzzer Int
-positiveInt =
-    Fuzz.intRange 0 99
-
-
-smallPositiveInt : Fuzzer Int
-smallPositiveInt =
-    Fuzz.intRange 0 10
-
-
-oneOrGreater : Fuzzer Int
-oneOrGreater =
-    Fuzz.intRange 1 99
-
-
-twoOrGreater : Fuzzer Int
-twoOrGreater =
-    Fuzz.intRange 2 99
-
-
-negativeOrZero : Fuzzer Int
-negativeOrZero =
-    Fuzz.intRange Random.minInt 0
-
-
-sizeAndPos : Fuzzer ( Int, Int )
-sizeAndPos =
-    Fuzz.map2
-        (\size fraction -> ( size, floor (toFloat size * (fraction * 0.99999999999999)) ))
-        oneOrGreater
-        Fuzz.percentage
-
-
-sizeAndInvalidPos : Fuzzer ( Int, Int )
-sizeAndInvalidPos =
-    Fuzz.map2
-        (\size pos ->
-            ( size
-            , if pos >= 0 then
-                pos + size
-
-              else
-                pos
-            )
-        )
-        oneOrGreater
-        Fuzz.int
-
-
-sizeAndInvalidPos2 : Fuzzer ( ( Int, Int ), ( Int, Int ) )
-sizeAndInvalidPos2 =
-    Fuzz.oneOf
-        [ Fuzz.tuple ( sizeAndPos, sizeAndInvalidPos )
-        , Fuzz.tuple ( sizeAndInvalidPos, sizeAndPos )
-        ]
-
-
-listAndDimensions : Fuzzer ( List Int, Int, Int )
-listAndDimensions =
-    Fuzz.custom
-        randomListAndDimensions
-        Shrink.noShrink
-
-
-randomListAndDimensions : Random.Generator ( List Int, Int, Int )
-randomListAndDimensions =
-    Random.pair randomSize randomSize
-        |> Random.andThen
-            (\( w, h ) ->
-                randomList (w * h)
-                    |> Random.map (\list -> ( list, w, h ))
-            )
-
-
-randomList : Int -> Random.Generator (List Int)
-randomList length =
-    Random.list length (Random.int 0 99)
-
-
-randomSize : Random.Generator Int
-randomSize =
-    Random.int 1 99
