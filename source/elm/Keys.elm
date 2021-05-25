@@ -8,7 +8,6 @@ module Keys exposing
     , release
     )
 
-import Json.Decode exposing (bool)
 import Key exposing (Key)
 import List.Extra as List
 
