@@ -51,12 +51,12 @@ gravity =
 
 runSpeed : FramesPerSecond
 runSpeed =
-    3
+    2
 
 
 jumpSpeed : FramesPerSecond
 jumpSpeed =
-    3
+    2
 
 
 jumpDuration : Frames
