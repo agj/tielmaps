@@ -77,6 +77,19 @@ bottomLeftCurvedSolid =
         |> toTile
 
 
+topCurvedSolid : Tile Size8x8
+topCurvedSolid =
+    topCurvedSolidBitmap
+        |> toTile
+
+
+rightCurvedSolid : Tile Size8x8
+rightCurvedSolid =
+    topCurvedSolidBitmap
+        |> Bitmap.rotateClockwise
+        |> toTile
+
+
 
 -- PRIVATE
 
@@ -85,6 +98,22 @@ topLeftCurvedSolidBitmap : Bitmap
 topLeftCurvedSolidBitmap =
     """
     . █ █ █ █ █ █ █
+    █ █ █ █ █ █ █ █
+    █ █ █ █ █ █ █ █
+    █ █ █ █ █ █ █ █
+    █ █ █ █ █ █ █ █
+    █ █ █ █ █ █ █ █
+    █ █ █ █ █ █ █ █
+    █ █ █ █ █ █ █ █
+    """
+        |> Bitmap.fromString Color.defaultMap
+        |> Maybe.withDefault Bitmap.error
+
+
+topCurvedSolidBitmap : Bitmap
+topCurvedSolidBitmap =
+    """
+    . █ █ █ █ █ █ .
     █ █ █ █ █ █ █ █
     █ █ █ █ █ █ █ █
     █ █ █ █ █ █ █ █
