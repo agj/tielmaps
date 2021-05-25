@@ -8,11 +8,13 @@ module Keys exposing
     , release
     )
 
+import Json.Decode exposing (bool)
 import Key exposing (Key)
+import List.Extra as List
 
 
 type Keys
-    = Keys { direction_ : Direction, jumping_ : Bool }
+    = Keys (List Key)
 
 
 type Direction
@@ -23,17 +25,25 @@ type Direction
 
 empty : Keys
 empty =
-    Keys { direction_ = Static, jumping_ = False }
+    Keys []
 
 
 direction : Keys -> Direction
-direction (Keys { direction_ }) =
-    direction_
+direction (Keys keys) =
+    case List.find isLeftRight keys of
+        Just Key.Left ->
+            Left
+
+        Just Key.Right ->
+            Right
+
+        _ ->
+            Static
 
 
 jumping : Keys -> Bool
-jumping (Keys { jumping_ }) =
-    jumping_
+jumping (Keys keys) =
+    List.member Key.Jump keys
 
 
 
@@ -41,26 +51,19 @@ jumping (Keys { jumping_ }) =
 
 
 press : Key -> Keys -> Keys
-press key (Keys state) =
-    case key of
-        Key.Left ->
-            Keys { state | direction_ = Left }
-
-        Key.Right ->
-            Keys { state | direction_ = Right }
-
-        Key.Jump ->
-            Keys { state | jumping_ = True }
+press key (Keys keys) =
+    Keys (key :: keys)
 
 
 release : Key -> Keys -> Keys
-release key (Keys state) =
-    case key of
-        Key.Left ->
-            Keys { state | direction_ = Static }
+release key (Keys keys) =
+    Keys (List.filter ((/=) key) keys)
 
-        Key.Right ->
-            Keys { state | direction_ = Static }
 
-        Key.Jump ->
-            Keys { state | jumping_ = False }
+
+-- INTERNAL
+
+
+isLeftRight : Key -> Bool
+isLeftRight key =
+    key == Key.Left || key == Key.Right
