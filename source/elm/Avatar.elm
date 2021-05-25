@@ -15,7 +15,8 @@ import Avatar.Padding exposing (Padding)
 import Bitmap exposing (Bitmap)
 import Collider.Callback as Collider
 import CollisionLayer exposing (CollisionLayer)
-import Keys exposing (Keys)
+import Html exposing (pre)
+import Keys exposing (Keys, jumping)
 import Levers
 import Screen exposing (Screen)
 import Sprite exposing (Sprite)
@@ -49,6 +50,7 @@ type alias Data a =
     , height_ : Int
     , padding : Padding
     , motion : Motion
+    , pose : Pose
     }
 
 
@@ -78,10 +80,11 @@ fromSprites padding sprs =
         , y_ = 0
         , prevX = 0
         , prevY = 0
-        , width_ = Sprite.width sprs.standing
-        , height_ = Sprite.height sprs.standing
+        , width_ = Sprite.width sprs.standingRight
+        , height_ = Sprite.height sprs.standingRight
         , padding = padding
         , motion = Falling CanJump
+        , pose = PoseStandingRight
         }
 
 
@@ -112,7 +115,7 @@ y (Avatar { y_ }) =
 Takes care of gravity, jumping and left-right movement.
 -}
 tick : Keys -> Avatar a -> Avatar a
-tick keys (Avatar ({ y_, x_, motion } as data)) =
+tick keys (Avatar ({ y_, x_, prevX, motion } as data)) =
     let
         newX =
             case Keys.direction keys of
@@ -126,14 +129,14 @@ tick keys (Avatar ({ y_, x_, motion } as data)) =
                     x_ + Levers.runSpeed
 
         newY =
-            case newPosition of
+            case newMotion of
                 Jumping _ ->
                     y_ - Levers.jumpSpeed
 
                 _ ->
                     y_ + Levers.gravity
 
-        newPosition =
+        newMotion =
             -- The next position is always either Jumping or Falling.
             -- It's set as OnGround only when colliding against the floor!
             if Keys.jumping keys then
@@ -177,7 +180,8 @@ tick keys (Avatar ({ y_, x_, motion } as data)) =
         { data
             | x_ = newX
             , y_ = newY
-            , motion = newPosition
+            , motion = newMotion
+            , pose = getPose newMotion newX prevX
         }
         |> mapCurrentSprite Sprite.tick
 
@@ -252,44 +256,94 @@ collide collider (Avatar ({ x_, y_, prevX, prevY, width_, height_, motion, paddi
 
 
 currentSprite : Avatar a -> Sprite a
-currentSprite (Avatar { sprites_, motion, x_, prevX }) =
-    case motion of
-        OnGround _ ->
-            if x_ == prevX then
-                sprites_.standing
+currentSprite ((Avatar { sprites_, pose }) as avatar) =
+    case pose of
+        PoseStandingRight ->
+            sprites_.standingRight
 
-            else if x_ > prevX then
-                sprites_.runningLeft
+        PoseStandingLeft ->
+            sprites_.standingLeft
 
-            else
-                sprites_.runningRight
+        PoseRunningRight ->
+            sprites_.runningRight
 
-        Jumping _ ->
-            sprites_.jumping
+        PoseRunningLeft ->
+            sprites_.runningLeft
 
-        Falling _ ->
-            sprites_.jumping
+        PoseJumpingRight ->
+            sprites_.jumpingRight
+
+        PoseJumpingLeft ->
+            sprites_.jumpingLeft
 
 
 mapCurrentSprite : (Sprite a -> Sprite a) -> Avatar a -> Avatar a
-mapCurrentSprite mapper (Avatar ({ sprites_, motion, x_, prevX } as data)) =
+mapCurrentSprite mapper ((Avatar ({ sprites_, pose } as data)) as avatar) =
     Avatar
         { data
             | sprites_ =
-                case motion of
-                    OnGround _ ->
-                        if x_ == prevX then
-                            { sprites_ | standing = mapper sprites_.standing }
+                case pose of
+                    PoseStandingRight ->
+                        { sprites_ | standingRight = mapper sprites_.standingRight }
 
-                        else if x_ > prevX then
-                            { sprites_ | runningLeft = mapper sprites_.runningLeft }
+                    PoseStandingLeft ->
+                        { sprites_ | standingRight = mapper sprites_.standingRight }
 
-                        else
-                            { sprites_ | runningRight = mapper sprites_.runningRight }
+                    PoseRunningRight ->
+                        { sprites_ | runningRight = mapper sprites_.runningRight }
 
-                    Jumping _ ->
-                        { sprites_ | jumping = mapper sprites_.jumping }
+                    PoseRunningLeft ->
+                        { sprites_ | runningLeft = mapper sprites_.runningLeft }
 
-                    Falling _ ->
-                        { sprites_ | jumping = mapper sprites_.jumping }
+                    PoseJumpingRight ->
+                        { sprites_ | jumpingRight = mapper sprites_.jumpingRight }
+
+                    PoseJumpingLeft ->
+                        { sprites_ | jumpingLeft = mapper sprites_.jumpingLeft }
         }
+
+
+getPose : Motion -> Int -> Int -> Pose
+getPose motion x_ prevX =
+    let
+        rightNotLeft =
+            x_ > prevX
+
+        onGround =
+            if x_ == prevX then
+                PoseStandingRight
+
+            else if rightNotLeft then
+                PoseRunningRight
+
+            else
+                PoseRunningLeft
+
+        jumping =
+            if rightNotLeft then
+                PoseJumpingRight
+
+            else
+                PoseJumpingLeft
+    in
+    case motion of
+        OnGround _ ->
+            onGround
+
+        Jumping _ ->
+            jumping
+
+        Falling CanJump ->
+            onGround
+
+        Falling CannotJump ->
+            jumping
+
+
+type Pose
+    = PoseStandingRight
+    | PoseStandingLeft
+    | PoseRunningRight
+    | PoseRunningLeft
+    | PoseJumpingRight
+    | PoseJumpingLeft

@@ -7,17 +7,21 @@ import Sprite exposing (Sprite)
 
 
 type alias AvatarSprites a =
-    { standing : Sprite a
+    { standingRight : Sprite a
+    , standingLeft : Sprite a
     , runningRight : Sprite a
     , runningLeft : Sprite a
-    , jumping : Sprite a
+    , jumpingRight : Sprite a
+    , jumpingLeft : Sprite a
     }
 
 
 single : Sprite a -> AvatarSprites a
 single sprite =
-    { standing = sprite
+    { standingRight = sprite
+    , standingLeft = sprite
     , runningLeft = sprite
     , runningRight = sprite
-    , jumping = sprite
+    , jumpingRight = sprite
+    , jumpingLeft = sprite
     }

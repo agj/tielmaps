@@ -3,6 +3,7 @@ module Bitmap exposing
     , empty
     , encode
     , error
+    , flipX
     , fromString
     , height
     , paintBitmap
@@ -213,6 +214,13 @@ rotate180 ((Bitmap w h _) as bm) =
     bm
         |> transform
             (\x y -> ( w - x - 1, h - y - 1 ))
+
+
+flipX : Bitmap -> Bitmap
+flipX ((Bitmap w _ _) as bm) =
+    bm
+        |> transform
+            (\x y -> ( w - x - 1, y ))
 
 
 transform : (Int -> Int -> ( Int, Int )) -> Bitmap -> Bitmap
