@@ -51,7 +51,19 @@ type alias Data a =
     , padding : Padding
     , motion : Motion
     , pose : Pose
+    , facing : Facing
     }
+
+
+type Pose
+    = PoseStanding
+    | PoseRunning
+    | PoseJumping
+
+
+type Facing
+    = FacingLeft
+    | FacingRight
 
 
 
@@ -84,7 +96,8 @@ fromSprites padding sprs =
         , height_ = Sprite.height sprs.standingRight
         , padding = padding
         , motion = Falling CanJump
-        , pose = PoseStandingRight
+        , pose = PoseStanding
+        , facing = FacingRight
         }
 
 
@@ -115,7 +128,7 @@ y (Avatar { y_ }) =
 Takes care of gravity, jumping and left-right movement.
 -}
 tick : Keys -> Avatar a -> Avatar a
-tick keys (Avatar ({ y_, x_, prevX, motion } as data)) =
+tick keys (Avatar ({ y_, x_, prevX, motion, facing } as data)) =
     let
         newX =
             case Keys.direction keys of
@@ -182,6 +195,7 @@ tick keys (Avatar ({ y_, x_, prevX, motion } as data)) =
             , y_ = newY
             , motion = newMotion
             , pose = getPose newMotion newX prevX
+            , facing = getFacing facing newX prevX
         }
         |> mapCurrentSprite Sprite.tick
 
@@ -256,49 +270,49 @@ collide collider (Avatar ({ x_, y_, prevX, prevY, width_, height_, motion, paddi
 
 
 currentSprite : Avatar a -> Sprite a
-currentSprite ((Avatar { sprites_, pose }) as avatar) =
-    case pose of
-        PoseStandingRight ->
+currentSprite (Avatar { sprites_, pose, facing }) =
+    case ( pose, facing ) of
+        ( PoseStanding, FacingRight ) ->
             sprites_.standingRight
 
-        PoseStandingLeft ->
+        ( PoseStanding, FacingLeft ) ->
             sprites_.standingLeft
 
-        PoseRunningRight ->
+        ( PoseRunning, FacingRight ) ->
             sprites_.runningRight
 
-        PoseRunningLeft ->
+        ( PoseRunning, FacingLeft ) ->
             sprites_.runningLeft
 
-        PoseJumpingRight ->
+        ( PoseJumping, FacingRight ) ->
             sprites_.jumpingRight
 
-        PoseJumpingLeft ->
+        ( PoseJumping, FacingLeft ) ->
             sprites_.jumpingLeft
 
 
 mapCurrentSprite : (Sprite a -> Sprite a) -> Avatar a -> Avatar a
-mapCurrentSprite mapper ((Avatar ({ sprites_, pose } as data)) as avatar) =
+mapCurrentSprite mapper (Avatar ({ sprites_, pose, facing } as data)) =
     Avatar
         { data
             | sprites_ =
-                case pose of
-                    PoseStandingRight ->
+                case ( pose, facing ) of
+                    ( PoseStanding, FacingRight ) ->
                         { sprites_ | standingRight = mapper sprites_.standingRight }
 
-                    PoseStandingLeft ->
-                        { sprites_ | standingRight = mapper sprites_.standingRight }
+                    ( PoseStanding, FacingLeft ) ->
+                        { sprites_ | standingLeft = mapper sprites_.standingLeft }
 
-                    PoseRunningRight ->
+                    ( PoseRunning, FacingRight ) ->
                         { sprites_ | runningRight = mapper sprites_.runningRight }
 
-                    PoseRunningLeft ->
+                    ( PoseRunning, FacingLeft ) ->
                         { sprites_ | runningLeft = mapper sprites_.runningLeft }
 
-                    PoseJumpingRight ->
+                    ( PoseJumping, FacingRight ) ->
                         { sprites_ | jumpingRight = mapper sprites_.jumpingRight }
 
-                    PoseJumpingLeft ->
+                    ( PoseJumping, FacingLeft ) ->
                         { sprites_ | jumpingLeft = mapper sprites_.jumpingLeft }
         }
 
@@ -311,39 +325,39 @@ getPose motion x_ prevX =
 
         onGround =
             if x_ == prevX then
-                PoseStandingRight
+                PoseStanding
 
             else if rightNotLeft then
-                PoseRunningRight
+                PoseRunning
 
             else
-                PoseRunningLeft
-
-        jumping =
-            if rightNotLeft then
-                PoseJumpingRight
-
-            else
-                PoseJumpingLeft
+                PoseRunning
     in
     case motion of
         OnGround _ ->
             onGround
 
         Jumping _ ->
-            jumping
+            PoseJumping
 
         Falling CanJump ->
             onGround
 
         Falling CannotJump ->
-            jumping
+            PoseJumping
 
 
-type Pose
-    = PoseStandingRight
-    | PoseStandingLeft
-    | PoseRunningRight
-    | PoseRunningLeft
-    | PoseJumpingRight
-    | PoseJumpingLeft
+getFacing : Facing -> Int -> Int -> Facing
+getFacing previous x_ prevX =
+    let
+        rightNotLeft =
+            x_ > prevX
+    in
+    if x_ == prevX then
+        previous
+
+    else if rightNotLeft then
+        FacingRight
+
+    else
+        FacingLeft
