@@ -82,13 +82,11 @@ jumpDuration =
 
 colorLight : Color
 colorLight =
-    -- Color.hsl (deg 102.4) (pc 64.3) (pc 86.6)
     Color.hsl (deg 53.2) (pc 100) (pc 94.5)
 
 
 colorDark : Color
 colorDark =
-    -- Color.hsl (deg 200.9) (pc 89.5) (pc 54.5)
     Color.hsl (deg 30.7) (pc 100) (pc 54.6)
 
 
