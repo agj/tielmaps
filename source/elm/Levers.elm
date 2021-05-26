@@ -1,4 +1,20 @@
-module Levers exposing (..)
+module Levers exposing
+    ( colorDark
+    , colorLight
+    , framesPerSecond
+    , gravity
+    , jumpDuration
+    , jumpSpeed
+    , runSpeed
+    , screenHeight
+    , screenHeightTiles
+    , screenWidth
+    , screenWidthTiles
+    , tileHeight
+    , tileWidth
+    )
+
+import Color exposing (Color)
 
 
 type alias FramesPerSecond =
@@ -62,3 +78,29 @@ jumpSpeed =
 jumpDuration : Frames
 jumpDuration =
     10
+
+
+colorLight : Color
+colorLight =
+    -- Color.hsl (deg 102.4) (pc 64.3) (pc 86.6)
+    Color.hsl (deg 53.2) (pc 100) (pc 94.5)
+
+
+colorDark : Color
+colorDark =
+    -- Color.hsl (deg 200.9) (pc 89.5) (pc 54.5)
+    Color.hsl (deg 30.7) (pc 100) (pc 54.6)
+
+
+
+-- INTERNAL
+
+
+deg : Float -> Float
+deg n =
+    n / 360
+
+
+pc : Float -> Float
+pc n =
+    n / 100

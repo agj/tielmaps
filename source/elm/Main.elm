@@ -114,6 +114,8 @@ update msg model =
                 , screen = newScreen
               }
             , Js.paintCanvas
+                Levers.colorLight
+                Levers.colorDark
                 (screenBm
                     |> Bitmap.paintBitmap
                         (Avatar.x newCharacter)
