@@ -8,7 +8,7 @@ module Keys exposing
     , release
     )
 
-import Key exposing (Key)
+import Keys.Key as Key exposing (Key)
 import List.Extra as List
 
 

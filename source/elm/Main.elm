@@ -15,8 +15,8 @@ import Html.Styled.Attributes exposing (css, height, id, style, width)
 import Html.Styled.Lazy exposing (lazy)
 import Js
 import Json.Decode as D
-import Key exposing (Key)
 import Keys exposing (Keys)
+import Keys.Key as Key exposing (Key)
 import Levers
 import Screen exposing (Screen)
 import Size exposing (Size22x22, Size8x8)
