@@ -9,8 +9,8 @@ import Screen exposing (Screen)
 collideAvatar : Screen a b -> Avatar b -> Avatar b
 collideAvatar screen avatar =
     let
-        collisionLayer =
-            Screen.collisionLayer screen
+        collAt =
+            Screen.collider screen
 
         tw =
             Screen.tileWidth screen
@@ -18,7 +18,7 @@ collideAvatar screen avatar =
         th =
             Screen.tileHeight screen
     in
-    Avatar.collide (collider collisionLayer tw th) avatar
+    Avatar.collide (collider collAt tw th) avatar
 
 
 
@@ -31,20 +31,20 @@ type alias Point =
 
 {-| Generates a Callback function to provide a moving object in order to check for collisions.
 -}
-collider : CollisionLayer -> Int -> Int -> Callback
-collider collisionLayer tileWidth tileHeight ({ x, y, prevX, prevY, width, height } as avatar) =
+collider : (Int -> Int -> Bool) -> Int -> Int -> Callback
+collider collAt tileWidth tileHeight ({ x, y, prevX, prevY, width, height } as avatar) =
     let
         { checkXPoint, checkYPoint, needsChecksPoint } =
             getPointsToCheck avatar
 
         stopX =
-            pointCollided collisionLayer tileWidth tileHeight checkXPoint
+            pointCollided collAt checkXPoint
 
         stopY =
-            pointCollided collisionLayer tileWidth tileHeight checkYPoint
+            pointCollided collAt checkYPoint
 
         needsFurtherChecks =
-            pointCollided collisionLayer tileWidth tileHeight needsChecksPoint
+            pointCollided collAt needsChecksPoint
     in
     if stopX || stopY || needsFurtherChecks then
         let
@@ -126,9 +126,9 @@ getPointsToCheck { x, y, width, height, prevX, prevY } =
         }
 
 
-pointCollided : CollisionLayer -> Int -> Int -> Point -> Bool
-pointCollided coll tw th ( x, y ) =
-    CollisionLayer.getAt (x // tw) (y // th) coll
+pointCollided : (Int -> Int -> Bool) -> Point -> Bool
+pointCollided collAt ( x, y ) =
+    collAt x y
 
 
 {-| After a collision, the position needs to be corrected on one or two axes.

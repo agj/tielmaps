@@ -1,6 +1,6 @@
 module Screen exposing
     ( Screen
-    , collisionLayer
+    , collider
     , empty22x22
     , error22x22
     , make22x22
@@ -89,9 +89,9 @@ tilemap (Screen { tilemap_ }) =
     tilemap_
 
 
-collisionLayer : Screen a b -> CollisionLayer
-collisionLayer (Screen { collisionLayer_ }) =
-    collisionLayer_
+collider : Screen a b -> Int -> Int -> Bool
+collider (Screen { collisionLayer_, tileWidth_, tileHeight_ }) x_ y_ =
+    CollisionLayer.getAt (x_ // tileWidth_) (y_ // tileHeight_) collisionLayer_
 
 
 tileWidth : Screen a b -> Int

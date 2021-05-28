@@ -52,7 +52,7 @@ height (CollisionLayer _ h _) =
 
 
 getAt : Int -> Int -> CollisionLayer -> Bool
-getAt x y (CollisionLayer w _ collisions) =
+getAt x y (CollisionLayer _ _ collisions) =
     collisions
         |> Array2d.get x y
         |> Maybe.withDefault False
