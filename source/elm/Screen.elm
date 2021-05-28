@@ -4,6 +4,7 @@ module Screen exposing
     , empty22x22
     , error22x22
     , make22x22
+    , solid22x22
     , tileHeight
     , tileWidth
     , tilemap
@@ -11,6 +12,7 @@ module Screen exposing
     )
 
 import Bitmap exposing (Bitmap)
+import Bitmap.Color exposing (Color(..))
 import CollisionLayer exposing (CollisionLayer)
 import Dict
 import Size exposing (Size22x22, Size8x8)
@@ -62,6 +64,16 @@ empty22x22 =
         }
 
 
+solid22x22 : Screen Size22x22 Size8x8
+solid22x22 =
+    Screen
+        { tilemap_ = solidTilemap
+        , collisionLayer_ = CollisionLayer.solid 22 22
+        , tileWidth_ = 8
+        , tileHeight_ = 8
+        }
+
+
 error22x22 : Screen Size22x22 Size8x8
 error22x22 =
     Screen
@@ -105,35 +117,51 @@ toBitmapMemoized (Screen ({ tilemap_ } as state)) =
 -- INTERNAL
 
 
+solidTilemap : Tilemap Size8x8
+solidTilemap =
+    fullTilemapString
+        |> Tilemap.fromString
+            (Dict.fromList
+                [ ( '#', Tile.solid8x8 Dark )
+                ]
+            )
+        |> Maybe.withDefault (Tilemap.empty8x8Tile 0 0)
+
+
 errorTilemap : Tilemap Size8x8
 errorTilemap =
-    """
-# # # # # # # # # # # # # # # # # # # # # #
-# # # # # # # # # # # # # # # # # # # # # #
-# # # # # # # # # # # # # # # # # # # # # #
-# # # # # # # # # # # # # # # # # # # # # #
-# # # # # # # # # # # # # # # # # # # # # #
-# # # # # # # # # # # # # # # # # # # # # #
-# # # # # # # # # # # # # # # # # # # # # #
-# # # # # # # # # # # # # # # # # # # # # #
-# # # # # # # # # # # # # # # # # # # # # #
-# # # # # # # # # # # # # # # # # # # # # #
-# # # # # # # # # # # # # # # # # # # # # #
-# # # # # # # # # # # # # # # # # # # # # #
-# # # # # # # # # # # # # # # # # # # # # #
-# # # # # # # # # # # # # # # # # # # # # #
-# # # # # # # # # # # # # # # # # # # # # #
-# # # # # # # # # # # # # # # # # # # # # #
-# # # # # # # # # # # # # # # # # # # # # #
-# # # # # # # # # # # # # # # # # # # # # #
-# # # # # # # # # # # # # # # # # # # # # #
-# # # # # # # # # # # # # # # # # # # # # #
-# # # # # # # # # # # # # # # # # # # # # #
-# # # # # # # # # # # # # # # # # # # # # #
-"""
+    fullTilemapString
         |> Tilemap.fromString
             (Dict.fromList
                 [ ( '#', Tile.error8x8 )
                 ]
             )
         |> Maybe.withDefault (Tilemap.empty8x8Tile 0 0)
+
+
+fullTilemapString : String
+fullTilemapString =
+    """
+    # # # # # # # # # # # # # # # # # # # # # #
+    # # # # # # # # # # # # # # # # # # # # # #
+    # # # # # # # # # # # # # # # # # # # # # #
+    # # # # # # # # # # # # # # # # # # # # # #
+    # # # # # # # # # # # # # # # # # # # # # #
+    # # # # # # # # # # # # # # # # # # # # # #
+    # # # # # # # # # # # # # # # # # # # # # #
+    # # # # # # # # # # # # # # # # # # # # # #
+    # # # # # # # # # # # # # # # # # # # # # #
+    # # # # # # # # # # # # # # # # # # # # # #
+    # # # # # # # # # # # # # # # # # # # # # #
+    # # # # # # # # # # # # # # # # # # # # # #
+    # # # # # # # # # # # # # # # # # # # # # #
+    # # # # # # # # # # # # # # # # # # # # # #
+    # # # # # # # # # # # # # # # # # # # # # #
+    # # # # # # # # # # # # # # # # # # # # # #
+    # # # # # # # # # # # # # # # # # # # # # #
+    # # # # # # # # # # # # # # # # # # # # # #
+    # # # # # # # # # # # # # # # # # # # # # #
+    # # # # # # # # # # # # # # # # # # # # # #
+    # # # # # # # # # # # # # # # # # # # # # #
+    # # # # # # # # # # # # # # # # # # # # # #
+    """

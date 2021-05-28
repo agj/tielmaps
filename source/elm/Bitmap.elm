@@ -12,6 +12,7 @@ module Bitmap exposing
     , rotate180
     , rotateClockwise
     , rotateCounterClockwise
+    , solid
     , transform
     , width
     )
@@ -71,7 +72,12 @@ fromString cMap str =
 
 empty : Int -> Int -> Bitmap
 empty w h =
-    Bitmap w h (Array2d.repeat w h Transparent)
+    solid Transparent w h
+
+
+solid : Color -> Int -> Int -> Bitmap
+solid color w h =
+    Bitmap w h (Array2d.repeat w h color)
 
 
 error : Bitmap

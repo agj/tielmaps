@@ -4,6 +4,7 @@ module CollisionLayer exposing
     , fromString
     , getAt
     , height
+    , solid
     , width
     )
 
@@ -19,6 +20,11 @@ type CollisionLayer
 empty : Int -> Int -> CollisionLayer
 empty w h =
     CollisionLayer w h (Array2d.repeat w h False)
+
+
+solid : Int -> Int -> CollisionLayer
+solid w h =
+    CollisionLayer w h (Array2d.repeat w h True)
 
 
 fromString : List Char -> String -> Maybe CollisionLayer
