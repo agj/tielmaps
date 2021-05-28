@@ -2,6 +2,7 @@ module Main exposing (Msg(..), main, update, view)
 
 import Assets.Screens as Screens
 import Assets.Sprites as Sprites
+import Assets.Worlds as Worlds
 import Avatar exposing (Avatar)
 import Avatar.Padding as Padding exposing (zero)
 import Bitmap exposing (Bitmap)
@@ -24,6 +25,7 @@ import Sprite exposing (Sprite)
 import Tilemap exposing (Tilemap)
 import Time
 import Viewport exposing (Viewport)
+import World exposing (World)
 
 
 
@@ -45,7 +47,7 @@ main =
 
 
 type alias Model =
-    { screen : Screen Size22x22 Size8x8
+    { world : World Size22x22 Size8x8
     , character : Avatar Size8x8
     , keys : Keys
     , scale : Int
@@ -63,7 +65,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
-    ( { screen = Screens.testScreen
+    ( { world = Worlds.testWorld
       , character =
             Avatar.fromSprites
                 { zero
@@ -104,14 +106,15 @@ update msg model =
                 newCharacter =
                     model.character
                         |> Avatar.tick model.keys
-                        |> Collider.collideAvatar model.screen
+                        |> Collider.collideAvatar model.world
 
-                ( screenBm, newScreen ) =
-                    Screen.toBitmapMemoized model.screen
+                ( screenBm, newWorld ) =
+                    model.world
+                        |> World.toScreenBitmapMemoized (Avatar.x newCharacter) (Avatar.y newCharacter)
             in
             ( { model
                 | character = newCharacter
-                , screen = newScreen
+                , world = newWorld
               }
             , Js.paintCanvas
                 Levers.colorLight

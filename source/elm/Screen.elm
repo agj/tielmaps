@@ -3,12 +3,14 @@ module Screen exposing
     , collider
     , empty22x22
     , error22x22
+    , height
     , make22x22
     , solid22x22
     , tileHeight
     , tileWidth
     , tilemap
     , toBitmapMemoized
+    , width
     )
 
 import Bitmap exposing (Bitmap)
@@ -26,15 +28,24 @@ type Screen mapSize tileSize
         , collisionLayer_ : CollisionLayer
         , tileWidth_ : Int
         , tileHeight_ : Int
+        , width_ : Int
+        , height_ : Int
         }
 
 
 make22x22 : Tilemap a -> CollisionLayer -> Maybe (Screen Size22x22 a)
 make22x22 m coll =
+    let
+        width_ =
+            Tilemap.width m
+
+        height_ =
+            Tilemap.height m
+    in
     if
-        Tilemap.width m
+        width_
             == 22
-            && Tilemap.height m
+            && height_
             == 22
             && CollisionLayer.width coll
             == 22
@@ -47,6 +58,8 @@ make22x22 m coll =
                 , collisionLayer_ = coll
                 , tileWidth_ = Tilemap.tileWidth m
                 , tileHeight_ = Tilemap.tileHeight m
+                , width_ = width_
+                , height_ = height_
                 }
             )
 
@@ -61,6 +74,8 @@ empty22x22 =
         , collisionLayer_ = CollisionLayer.empty 22 22
         , tileWidth_ = 8
         , tileHeight_ = 8
+        , width_ = 22
+        , height_ = 22
         }
 
 
@@ -71,6 +86,8 @@ solid22x22 =
         , collisionLayer_ = CollisionLayer.solid 22 22
         , tileWidth_ = 8
         , tileHeight_ = 8
+        , width_ = 22
+        , height_ = 22
         }
 
 
@@ -81,6 +98,8 @@ error22x22 =
         , collisionLayer_ = CollisionLayer.empty 22 22
         , tileWidth_ = 8
         , tileHeight_ = 8
+        , width_ = 22
+        , height_ = 22
         }
 
 
@@ -102,6 +121,16 @@ tileWidth (Screen { tileWidth_ }) =
 tileHeight : Screen a b -> Int
 tileHeight (Screen { tileHeight_ }) =
     tileHeight_
+
+
+width : Screen a b -> Int
+width (Screen { width_ }) =
+    width_
+
+
+height : Screen a b -> Int
+height (Screen { height_ }) =
+    height_
 
 
 toBitmapMemoized : Screen a b -> ( Bitmap, Screen a b )

@@ -4,19 +4,20 @@ import Avatar exposing (Avatar)
 import Collider.Callback exposing (Callback, Position)
 import CollisionLayer exposing (CollisionLayer)
 import Screen exposing (Screen)
+import World exposing (World)
 
 
-collideAvatar : Screen a b -> Avatar b -> Avatar b
-collideAvatar screen avatar =
+collideAvatar : World a b -> Avatar b -> Avatar b
+collideAvatar world avatar =
     let
         collAt =
-            Screen.collider screen
+            World.collider world
 
         tw =
-            Screen.tileWidth screen
+            World.tileWidth world
 
         th =
-            Screen.tileHeight screen
+            World.tileHeight world
     in
     Avatar.collide (collider collAt tw th) avatar
 
