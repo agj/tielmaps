@@ -6,6 +6,7 @@ module World exposing
     , render
     , singleton
     , stitchHorizontally
+    , stitchVertically
     , tileHeight
     , tileWidth
     , widthInScreens
@@ -52,18 +53,38 @@ singleton screen =
 
 
 stitchHorizontally : World a b -> World a b -> Maybe (World a b)
-stitchHorizontally (World dataA) (World dataB) =
-    case stitchArray2dX dataA.screens dataB.screens of
+stitchHorizontally (World left) (World right) =
+    case stitchArray2dX left.screens right.screens of
         Just stitchedScreens ->
             Just
                 (World
                     { screens = stitchedScreens
-                    , tileWidth_ = dataA.tileWidth_
-                    , tileHeight_ = dataA.tileHeight_
-                    , screenWidthInTiles = dataA.screenWidthInTiles
-                    , screenHeightInTiles = dataA.screenHeightInTiles
-                    , screenWidthInPixels = dataA.screenWidthInPixels
-                    , screenHeightInPixels = dataA.screenHeightInPixels
+                    , tileWidth_ = left.tileWidth_
+                    , tileHeight_ = left.tileHeight_
+                    , screenWidthInTiles = left.screenWidthInTiles
+                    , screenHeightInTiles = left.screenHeightInTiles
+                    , screenWidthInPixels = left.screenWidthInPixels
+                    , screenHeightInPixels = left.screenHeightInPixels
+                    }
+                )
+
+        Nothing ->
+            Nothing
+
+
+stitchVertically : World a b -> World a b -> Maybe (World a b)
+stitchVertically (World top) (World bottom) =
+    case stitchArray2dY top.screens bottom.screens of
+        Just stitchedScreens ->
+            Just
+                (World
+                    { screens = stitchedScreens
+                    , tileWidth_ = top.tileWidth_
+                    , tileHeight_ = top.tileHeight_
+                    , screenWidthInTiles = top.screenWidthInTiles
+                    , screenHeightInTiles = top.screenHeightInTiles
+                    , screenWidthInPixels = top.screenWidthInPixels
+                    , screenHeightInPixels = top.screenHeightInPixels
                     }
                 )
 
@@ -184,18 +205,18 @@ getScreenPosWrapping screens screenWidthInPixels screenHeightInPixels x_ y_ =
 
 
 stitchArray2dX : Array2d a -> Array2d a -> Maybe (Array2d a)
-stitchArray2dX a b =
-    if Array2d.height a == Array2d.height b then
+stitchArray2dX left right =
+    if Array2d.height left == Array2d.height right then
         let
-            aWidth =
-                Array2d.width a
+            leftWidth =
+                Array2d.width left
 
             fullWidth =
-                aWidth
-                    + Array2d.width b
+                leftWidth
+                    + Array2d.width right
 
             height_ =
-                Array2d.height a
+                Array2d.height left
 
             listX =
                 List.range 0 (fullWidth - 1)
@@ -210,17 +231,60 @@ stitchArray2dX a b =
                         ++ (listY
                                 |> List.map
                                     (\y ->
-                                        if x < aWidth then
-                                            Array2d.get x y a
+                                        if x < leftWidth then
+                                            Array2d.get x y left
 
                                         else
-                                            Array2d.get (x - aWidth) y b
+                                            Array2d.get (x - leftWidth) y right
                                     )
                            )
                 )
                 []
             |> Maybe.combine
             |> Maybe.andThen (Array2d.fromList fullWidth)
+
+    else
+        Nothing
+
+
+stitchArray2dY : Array2d a -> Array2d a -> Maybe (Array2d a)
+stitchArray2dY top bottom =
+    if Array2d.width top == Array2d.width bottom then
+        let
+            topHeight =
+                Array2d.height top
+
+            fullHeight =
+                topHeight
+                    + Array2d.height bottom
+
+            width_ =
+                Array2d.width top
+
+            listX =
+                List.range 0 (width_ - 1)
+
+            listY =
+                List.range 0 (fullHeight - 1)
+        in
+        listX
+            |> List.foldl
+                (\x r ->
+                    r
+                        ++ (listY
+                                |> List.map
+                                    (\y ->
+                                        if y < topHeight then
+                                            Array2d.get x y top
+
+                                        else
+                                            Array2d.get x (y - topHeight) bottom
+                                    )
+                           )
+                )
+                []
+            |> Maybe.combine
+            |> Maybe.andThen (Array2d.fromList width_)
 
     else
         Nothing
