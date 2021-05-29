@@ -108,9 +108,9 @@ update msg model =
                         |> Avatar.tick model.keys
                         |> Collider.collideAvatar model.world
 
-                ( screenBm, newWorld ) =
+                ( bitmap, newWorld ) =
                     model.world
-                        |> World.toScreenBitmapMemoized (Avatar.x newCharacter) (Avatar.y newCharacter)
+                        |> World.render newCharacter
             in
             ( { model
                 | character = newCharacter
@@ -119,12 +119,7 @@ update msg model =
             , Js.paintCanvas
                 Levers.colorLight
                 Levers.colorDark
-                (screenBm
-                    |> Bitmap.paintBitmap
-                        (Avatar.x newCharacter)
-                        (Avatar.y newCharacter)
-                        (Avatar.bitmap newCharacter)
-                )
+                bitmap
             )
 
         PressedKey key ->

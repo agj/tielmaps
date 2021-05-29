@@ -3,15 +3,16 @@ module World exposing
     , collider
     , currentScreen
     , height
+    , render
     , singleton
     , stitchHorizontally
     , tileHeight
     , tileWidth
-    , toScreenBitmapMemoized
     , width
     )
 
 import Array2d exposing (Array2d)
+import Avatar exposing (Avatar)
 import Bitmap exposing (Bitmap)
 import List.Extra as List
 import Maybe.Extra as Maybe
@@ -139,9 +140,15 @@ currentScreen x y (World { tileWidth_, tileHeight_, screenWidth_, screenHeight_,
     getScreenWrapping screens (x // screenPixelW) (y // screenPixelH)
 
 
-toScreenBitmapMemoized : Int -> Int -> World a b -> ( Bitmap, World a b )
-toScreenBitmapMemoized x y ((World ({ tileWidth_, tileHeight_, screenWidth_, screenHeight_, screens } as state)) as world) =
+render : Avatar c -> World a b -> ( Bitmap, World a b )
+render avatar ((World ({ tileWidth_, tileHeight_, screenWidth_, screenHeight_, screens } as state)) as world) =
     let
+        x =
+            Avatar.x avatar
+
+        y =
+            Avatar.y avatar
+
         screenPixelW =
             screenWidth_ * tileWidth_
 
@@ -157,8 +164,12 @@ toScreenBitmapMemoized x y ((World ({ tileWidth_, tileHeight_, screenWidth_, scr
     case screenM of
         Just screen ->
             let
-                ( bitmap, newScreen ) =
+                ( bm, newScreen ) =
                     Screen.toBitmapMemoized screen
+
+                bitmap =
+                    bm
+                        |> Bitmap.paintBitmap (modBy screenPixelW x) (modBy screenPixelH y) (Avatar.bitmap avatar)
             in
             ( bitmap, World { state | screens = Array2d.set screenX screenY newScreen screens } )
 
