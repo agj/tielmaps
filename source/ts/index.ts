@@ -1,4 +1,4 @@
-import { Bitmap, ColorsAndBitmap, Elm, Pixel } from "../elm/Main.elm";
+import { Bitmap, PaintCanvasInstructions, Elm, Pixel } from "../elm/Main.elm";
 
 const app = Elm.Main.init({
   node: document.getElementById("elm"),
@@ -23,8 +23,9 @@ const paintCanvas = ({
   lightColor,
   darkColor,
   bitmap: { width, height, pixels },
-}: ColorsAndBitmap): void => {
-  const canvas = document.getElementById("canvas");
+  canvasId,
+}: PaintCanvasInstructions): void => {
+  const canvas = document.getElementById(canvasId);
 
   if (canvas instanceof HTMLCanvasElement) {
     const ctx = canvas.getContext("2d");

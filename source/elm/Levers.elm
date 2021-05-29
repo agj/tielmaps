@@ -1,5 +1,6 @@
 module Levers exposing
-    ( colorDark
+    ( canvasId
+    , colorDark
     , colorLight
     , framesPerSecond
     , gravity
@@ -88,6 +89,11 @@ colorLight =
 colorDark : Color
 colorDark =
     Color.hsl (deg 30.7) (pc 100) (pc 54.6)
+
+
+canvasId : String
+canvasId =
+    "canvas"
 
 
 

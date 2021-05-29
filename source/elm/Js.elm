@@ -3,6 +3,7 @@ port module Js exposing (paintCanvas)
 import Bitmap exposing (Bitmap)
 import Color exposing (Color)
 import Json.Encode as E
+import Levers
 
 
 paintCanvas : Color -> Color -> Bitmap -> Cmd msg
@@ -34,6 +35,7 @@ encodeBitmapAndColors lightColor darkColor bm =
         , ( "bitmap"
           , Bitmap.encode bm
           )
+        , ( "canvasId", E.string Levers.canvasId )
         ]
 
 

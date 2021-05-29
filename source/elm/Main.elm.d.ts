@@ -47,15 +47,16 @@ export type Action = PaintCanvasAction;
 
 export type PaintCanvasAction = {
   readonly kind: "paintCanvas";
-  readonly value: ColorsAndBitmap;
+  readonly value: PaintCanvasInstructions;
 };
 
 // Values
 
-export type ColorsAndBitmap = {
+export type PaintCanvasInstructions = {
   readonly lightColor: Color;
   readonly darkColor: Color;
   readonly bitmap: Bitmap;
+  readonly canvasId: string;
 };
 
 export type Color = {

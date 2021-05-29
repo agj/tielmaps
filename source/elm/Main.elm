@@ -164,10 +164,6 @@ globalStyles =
             , padding (px 0)
             , Css.height (pct 100)
             ]
-        , selector "canvas"
-            [ property "image-rendering" "crisp-edges"
-            , property "image-rendering" "pixelated"
-            ]
         ]
 
 
@@ -186,11 +182,13 @@ mainView scale_ =
             ]
         ]
         [ canvas
-            [ id "canvas"
+            [ id Levers.canvasId
             , width Levers.screenWidth
             , height Levers.screenHeight
             , css
                 [ transform (scale (toFloat scale_))
+                , property "image-rendering" "crisp-edges"
+                , property "image-rendering" "pixelated"
                 ]
             ]
             []
