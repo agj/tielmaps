@@ -68,16 +68,13 @@ stitchArray2dX a b =
         let
             aWidth =
                 Array2d.width a
-                    |> Debug.log "aWidth"
 
             fullWidth =
                 aWidth
                     + Array2d.width b
-                    |> Debug.log "fullWidth"
 
             height_ =
                 Array2d.height a
-                    |> Debug.log "height"
 
             listX =
                 List.range 0 (fullWidth - 1)
@@ -144,10 +141,10 @@ render : Avatar c -> World a b -> ( Bitmap, World a b )
 render avatar ((World ({ tileWidth_, tileHeight_, screenWidth_, screenHeight_, screens } as state)) as world) =
     let
         x =
-            Avatar.x avatar
+            Avatar.baseX avatar
 
         y =
-            Avatar.y avatar
+            Avatar.baseY avatar
 
         screenPixelW =
             screenWidth_ * tileWidth_
@@ -167,9 +164,18 @@ render avatar ((World ({ tileWidth_, tileHeight_, screenWidth_, screenHeight_, s
                 ( bm, newScreen ) =
                     Screen.toBitmapMemoized screen
 
+                xOffset =
+                    x - modBy screenPixelW x
+
+                yOffset =
+                    y - modBy screenPixelW y
+
                 bitmap =
                     bm
-                        |> Bitmap.paintBitmap (modBy screenPixelW x) (modBy screenPixelH y) (Avatar.bitmap avatar)
+                        |> Bitmap.paintBitmap
+                            (Avatar.topLeftX avatar - xOffset)
+                            (Avatar.topLeftY avatar - yOffset)
+                            (Avatar.bitmap avatar)
             in
             ( bitmap, World { state | screens = Array2d.set screenX screenY newScreen screens } )
 

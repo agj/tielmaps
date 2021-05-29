@@ -74,7 +74,7 @@ init flags =
                     , top = 2
                 }
                 Sprites.avatarSprites
-                |> Avatar.reposition (1 * Levers.tileWidth) (1 * Levers.tileHeight)
+                |> Avatar.repositionTopLeft (1 * Levers.tileWidth) (1 * Levers.tileHeight)
       , keys = Keys.empty
       , scale = getScale flags.viewport
       }

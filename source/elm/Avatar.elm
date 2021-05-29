@@ -1,13 +1,15 @@
 module Avatar exposing
     ( Avatar
+    , baseX
+    , baseY
     , bitmap
     , collide
     , fromSprite
     , fromSprites
-    , reposition
+    , repositionTopLeft
     , tick
-    , x
-    , y
+    , topLeftX
+    , topLeftY
     )
 
 import Avatar.AvatarSprites as AvatarSprites exposing (AvatarSprites)
@@ -42,12 +44,14 @@ type CanJumpStatus
 
 type alias Data a =
     { sprites_ : AvatarSprites a
-    , x_ : Int
-    , y_ : Int
+    , x : Int
+    , y : Int
     , prevX : Int
     , prevY : Int
     , width_ : Int
     , height_ : Int
+    , baseOffsetX : Int
+    , baseOffsetY : Int
     , padding : Padding
     , motion : Motion
     , pose : Pose
@@ -86,14 +90,23 @@ how far into the Sprite should the collision box be calculated.
 -}
 fromSprites : Padding -> AvatarSprites a -> Avatar a
 fromSprites padding sprs =
+    let
+        width_ =
+            Sprite.width sprs.standingRight
+
+        height_ =
+            Sprite.height sprs.standingRight
+    in
     Avatar
         { sprites_ = sprs
-        , x_ = 0
-        , y_ = 0
+        , x = 0
+        , y = 0
         , prevX = 0
         , prevY = 0
-        , width_ = Sprite.width sprs.standingRight
-        , height_ = Sprite.height sprs.standingRight
+        , width_ = width_
+        , height_ = height_
+        , baseOffsetX = padding.left + round (toFloat (width_ - padding.left - padding.right) / 2)
+        , baseOffsetY = height_ - padding.bottom
         , padding = padding
         , motion = Falling CanJump
         , pose = PoseStanding
@@ -110,14 +123,24 @@ bitmap avatar =
     Sprite.bitmap (currentSprite avatar)
 
 
-x : Avatar a -> Int
-x (Avatar { x_ }) =
-    x_
+topLeftX : Avatar a -> Int
+topLeftX (Avatar { x }) =
+    x
 
 
-y : Avatar a -> Int
-y (Avatar { y_ }) =
-    y_
+topLeftY : Avatar a -> Int
+topLeftY (Avatar { y }) =
+    y
+
+
+baseX : Avatar a -> Int
+baseX (Avatar { x, baseOffsetX }) =
+    x + baseOffsetX
+
+
+baseY : Avatar a -> Int
+baseY (Avatar { y, baseOffsetY }) =
+    y + baseOffsetY
 
 
 
@@ -128,26 +151,26 @@ y (Avatar { y_ }) =
 Takes care of gravity, jumping and left-right movement.
 -}
 tick : Keys -> Avatar a -> Avatar a
-tick keys (Avatar ({ y_, x_, prevX, motion, facing } as data)) =
+tick keys (Avatar ({ y, x, prevX, motion, facing } as data)) =
     let
         newX =
             case Keys.direction keys of
                 Keys.Static ->
-                    x_
+                    x
 
                 Keys.Left ->
-                    x_ - Levers.runSpeed
+                    x - Levers.runSpeed
 
                 Keys.Right ->
-                    x_ + Levers.runSpeed
+                    x + Levers.runSpeed
 
         newY =
             case newMotion of
                 Jumping _ ->
-                    y_ - Levers.jumpSpeed
+                    y - Levers.jumpSpeed
 
                 _ ->
-                    y_ + Levers.gravity
+                    y + Levers.gravity
 
         newMotion =
             -- The next position is always either Jumping or Falling.
@@ -191,8 +214,8 @@ tick keys (Avatar ({ y_, x_, prevX, motion, facing } as data)) =
     in
     Avatar
         { data
-            | x_ = newX
-            , y_ = newY
+            | x = newX
+            , y = newY
             , motion = newMotion
             , pose = getPose newMotion newX prevX
             , facing = getFacing facing newX prevX
@@ -202,12 +225,12 @@ tick keys (Avatar ({ y_, x_, prevX, motion, facing } as data)) =
 
 {-| Moves the Avatar to a new point given its x and y coordinates.
 -}
-reposition : Int -> Int -> Avatar a -> Avatar a
-reposition newX newY (Avatar data) =
+repositionTopLeft : Int -> Int -> Avatar a -> Avatar a
+repositionTopLeft newX newY (Avatar data) =
     Avatar
         { data
-            | x_ = newX
-            , y_ = newY
+            | x = newX
+            , y = newY
             , prevX = newX
             , prevY = newY
         }
@@ -218,12 +241,12 @@ It should normally be called from within `Collider.collideAvatar`,
 which you should call every tick after calling `tick`.
 -}
 collide : Collider.Callback -> Avatar b -> Avatar b
-collide collider (Avatar ({ x_, y_, prevX, prevY, width_, height_, motion, padding } as data)) =
+collide collider (Avatar ({ x, y, prevX, prevY, width_, height_, motion, padding } as data)) =
     let
         ( newXPre, newYPre ) =
             collider
-                { x = x_ + padding.left
-                , y = y_ + padding.top
+                { x = x + padding.left
+                , y = y + padding.top
                 , prevX = prevX + padding.left
                 , prevY = prevY + padding.top
                 , width = width_ - padding.left - padding.right
@@ -238,12 +261,12 @@ collide collider (Avatar ({ x_, y_, prevX, prevY, width_, height_, motion, paddi
     in
     Avatar
         { data
-            | x_ = newX
-            , y_ = newY
+            | x = newX
+            , y = newY
             , prevX = newX
             , prevY = newY
             , motion =
-                if newY < y_ then
+                if newY < y then
                     -- Collider bounced us back up.
                     case motion of
                         OnGround canJumpStatus ->
@@ -256,7 +279,7 @@ collide collider (Avatar ({ x_, y_, prevX, prevY, width_, height_, motion, paddi
                             -- Normally, this should never occur.
                             OnGround CannotJump
 
-                else if newY > y_ then
+                else if newY > y then
                     -- Collider bounced us back down.
                     Falling CannotJump
 
