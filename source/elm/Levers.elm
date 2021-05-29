@@ -78,7 +78,7 @@ jumpSpeed =
 
 jumpDuration : Frames
 jumpDuration =
-    10
+    12
 
 
 colorLight : Color

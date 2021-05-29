@@ -8,7 +8,13 @@ import World exposing (World)
 
 testWorld : World Size22x22 Size8x8
 testWorld =
-    World.stitchHorizontally
-        (World.singleton Screens.testScreen1)
+    World.stitchVertically
         (World.singleton Screens.testScreen2)
+        (World.singleton Screens.testScreen1)
+        |> Maybe.andThen
+            (\w ->
+                World.stitchVertically
+                    (World.singleton Screens.testScreen3)
+                    w
+            )
         |> Maybe.withDefault (World.singleton Screen.error22x22)
