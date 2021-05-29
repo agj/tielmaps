@@ -4,6 +4,7 @@ module Bitmap exposing
     , encode
     , error
     , flipX
+    , flipY
     , fromString
     , height
     , paintBitmap
@@ -227,6 +228,13 @@ flipX ((Bitmap w _ _) as bm) =
     bm
         |> transform
             (\x y -> ( w - x - 1, y ))
+
+
+flipY : Bitmap -> Bitmap
+flipY ((Bitmap _ h _) as bm) =
+    bm
+        |> transform
+            (\x y -> ( x, h - y - 1 ))
 
 
 transform : (Int -> Int -> ( Int, Int )) -> Bitmap -> Bitmap

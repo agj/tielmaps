@@ -1,4 +1,19 @@
-module Assets.Tiles exposing (..)
+module Assets.Tiles exposing
+    ( bottomLeftCurvedSolid
+    , brick
+    , bush
+    , dirt
+    , empty
+    , hollow
+    , pillarBottom
+    , pillarMiddle
+    , pillarTop
+    , rightCurvedSolid
+    , solid
+    , topCurvedSolid
+    , topLeftCurvedSolid
+    , topRightCurvedSolid
+    )
 
 import Bitmap exposing (Bitmap)
 import Bitmap.Color as Color
@@ -18,8 +33,6 @@ empty =
     . . . . . . . .
     . . . . . . . .
     """
-        |> Bitmap.fromString Color.defaultMap
-        |> Maybe.withDefault Bitmap.error
         |> toTile
 
 
@@ -35,8 +48,36 @@ solid =
     █ █ █ █ █ █ █ █
     █ █ █ █ █ █ █ █
     """
-        |> Bitmap.fromString Color.defaultMap
-        |> Maybe.withDefault Bitmap.error
+        |> toTile
+
+
+dirt : Tile Size8x8
+dirt =
+    """
+    █ █ █ █ █ █ █ █
+    █ █ . █ █ █ █ █
+    █ . . . █ █ █ █
+    █ █ . █ █ █ █ .
+    █ █ █ █ █ █ █ █
+    █ . █ █ █ █ █ █
+    █ █ █ █ █ . █ █
+    █ █ █ █ █ █ █ █
+    """
+        |> toTile
+
+
+brick : Tile Size8x8
+brick =
+    """
+    █ █ █ █ █ █ █ .
+    █ █ █ █ █ █ █ .
+    █ █ █ █ █ █ █ .
+    . . . . . . . .
+    █ █ █ . █ █ █ █
+    █ █ █ . █ █ █ █
+    █ █ █ . █ █ █ █
+    . . . . . . . .
+    """
         |> toTile
 
 
@@ -52,41 +93,82 @@ hollow =
     █ . . . . . . █
     . █ █ █ █ █ █ .
     """
-        |> Bitmap.fromString Color.defaultMap
-        |> Maybe.withDefault Bitmap.error
         |> toTile
 
 
 topLeftCurvedSolid : Tile Size8x8
 topLeftCurvedSolid =
     topLeftCurvedSolidBitmap
-        |> toTile
+        |> bitmapToTile
 
 
 topRightCurvedSolid : Tile Size8x8
 topRightCurvedSolid =
     topLeftCurvedSolidBitmap
         |> Bitmap.rotateClockwise
-        |> toTile
+        |> bitmapToTile
 
 
 bottomLeftCurvedSolid : Tile Size8x8
 bottomLeftCurvedSolid =
     topLeftCurvedSolidBitmap
         |> Bitmap.rotateCounterClockwise
-        |> toTile
+        |> bitmapToTile
 
 
 topCurvedSolid : Tile Size8x8
 topCurvedSolid =
     topCurvedSolidBitmap
-        |> toTile
+        |> bitmapToTile
 
 
 rightCurvedSolid : Tile Size8x8
 rightCurvedSolid =
     topCurvedSolidBitmap
         |> Bitmap.rotateClockwise
+        |> bitmapToTile
+
+
+pillarMiddle : Tile Size8x8
+pillarMiddle =
+    """
+    . █ . . . . █ .
+    . █ . . . . █ .
+    . █ . . . . █ .
+    . █ . . . . █ .
+    . █ . . . . █ .
+    . █ . . . . █ .
+    . █ . . . . █ .
+    . █ . . . . █ .
+    """
+        |> toTile
+
+
+pillarTop : Tile Size8x8
+pillarTop =
+    pillarTopBitmap
+        |> bitmapToTile
+
+
+pillarBottom : Tile Size8x8
+pillarBottom =
+    pillarTopBitmap
+        |> Bitmap.flipY
+        |> bitmapToTile
+
+
+bush : Tile Size8x8
+bush =
+    """
+    . . . . . . . .
+    . . . . . . . .
+    . . █ █ █ █ . .
+    . █ . . . . █ .
+    █ . . . . █ . █
+    █ . . . . . . █
+    █ . . █ . . . █
+    . █ . . . . █ .
+    """
         |> toTile
 
 
@@ -126,6 +208,30 @@ topCurvedSolidBitmap =
         |> Maybe.withDefault Bitmap.error
 
 
-toTile : Bitmap -> Tile Size8x8
-toTile =
+pillarTopBitmap : Bitmap
+pillarTopBitmap =
+    """
+    █ . . . . . . █
+    . █ █ █ █ █ █ .
+    . █ . . . . █ .
+    . █ . . . . █ .
+    . █ . . . . █ .
+    . █ . . . . █ .
+    . █ . . . . █ .
+    . █ . . . . █ .
+    """
+        |> Bitmap.fromString Color.defaultMap
+        |> Maybe.withDefault Bitmap.error
+
+
+bitmapToTile : Bitmap -> Tile Size8x8
+bitmapToTile =
     Tile.make8x8 >> Maybe.withDefault Tile.error8x8
+
+
+toTile : String -> Tile Size8x8
+toTile string =
+    string
+        |> Bitmap.fromString Color.defaultMap
+        |> Maybe.withDefault Bitmap.error
+        |> bitmapToTile
