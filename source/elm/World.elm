@@ -44,20 +44,16 @@ singleton screen =
         { screens = Array2d.repeat 1 1 screen
         , tileWidth_ = tileWidth_
         , tileHeight_ = tileHeight_
-        , screenWidthInTiles = Screen.width screen
-        , screenHeightInTiles = Screen.height screen
-        , screenWidthInPixels = Screen.width screen * tileWidth_
-        , screenHeightInPixels = Screen.height screen * tileHeight_
+        , screenWidthInTiles = Screen.widthInTiles screen
+        , screenHeightInTiles = Screen.heightInTiles screen
+        , screenWidthInPixels = Screen.widthInTiles screen * tileWidth_
+        , screenHeightInPixels = Screen.heightInTiles screen * tileHeight_
         }
 
 
 stitchHorizontally : World a b -> World a b -> Maybe (World a b)
 stitchHorizontally (World dataA) (World dataB) =
-    let
-        stitchedScreensM =
-            stitchArray2dX dataA.screens dataB.screens
-    in
-    case stitchedScreensM of
+    case stitchArray2dX dataA.screens dataB.screens of
         Just stitchedScreens ->
             Just
                 (World

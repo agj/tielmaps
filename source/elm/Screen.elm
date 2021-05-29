@@ -3,14 +3,14 @@ module Screen exposing
     , collider
     , empty22x22
     , error22x22
-    , height
+    , heightInTiles
     , make22x22
     , solid22x22
     , tileHeight
     , tileWidth
     , tilemap
     , toBitmapMemoized
-    , width
+    , widthInTiles
     )
 
 import Bitmap exposing (Bitmap)
@@ -28,8 +28,8 @@ type Screen mapSize tileSize
         , collisionLayer_ : CollisionLayer
         , tileWidth_ : Int
         , tileHeight_ : Int
-        , width_ : Int
-        , height_ : Int
+        , widthInTiles_ : Int
+        , heightInTiles_ : Int
         }
 
 
@@ -58,8 +58,8 @@ make22x22 m coll =
                 , collisionLayer_ = coll
                 , tileWidth_ = Tilemap.tileWidth m
                 , tileHeight_ = Tilemap.tileHeight m
-                , width_ = width_
-                , height_ = height_
+                , widthInTiles_ = width_
+                , heightInTiles_ = height_
                 }
             )
 
@@ -74,8 +74,8 @@ empty22x22 =
         , collisionLayer_ = CollisionLayer.empty 22 22
         , tileWidth_ = 8
         , tileHeight_ = 8
-        , width_ = 22
-        , height_ = 22
+        , widthInTiles_ = 22
+        , heightInTiles_ = 22
         }
 
 
@@ -86,8 +86,8 @@ solid22x22 =
         , collisionLayer_ = CollisionLayer.solid 22 22
         , tileWidth_ = 8
         , tileHeight_ = 8
-        , width_ = 22
-        , height_ = 22
+        , widthInTiles_ = 22
+        , heightInTiles_ = 22
         }
 
 
@@ -98,8 +98,8 @@ error22x22 =
         , collisionLayer_ = CollisionLayer.empty 22 22
         , tileWidth_ = 8
         , tileHeight_ = 8
-        , width_ = 22
-        , height_ = 22
+        , widthInTiles_ = 22
+        , heightInTiles_ = 22
         }
 
 
@@ -123,14 +123,14 @@ tileHeight (Screen { tileHeight_ }) =
     tileHeight_
 
 
-width : Screen a b -> Int
-width (Screen { width_ }) =
-    width_
+widthInTiles : Screen a b -> Int
+widthInTiles (Screen { widthInTiles_ }) =
+    widthInTiles_
 
 
-height : Screen a b -> Int
-height (Screen { height_ }) =
-    height_
+heightInTiles : Screen a b -> Int
+heightInTiles (Screen { heightInTiles_ }) =
+    heightInTiles_
 
 
 toBitmapMemoized : Screen a b -> ( Bitmap, Screen a b )
