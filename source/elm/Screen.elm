@@ -28,8 +28,6 @@ type Screen mapSize tileSize
         , collisionLayer_ : CollisionLayer
         , tileWidth_ : Int
         , tileHeight_ : Int
-        , widthInTiles_ : Int
-        , heightInTiles_ : Int
         }
 
 
@@ -58,8 +56,6 @@ make22x22 m coll =
                 , collisionLayer_ = coll
                 , tileWidth_ = Tilemap.tileWidth m
                 , tileHeight_ = Tilemap.tileHeight m
-                , widthInTiles_ = width_
-                , heightInTiles_ = height_
                 }
             )
 
@@ -74,8 +70,6 @@ empty22x22 =
         , collisionLayer_ = CollisionLayer.empty 22 22
         , tileWidth_ = 8
         , tileHeight_ = 8
-        , widthInTiles_ = 22
-        , heightInTiles_ = 22
         }
 
 
@@ -86,8 +80,6 @@ solid22x22 =
         , collisionLayer_ = CollisionLayer.solid 22 22
         , tileWidth_ = 8
         , tileHeight_ = 8
-        , widthInTiles_ = 22
-        , heightInTiles_ = 22
         }
 
 
@@ -98,8 +90,6 @@ error22x22 =
         , collisionLayer_ = CollisionLayer.empty 22 22
         , tileWidth_ = 8
         , tileHeight_ = 8
-        , widthInTiles_ = 22
-        , heightInTiles_ = 22
         }
 
 
@@ -124,13 +114,13 @@ tileHeight (Screen { tileHeight_ }) =
 
 
 widthInTiles : Screen a b -> Int
-widthInTiles (Screen { widthInTiles_ }) =
-    widthInTiles_
+widthInTiles (Screen { tilemap_ }) =
+    Tilemap.width tilemap_
 
 
 heightInTiles : Screen a b -> Int
-heightInTiles (Screen { heightInTiles_ }) =
-    heightInTiles_
+heightInTiles (Screen { tilemap_ }) =
+    Tilemap.height tilemap_
 
 
 toBitmapMemoized : Screen a b -> ( Bitmap, Screen a b )
