@@ -109,7 +109,7 @@ testCollisionLayer1 =
 
 testCollisionLayer2 : CollisionLayer
 testCollisionLayer2 =
-    tilemapString1
+    tilemapString2
         |> CollisionLayer.fromString
             (Dict.keys charTiles |> List.filter ((/=) '.'))
         |> Maybe.withDefault (CollisionLayer.empty Levers.screenWidthTiles Levers.screenHeightTiles)
