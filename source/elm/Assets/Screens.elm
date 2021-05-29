@@ -11,26 +11,6 @@ import Tilemap exposing (Tilemap)
 
 testScreen1 : Screen Size22x22 Size8x8
 testScreen1 =
-    Screen.make22x22
-        testTilemap1
-        testCollisionLayer1
-        |> Maybe.withDefault Screen.error22x22
-
-
-testScreen2 : Screen Size22x22 Size8x8
-testScreen2 =
-    Screen.make22x22
-        testTilemap2
-        testCollisionLayer2
-        |> Maybe.withDefault Screen.error22x22
-
-
-
--- INTERNAL
-
-
-tilemapString1 : String
-tilemapString1 =
     """
     █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █
     █ . . . . . . . . . . . . . . . . . . . . █
@@ -55,10 +35,11 @@ tilemapString1 =
     . . . . . . . . . . . . . . . . . . . . . .
     █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █
     """
+        |> toScreen
 
 
-tilemapString2 : String
-tilemapString2 =
+testScreen2 : Screen Size22x22 Size8x8
+testScreen2 =
     """
     █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █
     █ . . . . . . . . . . . . . . . . . . . . █
@@ -83,36 +64,28 @@ tilemapString2 =
     . . . . . . . . . . . . . . . . . . . . . .
     █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █
     """
+        |> toScreen
 
 
-testTilemap1 : Tilemap Size8x8
-testTilemap1 =
-    tilemapString1
-        |> Tilemap.fromString charTiles
-        |> Maybe.withDefault (Tilemap.empty8x8Tile 0 0)
+
+-- INTERNAL
 
 
-testTilemap2 : Tilemap Size8x8
-testTilemap2 =
-    tilemapString2
-        |> Tilemap.fromString charTiles
-        |> Maybe.withDefault (Tilemap.empty8x8Tile 0 0)
+toScreen string =
+    let
+        tilemap =
+            string
+                |> Tilemap.fromString charTiles
+                |> Maybe.withDefault (Tilemap.empty8x8Tile 0 0)
 
-
-testCollisionLayer1 : CollisionLayer
-testCollisionLayer1 =
-    tilemapString1
-        |> CollisionLayer.fromString
-            (Dict.keys charTiles |> List.filter ((/=) '.'))
-        |> Maybe.withDefault (CollisionLayer.empty Levers.screenWidthTiles Levers.screenHeightTiles)
-
-
-testCollisionLayer2 : CollisionLayer
-testCollisionLayer2 =
-    tilemapString2
-        |> CollisionLayer.fromString
-            (Dict.keys charTiles |> List.filter ((/=) '.'))
-        |> Maybe.withDefault (CollisionLayer.empty Levers.screenWidthTiles Levers.screenHeightTiles)
+        collisionLayer =
+            string
+                |> CollisionLayer.fromString
+                    (Dict.keys charTiles |> List.filter ((/=) '.'))
+                |> Maybe.withDefault (CollisionLayer.empty Levers.screenWidthTiles Levers.screenHeightTiles)
+    in
+    Screen.make22x22 tilemap collisionLayer
+        |> Maybe.withDefault Screen.error22x22
 
 
 charTiles =
