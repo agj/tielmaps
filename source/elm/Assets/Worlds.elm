@@ -7,4 +7,4 @@ import World exposing (World)
 
 testWorld : World Size22x22 Size8x8
 testWorld =
-    World.singleton Screens.testScreen
+    World.singleton Screens.testScreen1
