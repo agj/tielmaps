@@ -2,6 +2,7 @@ module World exposing
     ( World
     , collider
     , currentScreen
+    , fromArray2d
     , heightInScreens
     , render
     , singleton
@@ -50,6 +51,33 @@ singleton screen =
         , screenWidthInPixels = Screen.widthInTiles screen * tileWidth_
         , screenHeightInPixels = Screen.heightInTiles screen * tileHeight_
         }
+
+
+fromArray2d : Array2d (Screen a b) -> Maybe (World a b)
+fromArray2d screens =
+    case Array2d.get 0 0 screens of
+        Just screen ->
+            let
+                tileWidth_ =
+                    Screen.tileWidth screen
+
+                tileHeight_ =
+                    Screen.tileHeight screen
+            in
+            Just
+                (World
+                    { screens = screens
+                    , tileWidth_ = tileWidth_
+                    , tileHeight_ = tileHeight_
+                    , screenWidthInTiles = Screen.widthInTiles screen
+                    , screenHeightInTiles = Screen.heightInTiles screen
+                    , screenWidthInPixels = Screen.widthInTiles screen * tileWidth_
+                    , screenHeightInPixels = Screen.heightInTiles screen * tileHeight_
+                    }
+                )
+
+        Nothing ->
+            Nothing
 
 
 stitchHorizontally : World a b -> World a b -> Maybe (World a b)
