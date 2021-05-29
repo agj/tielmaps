@@ -93,7 +93,7 @@ tileHeight (World { tileHeight_ }) =
 
 currentScreen : Int -> Int -> World a b -> Maybe (Screen a b)
 currentScreen x y (World { screenWidthInPixels, screenHeightInPixels, screens }) =
-    getScreenWrapping screens (x // screenWidthInPixels) (y // screenHeightInPixels)
+    getScreenWrapping screens screenWidthInPixels screenHeightInPixels x y
 
 
 render : Avatar c -> World a b -> ( Bitmap, World a b )
@@ -106,7 +106,7 @@ render avatar ((World ({ screenWidthInPixels, screenHeightInPixels, screens } as
             Avatar.baseY avatar
 
         ( screenX, screenY ) =
-            getScreenPosWrapping screens (x // screenWidthInPixels) (y // screenHeightInPixels)
+            getScreenPosWrapping screens screenWidthInPixels screenHeightInPixels x y
 
         screenM =
             Array2d.get screenX screenY screens
@@ -140,7 +140,7 @@ collider : World a b -> Int -> Int -> Bool
 collider (World { screenWidthInPixels, screenHeightInPixels, screens }) x y =
     let
         screenM =
-            getScreenWrapping screens (x // screenWidthInPixels) (y // screenHeightInPixels)
+            getScreenWrapping screens screenWidthInPixels screenHeightInPixels x y
     in
     case screenM of
         Just screen ->
@@ -154,26 +154,32 @@ collider (World { screenWidthInPixels, screenHeightInPixels, screens }) x y =
 -- INTERNAL
 
 
-getScreenWrapping : Array2d (Screen a b) -> Int -> Int -> Maybe (Screen a b)
-getScreenWrapping screens x_ y_ =
+getScreenWrapping : Array2d (Screen a b) -> Int -> Int -> Int -> Int -> Maybe (Screen a b)
+getScreenWrapping screens screenWidthInPixels screenHeightInPixels x_ y_ =
     let
         ( x, y ) =
-            getScreenPosWrapping screens x_ y_
+            getScreenPosWrapping screens screenWidthInPixels screenHeightInPixels x_ y_
     in
     Array2d.get x y screens
 
 
-getScreenPosWrapping : Array2d (Screen a b) -> Int -> Int -> ( Int, Int )
-getScreenPosWrapping screens x_ y_ =
+getScreenPosWrapping : Array2d (Screen a b) -> Int -> Int -> Int -> Int -> ( Int, Int )
+getScreenPosWrapping screens screenWidthInPixels screenHeightInPixels x_ y_ =
     let
+        x =
+            floor (toFloat x_ / toFloat screenWidthInPixels)
+
+        y =
+            floor (toFloat y_ / toFloat screenHeightInPixels)
+
         w =
             Array2d.width screens
 
         h =
             Array2d.height screens
     in
-    ( modBy w x_
-    , modBy h y_
+    ( modBy w x
+    , modBy h y
     )
 
 
