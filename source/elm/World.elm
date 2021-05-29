@@ -4,6 +4,7 @@ module World exposing
     , currentScreen
     , height
     , singleton
+    , stitchHorizontally
     , tileHeight
     , tileWidth
     , toScreenBitmapMemoized
@@ -12,6 +13,8 @@ module World exposing
 
 import Array2d exposing (Array2d)
 import Bitmap exposing (Bitmap)
+import List.Extra as List
+import Maybe.Extra as Maybe
 import Screen exposing (Screen)
 
 
@@ -36,13 +39,72 @@ singleton screen =
         }
 
 
+stitchHorizontally : World a b -> World a b -> Maybe (World a b)
+stitchHorizontally ((World dataA) as wa) ((World dataB) as wb) =
+    let
+        stitchedScreensM =
+            stitchArray2dX dataA.screens dataB.screens
+    in
+    case stitchedScreensM of
+        Just stitchedScreens ->
+            Just
+                (World
+                    { screens = stitchedScreens
+                    , tileWidth_ = dataA.tileWidth_
+                    , tileHeight_ = dataA.tileHeight_
+                    , screenWidth_ = dataA.screenWidth_
+                    , screenHeight_ = dataA.screenHeight_
+                    }
+                )
 
--- stitchHorizontally : World a b -> World a b -> Maybe (World a b)
--- stitchHorizontally wa wb =
---     if height wa == height wb then
---         Nothing
---     else
---         Nothing
+        Nothing ->
+            Nothing
+
+
+stitchArray2dX : Array2d a -> Array2d a -> Maybe (Array2d a)
+stitchArray2dX a b =
+    if Array2d.height a == Array2d.height b then
+        let
+            aWidth =
+                Array2d.width a
+                    |> Debug.log "aWidth"
+
+            fullWidth =
+                aWidth
+                    + Array2d.width b
+                    |> Debug.log "fullWidth"
+
+            height_ =
+                Array2d.height a
+                    |> Debug.log "height"
+
+            listX =
+                List.range 0 (fullWidth - 1)
+
+            listY =
+                List.range 0 (height_ - 1)
+        in
+        listX
+            |> List.foldl
+                (\x r ->
+                    r
+                        ++ (listY
+                                |> List.map
+                                    (\y ->
+                                        if x < aWidth then
+                                            Array2d.get x y a
+
+                                        else
+                                            Array2d.get (x - aWidth) y b
+                                    )
+                           )
+                )
+                []
+            |> Maybe.combine
+            |> Maybe.andThen (Array2d.fromList fullWidth)
+
+    else
+        Nothing
 
 
 width : World a b -> Int
@@ -66,15 +128,28 @@ tileHeight (World { tileHeight_ }) =
 
 
 currentScreen : Int -> Int -> World a b -> Maybe (Screen a b)
-currentScreen x y (World { tileWidth_, tileHeight_, screens }) =
-    getScreenWrapping screens (x // tileWidth_) (y // tileHeight_)
+currentScreen x y (World { tileWidth_, tileHeight_, screenWidth_, screenHeight_, screens }) =
+    let
+        screenPixelW =
+            screenWidth_ * tileWidth_
+
+        screenPixelH =
+            screenHeight_ * tileHeight_
+    in
+    getScreenWrapping screens (x // screenPixelW) (y // screenPixelH)
 
 
 toScreenBitmapMemoized : Int -> Int -> World a b -> ( Bitmap, World a b )
-toScreenBitmapMemoized x y ((World ({ tileWidth_, tileHeight_, screens } as state)) as world) =
+toScreenBitmapMemoized x y ((World ({ tileWidth_, tileHeight_, screenWidth_, screenHeight_, screens } as state)) as world) =
     let
+        screenPixelW =
+            screenWidth_ * tileWidth_
+
+        screenPixelH =
+            screenHeight_ * tileHeight_
+
         ( screenX, screenY ) =
-            getScreenPosWrapping screens (x // tileWidth_) (y // tileWidth_)
+            getScreenPosWrapping screens (x // screenPixelW) (y // screenPixelH)
 
         screenM =
             Array2d.get screenX screenY screens
