@@ -3,6 +3,8 @@ module Assets.Tiles exposing
     , brick
     , bush
     , dirt
+    , doorBottom
+    , doorTop
     , empty
     , grass
     , hollow
@@ -199,6 +201,36 @@ bush =
     █ . . . . █ . █
     █ . . . . . . █
     █ . . █ . . . █
+    . █ . . . . █ .
+    """
+        |> toTile
+
+
+doorTop : Tile Size8x8
+doorTop =
+    """
+    . . . . . . . .
+    . . . . . . . .
+    . . . . . . . .
+    . █ . █ █ . █ .
+    █ . █ █ █ █ . █
+    . █ . . . . █ .
+    █ █ . . . . █ █
+    . █ . . . . █ .
+    """
+        |> toTile
+
+
+doorBottom : Tile Size8x8
+doorBottom =
+    """
+    █ █ . . . . █ █
+    . █ . . . . █ .
+    █ █ . . █ █ █ █
+    . █ . . █ █ █ .
+    █ █ . . . . █ █
+    . █ . . . . █ .
+    █ █ . . . . █ █
     . █ . . . . █ .
     """
         |> toTile
