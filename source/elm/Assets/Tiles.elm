@@ -4,12 +4,14 @@ module Assets.Tiles exposing
     , bush
     , dirt
     , empty
+    , grass
     , hollow
     , pillarBottom
     , pillarMiddle
     , pillarTop
     , rightCurvedSolid
     , solid
+    , stone
     , topCurvedSolid
     , topLeftCurvedSolid
     , topRightCurvedSolid
@@ -54,14 +56,29 @@ solid =
 dirt : Tile Size8x8
 dirt =
     """
+    █ █ █ █ █ █ . █
     █ █ █ █ █ █ █ █
-    █ █ . █ █ █ █ █
-    █ . . . █ █ █ █
-    █ █ . █ █ █ █ .
     █ █ █ █ █ █ █ █
-    █ . █ █ █ █ █ █
-    █ █ █ █ █ . █ █
+    █ █ █ █ . █ █ █
+    █ █ █ . . . █ █
+    █ . █ █ . █ █ █
     █ █ █ █ █ █ █ █
+    █ █ █ █ █ █ █ █
+    """
+        |> toTile
+
+
+grass : Tile Size8x8
+grass =
+    """
+    . █ █ . . █ █ .
+    █ . . █ █ . . █
+    . . . . █ . . █
+    █ . . . . . . .
+    . . . █ . . . █
+    █ █ █ █ █ █ █ █
+    █ █ █ █ █ █ █ █
+    █ . █ █ █ . █ █
     """
         |> toTile
 
@@ -69,14 +86,29 @@ dirt =
 brick : Tile Size8x8
 brick =
     """
-    █ █ █ █ █ █ █ .
-    █ █ █ █ █ █ █ .
-    █ █ █ █ █ █ █ .
+    █ █ . █ █ █ . █
+    █ █ . █ █ █ . █
+    █ █ . █ █ █ . █
     . . . . . . . .
-    █ █ █ . █ █ █ █
-    █ █ █ . █ █ █ █
-    █ █ █ . █ █ █ █
+    . █ █ █ . █ █ █
+    . █ █ █ . █ █ █
+    . █ █ █ . █ █ █
     . . . . . . . .
+    """
+        |> toTile
+
+
+stone : Tile Size8x8
+stone =
+    """
+    █ █ █ █ █ █ █ █
+    █ . . . . . . █
+    █ . █ █ █ █ . █
+    █ . █ █ █ █ . █
+    █ . █ █ . █ . █
+    █ . █ █ . █ . █
+    █ . . . . █ . █
+    █ █ █ █ █ █ █ █
     """
         |> toTile
 
