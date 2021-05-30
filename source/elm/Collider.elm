@@ -9,7 +9,7 @@ import World exposing (World)
 collideAvatar : World a b -> Avatar b -> Avatar b
 collideAvatar world avatar =
     let
-        collAt =
+        pointChecker =
             World.collider world
 
         tw =
@@ -18,7 +18,12 @@ collideAvatar world avatar =
         th =
             World.tileHeight world
     in
-    Avatar.collide (collider collAt tw th) avatar
+    collide tw th pointChecker Avatar.collide avatar
+
+
+collide : Int -> Int -> PointChecker -> (Collider -> movingObject -> movingObject) -> movingObject -> movingObject
+collide tileWidth tileHeight pointChecker collideFn movingObject =
+    collideFn (collider pointChecker tileWidth tileHeight) movingObject
 
 
 
