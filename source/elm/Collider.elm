@@ -6,7 +6,7 @@ import Point exposing (Point)
 import World exposing (World)
 
 
-collideAvatar : World a b -> Avatar b -> Avatar b
+collideAvatar : World a b -> Avatar c -> Avatar c
 collideAvatar world avatar =
     let
         pointChecker =
