@@ -1,12 +1,14 @@
 module Assets.Screens exposing (testScreen1, testScreen2, testScreen3, testScreen4, testScreen5, testScreen6)
 
 import Assets.Tiles as Tiles
-import CollisionLayer exposing (CollisionLayer)
+import CollisionLayer
+import Colors exposing (Colors)
 import Dict
 import Levers
+import Palette
 import Screen exposing (Screen)
 import Size exposing (Size22x22, Size8x8)
-import Tilemap exposing (Tilemap)
+import Tilemap
 
 
 testScreen6 : Screen Size22x22 Size8x8
@@ -35,7 +37,7 @@ testScreen6 =
     ▓ . . . . . . ◍ ◍ . ▯ ▓ . . . ▓ ▓ ▓ ▓ ▓ ▓ ▓
     ▓ . . . . . ▒ ▒ ▒ ▒ ▒ ▒ ▒ . . ▓ ▓ ▓ ▓ ▓ ▓ ▓
     """
-        |> toScreen
+        |> toScreen Palette.deepBlueSet
 
 
 testScreen5 : Screen Size22x22 Size8x8
@@ -64,7 +66,7 @@ testScreen5 =
     ▓ . . ▓ . . . . . . . . . . . ▚ ▚ ▚ ▚ ▚ ▚ ▚
     ▓ . ▀ ▓ . . . . . ▚ ▚ ▚ ▚ . . ▚ ▚ ▚ ▚ ▚ ▚ ▚
     """
-        |> toScreen
+        |> toScreen Palette.deepBlueSet
 
 
 testScreen4 : Screen Size22x22 Size8x8
@@ -93,7 +95,7 @@ testScreen4 =
     . . . . . . . . . . . . . . . . . . . . . .
     . . . . . . . . . . . ▀ ▀ ▀ ▀ . . . . . . .
     """
-        |> toScreen
+        |> toScreen Palette.sunsetSet
 
 
 testScreen3 : Screen Size22x22 Size8x8
@@ -122,7 +124,7 @@ testScreen3 =
     . . ▓ ▓ . . . . . . . . . . . . . . . . . .
     . . ▓ ▒ ▒ ▒ ▒ . . . . . . . . . . . . . . .
     """
-        |> toScreen
+        |> toScreen Palette.sunsetSet
 
 
 testScreen2 : Screen Size22x22 Size8x8
@@ -151,7 +153,7 @@ testScreen2 =
     . . . . . . ▓ ▓ ▓ ▓ ▓ . . . . . . . . . . .
     . . . ▒ ▒ ▒ ▒ ▓ . . . . . . . . . . . . . .
     """
-        |> toScreen
+        |> toScreen Palette.caveSet
 
 
 testScreen1 : Screen Size22x22 Size8x8
@@ -180,14 +182,15 @@ testScreen1 =
     ▓ ▓ ▓ ▓ ▒ ▒ ▒ ▒ ▒ ▒ ▒ ▒ ▓ ▓ ▓ ▓ ▓ ▓ ▓ ▓ ▓ ▓
     ▓ ▓ ▓ ▓ ▓ ▓ ▓ ▓ ▓ ▓ ▓ ▓ ▓ ▓ ▓ ▓ ▓ ▓ ▓ ▓ ▓ ▓
     """
-        |> toScreen
+        |> toScreen Palette.caveSet
 
 
 
 -- INTERNAL
 
 
-toScreen string =
+toScreen : Colors -> String -> Screen Size22x22 Size8x8
+toScreen colors string =
     let
         tilemap =
             string
@@ -202,7 +205,7 @@ toScreen string =
                     )
                 |> Maybe.withDefault (CollisionLayer.empty Levers.screenWidthInTiles Levers.screenHeightInTiles)
     in
-    Screen.make22x22 tilemap collisionLayer
+    Screen.make22x22 colors tilemap collisionLayer
         |> Maybe.withDefault Screen.error22x22
 
 

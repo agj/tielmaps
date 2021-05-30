@@ -1,7 +1,5 @@
 module Levers exposing
     ( canvasId
-    , colorDark
-    , colorLight
     , framesPerSecond
     , gravity
     , jumpDuration
@@ -14,8 +12,6 @@ module Levers exposing
     , tileHeight
     , tileWidth
     )
-
-import Color exposing (Color)
 
 
 type alias FramesPerSecond =
@@ -81,30 +77,6 @@ jumpDuration =
     12
 
 
-colorLight : Color
-colorLight =
-    Color.hsl (deg 53.2) (pc 100) (pc 94.5)
-
-
-colorDark : Color
-colorDark =
-    Color.hsl (deg 30.7) (pc 100) (pc 54.6)
-
-
 canvasId : String
 canvasId =
     "canvas"
-
-
-
--- INTERNAL
-
-
-deg : Float -> Float
-deg n =
-    n / 360
-
-
-pc : Float -> Float
-pc n =
-    n / 100

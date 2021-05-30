@@ -1,6 +1,7 @@
 module Screen exposing
     ( Screen
     , collider
+    , colors
     , empty22x22
     , error22x22
     , heightInTiles
@@ -14,8 +15,9 @@ module Screen exposing
     )
 
 import Bitmap exposing (Bitmap)
-import Bitmap.Color exposing (Color(..))
+import Bitmap.Color as Color
 import CollisionLayer exposing (CollisionLayer)
+import Colors exposing (Colors)
 import Dict
 import Size exposing (Size22x22, Size8x8)
 import Tile
@@ -28,11 +30,12 @@ type Screen mapSize tileSize
         , collisionLayer_ : CollisionLayer
         , tileWidth_ : Int
         , tileHeight_ : Int
+        , colors_ : Colors
         }
 
 
-make22x22 : Tilemap a -> CollisionLayer -> Maybe (Screen Size22x22 a)
-make22x22 m coll =
+make22x22 : Colors -> Tilemap a -> CollisionLayer -> Maybe (Screen Size22x22 a)
+make22x22 colors_ m coll =
     let
         width_ =
             Tilemap.width m
@@ -56,6 +59,7 @@ make22x22 m coll =
                 , collisionLayer_ = coll
                 , tileWidth_ = Tilemap.tileWidth m
                 , tileHeight_ = Tilemap.tileHeight m
+                , colors_ = colors_
                 }
             )
 
@@ -63,23 +67,25 @@ make22x22 m coll =
         Nothing
 
 
-empty22x22 : Screen Size22x22 Size8x8
-empty22x22 =
+empty22x22 : Colors -> Screen Size22x22 Size8x8
+empty22x22 colors_ =
     Screen
         { tilemap_ = Tilemap.empty8x8Tile 22 22
         , collisionLayer_ = CollisionLayer.empty 22 22
         , tileWidth_ = 8
         , tileHeight_ = 8
+        , colors_ = colors_
         }
 
 
-solid22x22 : Screen Size22x22 Size8x8
-solid22x22 =
+solid22x22 : Colors -> Screen Size22x22 Size8x8
+solid22x22 colors_ =
     Screen
         { tilemap_ = solidTilemap
         , collisionLayer_ = CollisionLayer.solid 22 22
         , tileWidth_ = 8
         , tileHeight_ = 8
+        , colors_ = colors_
         }
 
 
@@ -90,6 +96,7 @@ error22x22 =
         , collisionLayer_ = CollisionLayer.empty 22 22
         , tileWidth_ = 8
         , tileHeight_ = 8
+        , colors_ = Colors.default
         }
 
 
@@ -135,6 +142,11 @@ toBitmapMemoized (Screen ({ tilemap_ } as state)) =
     ( bitmap, Screen { state | tilemap_ = newTilemap } )
 
 
+colors : Screen a b -> Colors
+colors (Screen { colors_ }) =
+    colors_
+
+
 
 -- INTERNAL
 
@@ -144,7 +156,7 @@ solidTilemap =
     fullTilemapString
         |> Tilemap.fromString
             (Dict.fromList
-                [ ( '#', Tile.solid8x8 Dark )
+                [ ( '#', Tile.solid8x8 Color.Dark )
                 ]
             )
         |> Maybe.withDefault (Tilemap.empty8x8Tile 0 0)

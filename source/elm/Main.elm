@@ -9,6 +9,7 @@ import Bitmap exposing (Bitmap)
 import Browser
 import Browser.Events
 import Collider
+import Colors
 import Css exposing (alignItems, backgroundColor, center, display, displayFlex, hsl, justifyContent, margin, padding, pc, pct, property, px, scale, transform)
 import Css.Global exposing (global, selector)
 import Html.Styled exposing (Html, canvas, div, text, toUnstyled)
@@ -113,14 +114,20 @@ update msg model =
                 ( bitmap, newWorld ) =
                     model.world
                         |> World.render newCharacter
+
+                colors =
+                    model.world
+                        |> World.currentScreen (Avatar.baseX newCharacter) (Avatar.baseY newCharacter)
+                        |> Maybe.map Screen.colors
+                        |> Maybe.withDefault Colors.default
             in
             ( { model
                 | character = newCharacter
                 , world = newWorld
               }
             , Js.paintCanvas
-                Levers.colorLight
-                Levers.colorDark
+                colors.lightColor
+                colors.darkColor
                 bitmap
             )
 
