@@ -33,19 +33,19 @@ type alias Point =
 {-| Generates a Callback function to provide a moving object in order to check for collisions.
 -}
 collider : (Int -> Int -> Bool) -> Int -> Int -> Callback
-collider collAt tileWidth tileHeight ({ x, y, prevX, prevY, width, height } as avatar) =
+collider collidesAt tileWidth tileHeight ({ x, y, prevX, prevY, width, height } as avatar) =
     let
         { checkXPoint, checkYPoint, needsChecksPoint } =
             getPointsToCheck avatar
 
         stopX =
-            pointCollided collAt checkXPoint
+            collidesAt (Tuple.first checkXPoint) (Tuple.second checkXPoint)
 
         stopY =
-            pointCollided collAt checkYPoint
+            collidesAt (Tuple.first checkYPoint) (Tuple.second checkYPoint)
 
         needsFurtherChecks =
-            pointCollided collAt needsChecksPoint
+            collidesAt (Tuple.first needsChecksPoint) (Tuple.second needsChecksPoint)
     in
     if stopX || stopY || needsFurtherChecks then
         let
@@ -125,11 +125,6 @@ getPointsToCheck { x, y, width, height, prevX, prevY } =
         , checkYPoint = topRight
         , needsChecksPoint = topLeft
         }
-
-
-pointCollided : (Int -> Int -> Bool) -> Point -> Bool
-pointCollided collAt ( x, y ) =
-    collAt x y
 
 
 {-| After a collision, the position needs to be corrected on one or two axes.
