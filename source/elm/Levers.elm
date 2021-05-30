@@ -8,9 +8,9 @@ module Levers exposing
     , jumpSpeed
     , runSpeed
     , screenHeight
-    , screenHeightTiles
+    , screenHeightInTiles
     , screenWidth
-    , screenWidthTiles
+    , screenWidthInTiles
     , tileHeight
     , tileWidth
     )
@@ -41,24 +41,24 @@ tileHeight =
     8
 
 
-screenWidthTiles : Int
-screenWidthTiles =
+screenWidthInTiles : Int
+screenWidthInTiles =
     22
 
 
-screenHeightTiles : Int
-screenHeightTiles =
+screenHeightInTiles : Int
+screenHeightInTiles =
     22
 
 
 screenWidth : Int
 screenWidth =
-    screenWidthTiles * tileWidth
+    screenWidthInTiles * tileWidth
 
 
 screenHeight : Int
 screenHeight =
-    screenHeightTiles * tileHeight
+    screenHeightInTiles * tileHeight
 
 
 gravity : FramesPerSecond

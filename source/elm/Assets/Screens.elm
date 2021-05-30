@@ -200,7 +200,7 @@ toScreen string =
                     (Dict.keys charTiles
                         |> List.filter isSolid
                     )
-                |> Maybe.withDefault (CollisionLayer.empty Levers.screenWidthTiles Levers.screenHeightTiles)
+                |> Maybe.withDefault (CollisionLayer.empty Levers.screenWidthInTiles Levers.screenHeightInTiles)
     in
     Screen.make22x22 tilemap collisionLayer
         |> Maybe.withDefault Screen.error22x22
