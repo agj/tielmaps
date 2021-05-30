@@ -16,6 +16,7 @@ module World exposing
 import Array2d exposing (Array2d)
 import Avatar exposing (Avatar)
 import Bitmap exposing (Bitmap)
+import Collider.Interface as Collider
 import List.Extra as List
 import Maybe.Extra as Maybe
 import Screen exposing (Screen)
@@ -185,7 +186,7 @@ render avatar ((World ({ screenWidthInPixels, screenHeightInPixels, screens } as
             ( Bitmap.error, world )
 
 
-collider : World a b -> Int -> Int -> Bool
+collider : World a b -> Collider.PointChecker
 collider (World { screenWidthInPixels, screenHeightInPixels, screens }) x y =
     let
         screenM =

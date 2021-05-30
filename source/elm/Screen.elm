@@ -98,6 +98,9 @@ tilemap (Screen { tilemap_ }) =
     tilemap_
 
 
+{-| Checks whether there's a solid object at position x, y.
+Normally called from within `Collider.collide`.
+-}
 collider : Screen a b -> Int -> Int -> Bool
 collider (Screen { collisionLayer_, tileWidth_, tileHeight_ }) x_ y_ =
     CollisionLayer.getAt (x_ // tileWidth_) (y_ // tileHeight_) collisionLayer_

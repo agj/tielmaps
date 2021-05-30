@@ -1,9 +1,8 @@
 module Collider exposing (collideAvatar)
 
 import Avatar exposing (Avatar)
-import Collider.Callback exposing (Callback, Position)
-import CollisionLayer exposing (CollisionLayer)
-import Screen exposing (Screen)
+import Collider.Interface exposing (Collider, PointChecker, Position)
+import Point exposing (Point)
 import World exposing (World)
 
 
@@ -26,26 +25,23 @@ collideAvatar world avatar =
 -- INTERNAL
 
 
-type alias Point =
-    ( Int, Int )
-
-
-{-| Generates a Callback function to provide a moving object in order to check for collisions.
+{-| Given a `PointChecker`, generates a `Collider` function
+to provide a moving object in order to let them adjust position for collisions.
 -}
-collider : (Int -> Int -> Bool) -> Int -> Int -> Callback
+collider : PointChecker -> Int -> Int -> Collider
 collider collidesAt tileWidth tileHeight ({ x, y, prevX, prevY, width, height } as avatar) =
     let
         { checkXPoint, checkYPoint, needsChecksPoint } =
             getPointsToCheck avatar
 
         stopX =
-            collidesAt (Tuple.first checkXPoint) (Tuple.second checkXPoint)
+            collidesAt (Point.x checkXPoint) (Point.y checkXPoint)
 
         stopY =
-            collidesAt (Tuple.first checkYPoint) (Tuple.second checkYPoint)
+            collidesAt (Point.x checkYPoint) (Point.y checkYPoint)
 
         needsFurtherChecks =
-            collidesAt (Tuple.first needsChecksPoint) (Tuple.second needsChecksPoint)
+            collidesAt (Point.x needsChecksPoint) (Point.y needsChecksPoint)
     in
     if stopX || stopY || needsFurtherChecks then
         let
@@ -78,7 +74,7 @@ collider collidesAt tileWidth tileHeight ({ x, y, prevX, prevY, width, height } 
         ( x, y )
 
 
-{-| Returns three corner points that can be collision-checked against a CollisionLayer to know
+{-| Returns three corner points that can be collision-checked to know
 if the moving object needs to stop moving on the x or y axis.
 -}
 getPointsToCheck : Position -> { checkXPoint : Point, checkYPoint : Point, needsChecksPoint : Point }
@@ -139,7 +135,7 @@ getAxisCorrection posNow posPrev avSize tileSize =
         tileSize - modBy tileSize posNow
 
 
-{-| When colliding directly against an edge, we need to know whether to stop movement
+{-| When colliding directly against an outer corner, we need to know whether to stop movement
 on the x or y axes. True is x, False is y.
 -}
 shouldStopXNotY : Position -> Int -> Int -> Bool

@@ -15,12 +15,9 @@ module Avatar exposing
 import Avatar.AvatarSprites as AvatarSprites exposing (AvatarSprites)
 import Avatar.Padding exposing (Padding)
 import Bitmap exposing (Bitmap)
-import Collider.Callback as Collider
-import CollisionLayer exposing (CollisionLayer)
-import Html exposing (pre)
-import Keys exposing (Keys, jumping)
+import Collider.Interface exposing (Collider)
+import Keys exposing (Keys)
 import Levers
-import Screen exposing (Screen)
 import Sprite exposing (Sprite)
 
 
@@ -240,7 +237,7 @@ repositionTopLeft newX newY (Avatar data) =
 It should normally be called from within `Collider.collideAvatar`,
 which you should call every tick after calling `tick`.
 -}
-collide : Collider.Callback -> Avatar b -> Avatar b
+collide : Collider -> Avatar b -> Avatar b
 collide collider (Avatar ({ x, y, prevX, prevY, width_, height_, motion, padding } as data)) =
     let
         ( newXPre, newYPre ) =
