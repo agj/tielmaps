@@ -31,6 +31,9 @@ type Bitmap
 
 {-| Takes a specially formatted string and converts it into a Bitmap. Here's an example:
 
+    import Bitmap.Color
+    import Maybe
+
     """
     / / / / / /
     / █ █ █ █ /
@@ -40,8 +43,11 @@ type Bitmap
     / / / / / /
     """
         |> Bitmap.fromString Bitmap.Color.defaultMap
+        |> Maybe.andThen (Bitmap.pixel 1 1)
 
-This will produce a 6 × 6 Bitmap with a square in the middle,
+    --> Just Bitmap.Color.Dark
+
+The above example is constructing a 6 × 6 Bitmap with a square in the middle,
 drawn with a dark outline and light color fill, and surrounded by transparent pixels.
 The spaces are always ignored, but the other characters need to be specified
 by passing a Bitmap.Color.ColorMap which defines which character is which color.

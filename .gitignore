@@ -2,6 +2,7 @@
 dist
 
 elm-stuff
+tests/VerifyExamples
 node_modules
 .vscode
 .cache
