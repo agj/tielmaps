@@ -1,0 +1,4 @@
+{
+  "root": "../source/elm/",
+  "tests": ["Bitmap"]
+}

@@ -1,5 +1,9 @@
 
-dist/
+dist
 
-node-modules/
-elm-stuff/
+elm-stuff
+tests/VerifyExamples
+node_modules
+.vscode
+.cache
+.parcel-cache
