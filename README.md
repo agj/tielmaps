@@ -1,6 +1,6 @@
 # Tielmaps
 
-[See what this code compiles down to here](https://agj.github.io/tielmaps/). It's a little platformer game you can play on a desktop computer. Press the left and right keys to move sideways, and space to jump.
+This is a foundation for a pixel platformer game you can play on a desktop computer. You can see the code on [Github][tm-github] and on [Glitch][tm-glitch]. You can also play what this compiles down to on [Github Pages][tm-ghpages] or on [Glitch][tm-glitchlive]. Press the left and right keys to move sideways, and space to jump. Feel free to fork/remix!
 
 I started this (still in-progress) project to sate my curiosity. I wanted to learn more about the [Elm programming language][elm], and try making a web browser-runnable, barebones pixel platformer game basically from the ground up, while focusing only on its core elements.
 
@@ -12,6 +12,10 @@ I myself am learning through this process, so I don't claim I have the right app
 
 — agj
 
+[tm-github]: https://github.com/agj/tielmaps
+[tm-glitch]: https://glitch.com/edit/#!/tielmaps
+[tm-ghpages]: https://agj.github.io/tielmaps/
+[tm-glitchlive]: https://tielmaps.glitch.me
 [elm]: https://elm-lang.org/
 [node]: https://nodejs.org/
 [parcel]: https://parceljs.org/
