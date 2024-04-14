@@ -1,4 +1,4 @@
-import { PaintCanvasInstructions, Pixel } from "../elm/Main.elm";
+import { PaintCanvasInstructions, Pixel } from "./types";
 
 if (!window["customElements"]) {
   throw new Error(
