@@ -10,6 +10,7 @@ module Bitmap exposing
     , paintBitmap
     , paintPixel
     , pixel
+    , pixels
     , rotate180
     , rotateClockwise
     , rotateCounterClockwise
@@ -118,18 +119,23 @@ height (Bitmap _ h _) =
 
 
 pixel : Int -> Int -> Bitmap -> Maybe Color
-pixel x y (Bitmap w h pixels) =
-    pixels
+pixel x y (Bitmap _ _ pixels_) =
+    pixels_
         |> Array2d.get x y
 
 
+pixels : Bitmap -> Array2d Color
+pixels (Bitmap _ _ pixels_) =
+    pixels_
+
+
 encode : Bitmap -> Value
-encode (Bitmap w h pixels) =
+encode (Bitmap w h pixels_) =
     Encode.object
         [ ( "width", Encode.int w )
         , ( "height", Encode.int h )
         , ( "pixels"
-          , pixels
+          , pixels_
                 |> Array2d.toUnidimensional
                 |> Encode.array colorEncoder
           )
@@ -141,9 +147,9 @@ encode (Bitmap w h pixels) =
 
 
 paintPixel : Int -> Int -> Color -> Bitmap -> Bitmap
-paintPixel x y color ((Bitmap w h pixels) as bm) =
+paintPixel x y color ((Bitmap w h pixels_) as bm) =
     if x < w && y < h && x >= 0 && y >= 0 then
-        pixels
+        pixels_
             |> Array2d.set x y color
             |> Bitmap w h
 
