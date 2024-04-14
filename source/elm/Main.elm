@@ -206,7 +206,7 @@ mainView { world, bitmap, character, scale } =
 
 customElement : Int -> Int -> List (Html.Attribute msg) -> Colors -> Bitmap -> Html.Html msg
 customElement w h attrs colors bm =
-    Html.node "my-bla"
+    Html.node "pixel-renderer"
         ([ Html.Attributes.width w
          , Html.Attributes.height h
          , Html.Attributes.property "scene"

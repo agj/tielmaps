@@ -20,7 +20,7 @@ const getPixel = (
   return pixels[x + width * y] ?? -1;
 };
 
-class Bla extends HTMLElement {
+class PixelRendererElement extends HTMLElement {
   canvas?: HTMLCanvasElement;
   context?: CanvasRenderingContext2D;
   instructions?: PaintCanvasInstructions;
@@ -34,6 +34,7 @@ class Bla extends HTMLElement {
   }
 
   connectedCallback() {
+    // Create the child `<canvas>`.
     this.canvas = document.createElement("canvas");
     this.appendChild(this.canvas);
     const context = this.canvas.getContext("2d");
@@ -42,8 +43,8 @@ class Bla extends HTMLElement {
     }
     this.context = context;
 
-    // this.setCanvasDimensions();
-    // this.paintCanvas();
+    this.updateStyles();
+    this.paintCanvas();
   }
 
   disconnectedCallback() {
@@ -51,6 +52,7 @@ class Bla extends HTMLElement {
       return;
     }
 
+    // Clean up.
     this.removeChild(this.canvas);
     this.canvas = undefined;
     this.context = undefined;
@@ -62,7 +64,7 @@ class Bla extends HTMLElement {
       oldValue !== newValue
     ) {
       requestAnimationFrame(() => {
-        this.setCanvasDimensions();
+        this.updateStyles();
         this.paintCanvas();
       });
     }
@@ -73,7 +75,7 @@ class Bla extends HTMLElement {
     this.paintCanvas();
   }
 
-  setCanvasDimensions() {
+  updateStyles() {
     if (!this.canvas || !this.context) {
       return;
     }
@@ -132,4 +134,4 @@ class Bla extends HTMLElement {
   }
 }
 
-customElements.define("my-bla", Bla);
+customElements.define("pixel-renderer", PixelRendererElement);
