@@ -17,6 +17,7 @@ import Array2d exposing (Array2d)
 import Bitmap exposing (Bitmap)
 import Dict exposing (Dict)
 import Helper
+import List.Extra
 import Maybe.Extra as Maybe
 import Size exposing (Size8x8)
 import Tile exposing (Tile)
@@ -28,6 +29,10 @@ type Tilemap tileSize
         , height_ : Int
         , tileWidth_ : Int
         , tileHeight_ : Int
+        , tiles : Array (Tile tileSize)
+        , map : Array2d Int
+
+        -- Old:
         , bitmaps : Array2d Bitmap
         , bitmapMemo : Maybe Bitmap
         }
@@ -42,6 +47,10 @@ empty8x8Tile w h =
                 , height_ = h
                 , tileWidth_ = tileW
                 , tileHeight_ = tileH
+                , tiles = Array.repeat 1 Tile.empty8x8
+                , map = Array2d.repeat w h 0
+
+                -- Old:
                 , bitmaps = Array2d.repeat w h (Bitmap.empty tileW tileH)
                 , bitmapMemo = Nothing
                 }
@@ -72,7 +81,11 @@ Note that spaces are always ignored.
 -}
 fromString : Dict Char (Tile a) -> String -> Maybe (Tilemap a)
 fromString tiles str =
-    case Dict.values tiles of
+    let
+        tilesList =
+            Dict.values tiles
+    in
+    case tilesList of
         t :: _ ->
             let
                 tw =
@@ -81,26 +94,53 @@ fromString tiles str =
                 th =
                     Tile.height t
 
-                charToBitmap ch =
+                tilesArray : Array (Tile a)
+                tilesArray =
+                    Dict.values tiles
+                        |> Array.fromList
+
+                charToTileIndex : Char -> Maybe Int
+                charToTileIndex ch =
                     Dict.get ch tiles
-                        |> Maybe.map Tile.bitmap
+                        |> Maybe.andThen (\tile_ -> List.Extra.findIndex ((==) tile_) tilesList)
+
+                map : Maybe (Array2d Int)
+                map =
+                    Helper.stringToArray2d charToTileIndex str
 
                 bitmaps : Maybe (Array2d Bitmap)
                 bitmaps =
-                    Helper.stringToArray2d charToBitmap str
+                    map
+                        |> Maybe.map
+                            (\map_ ->
+                                map_
+                                    |> Array2d.map
+                                        (\tileIndex ->
+                                            Array.get tileIndex tilesArray
+                                                |> Maybe.withDefault t
+                                                |> Tile.bitmap
+                                        )
+                            )
             in
-            bitmaps
-                |> Maybe.map
-                    (\array2d ->
-                        Tilemap
-                            { width_ = Array2d.width array2d
-                            , height_ = Array2d.height array2d
+            case ( map, bitmaps ) of
+                ( Just mapOk, Just bitmapsOk ) ->
+                    Just
+                        (Tilemap
+                            { width_ = Array2d.width mapOk
+                            , height_ = Array2d.height mapOk
                             , tileWidth_ = tw
                             , tileHeight_ = th
-                            , bitmaps = array2d
+                            , tiles = tilesArray
+                            , map = mapOk
+
+                            -- Old:
+                            , bitmaps = bitmapsOk
                             , bitmapMemo = Nothing
                             }
-                    )
+                        )
+
+                _ ->
+                    Nothing
 
         _ ->
             Nothing
