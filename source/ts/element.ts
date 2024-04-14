@@ -1,4 +1,10 @@
-import { PaintCanvasInstructions, Pixel } from "./types";
+import {
+  Color,
+  PaintCanvasInstructions,
+  Pixel,
+  Tile,
+  TileStamp,
+} from "./types";
 
 if (!window["customElements"]) {
   throw new Error(
@@ -10,15 +16,27 @@ const getPixel = (
   width: number,
   x: number,
   y: number,
-  pixels: Array<Pixel>
+  pixels: Pixel[]
 ): Pixel => {
   return pixels[x + width * y] ?? -1;
 };
 
+const getPixel2 = (
+  width: number,
+  x: number,
+  y: number,
+  pixels: number[]
+): number => {
+  return pixels[x + width * y] ?? -1;
+};
+
 class PixelRendererElement extends HTMLElement {
-  canvas?: HTMLCanvasElement;
-  context?: CanvasRenderingContext2D;
-  instructions?: PaintCanvasInstructions;
+  private canvas?: HTMLCanvasElement;
+  private context?: CanvasRenderingContext2D;
+  private instructions?: PaintCanvasInstructions;
+  private tileStamps_: TileStamp[] = [];
+  tiles: Tile[] = [];
+  colors: Color[] = [];
 
   static get observedAttributes() {
     return ["width", "height"];
@@ -65,6 +83,11 @@ class PixelRendererElement extends HTMLElement {
   set scene(instructions: PaintCanvasInstructions) {
     this.instructions = instructions;
     this.paintCanvas();
+  }
+
+  set tileStamps(tileStamps: TileStamp[]) {
+    this.tileStamps_ = tileStamps;
+    this.paintCanvas2();
   }
 
   /**
@@ -122,6 +145,41 @@ class PixelRendererElement extends HTMLElement {
     }
 
     this.context.putImageData(imageData, 0, 0);
+  }
+
+  private paintCanvas2(): void {
+    if (!this.canvas || !this.context) {
+      return;
+    }
+
+    const tileImages = this.tiles.map(({ width, pixels }) => {
+      const height = Math.ceil(pixels.length / width);
+      const imageData = this.context?.createImageData(width, height);
+
+      if (imageData) {
+        for (let x = 0; x < width; x += 1) {
+          for (let y = 0; y < height; y += 1) {
+            const offset = x * 4 + width * 4 * y;
+            const pixel = getPixel2(width, x, y, pixels);
+            const color = this.colors[pixel];
+
+            imageData.data[offset + 0] = color?.red ?? 0;
+            imageData.data[offset + 1] = color?.green ?? 0;
+            imageData.data[offset + 2] = color?.blue ?? 0;
+            imageData.data[offset + 3] = color?.alpha ?? 1;
+          }
+        }
+      }
+
+      return imageData;
+    });
+
+    this.tileStamps_.forEach(({ x, y, tileIndex }) => {
+      const tileImage = tileImages[tileIndex];
+      if (tileImage) {
+        this.context?.putImageData(tileImage, x, y);
+      }
+    });
   }
 }
 
