@@ -5,6 +5,7 @@ module Array2d exposing
     , fromList
     , get
     , height
+    , map
     , repeat
     , set
     , toUnidimensional
@@ -150,6 +151,15 @@ set x y item ((Array2d ({ width_, height_, array } as data)) as array2d) =
 toUnidimensional : Array2d a -> Array a
 toUnidimensional (Array2d { array }) =
     array
+
+
+map : (a -> b) -> Array2d a -> Array2d b
+map mapper (Array2d { width_, height_, array }) =
+    Array2d
+        { width_ = width_
+        , height_ = height_
+        , array = Array.map mapper array
+        }
 
 
 
