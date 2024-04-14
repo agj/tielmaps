@@ -8,20 +8,17 @@ import Bitmap exposing (Bitmap)
 import Browser
 import Browser.Events
 import Collider
-import Color exposing (Color)
 import Colors exposing (Colors)
-import Css exposing (alignItems, backgroundColor, center, display, displayFlex, hsl, justifyContent, margin, padding, pc, pct, property, px, scale, transform)
+import Css exposing (alignItems, backgroundColor, center, displayFlex, hsl, justifyContent, margin, padding, pct, px, scale)
 import Css.Global exposing (global, selector)
-import Html
 import Html.Attributes
-import Html.Styled exposing (Html, canvas, div, text, toUnstyled)
-import Html.Styled.Attributes exposing (css, height, id, style, width)
-import Html.Styled.Lazy exposing (lazy)
+import Html.Styled exposing (Html, div, toUnstyled)
+import Html.Styled.Attributes exposing (css, height, width)
 import Json.Decode as D
-import Json.Encode
 import Keys exposing (Keys)
 import Keys.Key as Key exposing (Key)
 import Levers
+import PixelRenderer
 import Screen exposing (Screen)
 import Size exposing (Size22x22, Size8x8)
 import Sprite exposing (Sprite)
@@ -193,7 +190,7 @@ mainView { world, bitmap, character, scale } =
             , backgroundColor (hsl 0 0 0.97)
             ]
         ]
-        [ customElement
+        [ PixelRenderer.element
             Levers.screenWidth
             Levers.screenHeight
             [ Html.Attributes.style "transform"
@@ -205,48 +202,6 @@ mainView { world, bitmap, character, scale } =
             bitmap
             |> Html.Styled.fromUnstyled
         ]
-
-
-customElement : Int -> Int -> List (Html.Attribute msg) -> Colors -> Bitmap -> Html.Html msg
-customElement w h attrs colors bm =
-    Html.node "pixel-renderer"
-        ([ Html.Attributes.width w
-         , Html.Attributes.height h
-         , Html.Attributes.property "scene"
-            (encodeBitmapAndColors colors.lightColor colors.darkColor bm)
-         ]
-            ++ attrs
-        )
-        []
-
-
-encodeBitmapAndColors : Color -> Color -> Bitmap -> Json.Encode.Value
-encodeBitmapAndColors lightColor darkColor bm =
-    Json.Encode.object
-        [ ( "lightColor", encodeColor lightColor )
-        , ( "darkColor", encodeColor darkColor )
-        , ( "bitmap"
-          , Bitmap.encode bm
-          )
-        ]
-
-
-encodeColor : Color -> Json.Encode.Value
-encodeColor color =
-    let
-        { red, green, blue } =
-            Color.toRgba color
-    in
-    Json.Encode.object
-        [ ( "red", encodeColorChannel red )
-        , ( "green", encodeColorChannel green )
-        , ( "blue", encodeColorChannel blue )
-        ]
-
-
-encodeColorChannel : Float -> Json.Encode.Value
-encodeColorChannel channel =
-    Json.Encode.float channel
 
 
 
