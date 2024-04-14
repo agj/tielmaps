@@ -1,6 +1,5 @@
 module Levers exposing
-    ( canvasId
-    , framesPerSecond
+    ( framesPerSecond
     , gravity
     , jumpDuration
     , jumpSpeed
@@ -75,8 +74,3 @@ jumpSpeed =
 jumpDuration : Frames
 jumpDuration =
     12
-
-
-canvasId : String
-canvasId =
-    "canvas"

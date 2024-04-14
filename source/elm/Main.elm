@@ -228,7 +228,6 @@ encodeBitmapAndColors lightColor darkColor bm =
         , ( "bitmap"
           , Bitmap.encode bm
           )
-        , ( "canvasId", Json.Encode.string Levers.canvasId )
         ]
 
 

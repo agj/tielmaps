@@ -22,7 +22,6 @@ export type PaintCanvasInstructions = {
   readonly lightColor: Color;
   readonly darkColor: Color;
   readonly bitmap: Bitmap;
-  readonly canvasId: string;
 };
 
 export type Color = {
