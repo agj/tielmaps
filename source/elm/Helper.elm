@@ -4,7 +4,7 @@ import Array2d exposing (Array2d)
 import Maybe.Extra as Maybe
 
 
-stringToArray2d : (Char -> Maybe a) -> String -> Maybe { width : Int, height : Int, array2d : Array2d a }
+stringToArray2d : (Char -> Maybe a) -> String -> Maybe (Array2d a)
 stringToArray2d mapper str =
     let
         rawLines =
@@ -24,22 +24,12 @@ stringToArray2d mapper str =
         lines =
             rawLines
                 |> List.map (String.padRight w '.')
-
-        mapped =
-            lines
-                |> List.map (String.toList >> List.map mapper)
-                |> List.foldr (++) []
-                |> Maybe.combine
-                |> Maybe.andThen (Array2d.fromList w)
     in
-    mapped
-        |> Maybe.map
-            (\array2d ->
-                { width = w
-                , height = h
-                , array2d = array2d
-                }
-            )
+    lines
+        |> List.map (String.toList >> List.map mapper)
+        |> List.foldr (++) []
+        |> Maybe.combine
+        |> Maybe.andThen (Array2d.fromList w)
 
 
 

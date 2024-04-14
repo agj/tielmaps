@@ -12,6 +12,7 @@ module Tilemap exposing
     , width
     )
 
+import Array exposing (Array)
 import Array2d exposing (Array2d)
 import Bitmap exposing (Bitmap)
 import Dict exposing (Dict)
@@ -80,22 +81,23 @@ fromString tiles str =
                 th =
                     Tile.height t
 
-                mapper ch =
+                charToBitmap ch =
                     Dict.get ch tiles
                         |> Maybe.map Tile.bitmap
 
-                mapped =
-                    Helper.stringToArray2d mapper str
+                bitmaps : Maybe (Array2d Bitmap)
+                bitmaps =
+                    Helper.stringToArray2d charToBitmap str
             in
-            mapped
+            bitmaps
                 |> Maybe.map
-                    (\r ->
+                    (\array2d ->
                         Tilemap
-                            { width_ = r.width
-                            , height_ = r.height
+                            { width_ = Array2d.width array2d
+                            , height_ = Array2d.height array2d
                             , tileWidth_ = tw
                             , tileHeight_ = th
-                            , bitmaps = r.array2d
+                            , bitmaps = array2d
                             , bitmapMemo = Nothing
                             }
                     )

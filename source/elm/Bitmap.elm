@@ -74,7 +74,7 @@ fromString cMap str =
     in
     maybeResult
         |> Maybe.map
-            (\r -> Bitmap r.width r.height r.array2d)
+            (\array2d -> Bitmap (Array2d.width array2d) (Array2d.height array2d) array2d)
 
 
 empty : Int -> Int -> Bitmap

@@ -38,7 +38,7 @@ fromString solids str =
     in
     mapped
         |> Maybe.map
-            (\r -> CollisionLayer r.width r.height r.array2d)
+            (\array2d -> CollisionLayer (Array2d.width array2d) (Array2d.height array2d) array2d)
 
 
 width : CollisionLayer -> Int
