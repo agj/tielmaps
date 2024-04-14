@@ -12,22 +12,11 @@ export namespace Elm {
   }
 }
 
-export interface App {
-  readonly ports: Ports;
-}
+export interface App {}
 
 export type Config = {
   readonly node?: Element | null;
   readonly flags: Flags;
-};
-
-export type Ports = {
-  readonly command: Cmd<Action>;
-};
-
-export type Cmd<T> = {
-  subscribe(callback: (value: T) => void): void;
-  unsubscribe(callback: (value: T) => void): void;
 };
 
 // Flags
@@ -39,15 +28,6 @@ export type Flags = {
 export type Viewport = {
   readonly width: number;
   readonly height: number;
-};
-
-// Actions
-
-export type Action = PaintCanvasAction;
-
-export type PaintCanvasAction = {
-  readonly kind: "paintCanvas";
-  readonly value: PaintCanvasInstructions;
 };
 
 // Values
