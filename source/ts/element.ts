@@ -20,19 +20,25 @@ class PixelRendererElement extends HTMLElement {
   context?: CanvasRenderingContext2D;
   instructions?: PaintCanvasInstructions;
 
-  constructor() {
-    super();
-  }
-
   static get observedAttributes() {
     return ["width", "height"];
   }
 
+  /**
+   * Run when the element is put on the page. We prepare stuff here.
+   */
   connectedCallback() {
+    if (this.canvas && this.context) {
+      return;
+    }
+
     // Create the child `<canvas>`.
     this.canvas = document.createElement("canvas");
     this.appendChild(this.canvas);
+    this.canvas.style.display = "flex";
     this.canvas.style.imageRendering = "pixelated";
+
+    // The 2D context is the actual interface we use to paint the canvas.
     const context = this.canvas.getContext("2d");
     if (!context) {
       throw new Error("Could not get 2D context from canvas element.");
@@ -43,33 +49,30 @@ class PixelRendererElement extends HTMLElement {
     this.paintCanvas();
   }
 
-  disconnectedCallback() {
-    if (!this.canvas) {
-      return;
-    }
-
-    // Clean up.
-    this.removeChild(this.canvas);
-    this.canvas = undefined;
-    this.context = undefined;
-  }
-
+  /**
+   * Run whenever the element's attributes get changed.
+   */
   attributeChangedCallback(name: string, oldValue: unknown, newValue: unknown) {
     if ((name === "width" || name === "height") && oldValue !== newValue) {
-      requestAnimationFrame(() => {
-        this.updateStyles();
-        this.paintCanvas();
-      });
+      this.updateStyles();
     }
   }
 
+  /**
+   * A property the Elm side can use to communicate with the element, to tell it
+   * what to paint.
+   */
   set scene(instructions: PaintCanvasInstructions) {
     this.instructions = instructions;
     this.paintCanvas();
   }
 
-  updateStyles() {
-    if (!this.canvas || !this.context) {
+  /**
+   * Updates dimensions of the child `<canvas>` element according to values set
+   * via attributes.
+   */
+  private updateStyles() {
+    if (!this.canvas) {
       return;
     }
 
@@ -82,7 +85,10 @@ class PixelRendererElement extends HTMLElement {
     this.canvas.height = height;
   }
 
-  paintCanvas(): void {
+  /**
+   * Renders what the Elm side told it to paint.
+   */
+  private paintCanvas(): void {
     if (!this.canvas || !this.context || !this.instructions) {
       return;
     }
