@@ -6,11 +6,6 @@ if (!window["customElements"]) {
   );
 }
 
-const baseStyles = [
-  "image-rendering: crisp-edges",
-  "image-rendering: pixelated",
-].join(";");
-
 const getPixel = (
   width: number,
   x: number,
@@ -30,13 +25,14 @@ class PixelRendererElement extends HTMLElement {
   }
 
   static get observedAttributes() {
-    return ["width", "height", "style"];
+    return ["width", "height"];
   }
 
   connectedCallback() {
     // Create the child `<canvas>`.
     this.canvas = document.createElement("canvas");
     this.appendChild(this.canvas);
+    this.canvas.style.imageRendering = "pixelated";
     const context = this.canvas.getContext("2d");
     if (!context) {
       throw new Error("Could not get 2D context from canvas element.");
@@ -59,10 +55,7 @@ class PixelRendererElement extends HTMLElement {
   }
 
   attributeChangedCallback(name: string, oldValue: unknown, newValue: unknown) {
-    if (
-      (name === "width" || name === "height" || name === "style") &&
-      oldValue !== newValue
-    ) {
+    if ((name === "width" || name === "height") && oldValue !== newValue) {
       requestAnimationFrame(() => {
         this.updateStyles();
         this.paintCanvas();
@@ -80,21 +73,13 @@ class PixelRendererElement extends HTMLElement {
       return;
     }
 
-    const styles = this.getAttribute("style");
-    this.canvas.setAttribute("style", `${baseStyles};${styles}`);
-
     const width = Number(this.getAttribute("width"));
     const height = Number(this.getAttribute("height"));
 
-    const devicePixelRatio = window.devicePixelRatio ?? 1;
     this.canvas.style.width = width + "px";
     this.canvas.style.height = height + "px";
-    this.canvas.width = width * devicePixelRatio;
-    this.canvas.height = height * devicePixelRatio;
-
-    // Reset current transformation matrix to the identity matrix
-    this.context.setTransform(1, 0, 0, 1, 0, 0);
-    this.context.scale(devicePixelRatio, devicePixelRatio);
+    this.canvas.width = width;
+    this.canvas.height = height;
   }
 
   paintCanvas(): void {

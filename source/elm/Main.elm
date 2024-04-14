@@ -196,7 +196,10 @@ mainView { world, bitmap, character, scale } =
         [ customElement
             Levers.screenWidth
             Levers.screenHeight
-            [ Html.Attributes.style "transform" ("scale({scale})" |> String.replace "{scale}" (String.fromInt scale))
+            [ Html.Attributes.style "transform"
+                ("scale({scale})"
+                    |> String.replace "{scale}" (String.fromInt scale)
+                )
             ]
             colors
             bitmap
