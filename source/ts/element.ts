@@ -1,10 +1,4 @@
-import {
-  Color,
-  PaintCanvasInstructions,
-  Pixel,
-  Tile,
-  TileStamp,
-} from "./types";
+import { Color, Tile, TileStamp } from "./types";
 
 if (!window["customElements"]) {
   throw new Error(
@@ -16,15 +10,6 @@ const getPixel = (
   width: number,
   x: number,
   y: number,
-  pixels: Pixel[]
-): Pixel => {
-  return pixels[x + width * y] ?? -1;
-};
-
-const getPixel2 = (
-  width: number,
-  x: number,
-  y: number,
   pixels: number[]
 ): number => {
   return pixels[x + width * y] ?? -1;
@@ -33,7 +18,6 @@ const getPixel2 = (
 class PixelRendererElement extends HTMLElement {
   private canvas?: HTMLCanvasElement;
   private context?: CanvasRenderingContext2D;
-  private instructions?: PaintCanvasInstructions;
   private tileStamps_: TileStamp[] = [];
   tiles: Tile[] = [];
   colors: Color[] = [];
@@ -76,18 +60,9 @@ class PixelRendererElement extends HTMLElement {
     }
   }
 
-  /**
-   * A property the Elm side can use to communicate with the element, to tell it
-   * what to paint.
-   */
-  set scene(instructions: PaintCanvasInstructions) {
-    this.instructions = instructions;
-    this.paintCanvas();
-  }
-
   set tileStamps(tileStamps: TileStamp[]) {
     this.tileStamps_ = tileStamps;
-    this.paintCanvas2();
+    this.paintCanvas();
   }
 
   /**
@@ -108,46 +83,7 @@ class PixelRendererElement extends HTMLElement {
     this.canvas.height = height;
   }
 
-  /**
-   * Renders what the Elm side told it to paint.
-   */
   private paintCanvas(): void {
-    if (!this.canvas || !this.context || !this.instructions) {
-      return;
-    }
-
-    const {
-      lightColor,
-      darkColor,
-      bitmap: { width, height, pixels },
-    } = this.instructions;
-
-    const imageData = this.context.createImageData(width, height);
-
-    const lightR = lightColor.red * 0xff;
-    const lightG = lightColor.green * 0xff;
-    const lightB = lightColor.blue * 0xff;
-    const darkR = darkColor.red * 0xff;
-    const darkG = darkColor.green * 0xff;
-    const darkB = darkColor.blue * 0xff;
-
-    for (let x = 0; x < width; ++x) {
-      for (let y = 0; y < height; ++y) {
-        const offset = x * 4 + width * 4 * y;
-        const pixel = getPixel(width, x, y, pixels);
-        const alpha = pixel === -1 ? 0x00 : 0xff;
-
-        imageData.data[offset + 0] = pixel === 1 ? lightR : darkR;
-        imageData.data[offset + 1] = pixel === 1 ? lightG : darkG;
-        imageData.data[offset + 2] = pixel === 1 ? lightB : darkB;
-        imageData.data[offset + 3] = alpha;
-      }
-    }
-
-    this.context.putImageData(imageData, 0, 0);
-  }
-
-  private paintCanvas2(): void {
     if (!this.canvas || !this.context) {
       return;
     }
@@ -160,7 +96,7 @@ class PixelRendererElement extends HTMLElement {
         for (let x = 0; x < width; x += 1) {
           for (let y = 0; y < height; y += 1) {
             const offset = x * 4 + width * 4 * y;
-            const pixel = getPixel2(width, x, y, pixels);
+            const pixel = getPixel(width, x, y, pixels);
             const color = this.colors[pixel];
 
             imageData.data[offset + 0] = (color?.red ?? 0) * 0xff;
