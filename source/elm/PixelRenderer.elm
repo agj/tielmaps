@@ -51,11 +51,17 @@ element2 width height attrs colors tilemap =
 encodeTileStamps : Tilemap a -> Json.Encode.Value
 encodeTileStamps tilemap =
     let
+        tileWidth =
+            Tilemap.tileWidth tilemap
+
+        tileHeight =
+            Tilemap.tileHeight tilemap
+
         tileToTileStampValue : Int -> Int -> Int -> List Json.Encode.Value -> List Json.Encode.Value
-        tileToTileStampValue x y tileIndex acc =
+        tileToTileStampValue tileX tileY tileIndex acc =
             Json.Encode.object
-                [ ( "x", Json.Encode.int x )
-                , ( "y", Json.Encode.int y )
+                [ ( "x", Json.Encode.int (tileX * tileWidth) )
+                , ( "y", Json.Encode.int (tileY * tileHeight) )
                 , ( "tileIndex", Json.Encode.int tileIndex )
                 ]
                 :: acc
