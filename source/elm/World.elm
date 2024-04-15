@@ -4,7 +4,7 @@ module World exposing
     , currentScreen
     , fromArray2d
     , heightInScreens
-    , render2
+    , render
     , singleton
     , stitchHorizontally
     , stitchVertically
@@ -146,8 +146,8 @@ currentScreen x y (World { screenWidthInPixels, screenHeightInPixels, screens })
     getScreenWrapping screens screenWidthInPixels screenHeightInPixels x y
 
 
-render2 : Avatar c -> World a b -> Maybe (Screen a b)
-render2 avatar ((World ({ screenWidthInPixels, screenHeightInPixels, screens } as state)) as world) =
+render : Avatar c -> World a b -> Maybe (Screen a b)
+render avatar ((World ({ screenWidthInPixels, screenHeightInPixels, screens } as state)) as world) =
     let
         x =
             Avatar.baseX avatar

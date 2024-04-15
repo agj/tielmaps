@@ -2,6 +2,7 @@ module Sprite exposing
     ( Sprite
     , animated
     , bitmap
+    , bitmaps
     , height
     , static
     , tick
@@ -9,7 +10,7 @@ module Sprite exposing
     )
 
 import Bitmap exposing (Bitmap)
-import List.Nonempty as Nonempty exposing (Nonempty)
+import List.Nonempty exposing (Nonempty)
 import Sprite.Frame as Frame exposing (Frame)
 import Tile exposing (Tile)
 
@@ -43,8 +44,8 @@ animated firstFrame frames =
         , height_ = Frame.height firstFrame
         , animation =
             Animated 0
-                (Nonempty.singleton firstFrame
-                    |> Nonempty.replaceTail frames
+                (List.Nonempty.singleton firstFrame
+                    |> List.Nonempty.replaceTail frames
                 )
         }
 
@@ -65,6 +66,18 @@ tick ((Sprite state) as sprite) =
 
             else
                 Sprite { state | animation = Animated newTicks frames }
+
+
+bitmaps : Sprite a -> List Bitmap
+bitmaps (Sprite { animation }) =
+    case animation of
+        Static bm ->
+            [ bm ]
+
+        Animated _ frames ->
+            frames
+                |> List.Nonempty.toList
+                |> List.map Frame.bitmap
 
 
 bitmap : Sprite a -> Bitmap
@@ -94,7 +107,7 @@ height (Sprite { height_ }) =
 
 totalTicks : Nonempty (Frame a) -> Int
 totalTicks frames =
-    Nonempty.foldl (\f acc -> Frame.duration f + acc) 0 frames
+    List.Nonempty.foldl (\f acc -> Frame.duration f + acc) 0 frames
 
 
 currentFrame : Int -> Nonempty (Frame a) -> Frame a
@@ -117,5 +130,5 @@ currentFrame ticks frames =
                         f
     in
     iterate ticks
-        (Nonempty.head frames)
-        (Nonempty.tail frames)
+        (List.Nonempty.head frames)
+        (List.Nonempty.tail frames)

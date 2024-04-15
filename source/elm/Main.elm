@@ -171,7 +171,7 @@ mainView { world, character, scale } =
 
         currentScreenTilemap =
             world
-                |> World.render2 character
+                |> World.render character
                 |> Maybe.map Screen.tilemap
                 |> Maybe.withDefault (Tilemap.empty8x8Tile Levers.screenWidthInTiles Levers.screenHeightInTiles)
 

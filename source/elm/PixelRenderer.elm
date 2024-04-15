@@ -29,7 +29,9 @@ element width height attrs colors tilemap =
          , Html.Attributes.property "bitmaps"
             (encodeBitmaps tilemapBitmaps)
          , Html.Attributes.property "bitmapStamps"
-            (encodeTileStamps tilemap)
+            (encodeTilemapAsBitmapStamps tilemap
+                |> Json.Encode.list identity
+            )
          ]
             ++ attrs
         )
@@ -40,8 +42,8 @@ element width height attrs colors tilemap =
 -- ENCODERS
 
 
-encodeTileStamps : Tilemap a -> Json.Encode.Value
-encodeTileStamps tilemap =
+encodeTilemapAsBitmapStamps : Tilemap a -> List Json.Encode.Value
+encodeTilemapAsBitmapStamps tilemap =
     let
         tileWidth =
             Tilemap.tileWidth tilemap
@@ -49,19 +51,23 @@ encodeTileStamps tilemap =
         tileHeight =
             Tilemap.tileHeight tilemap
 
-        tileToTileStampValue : Int -> Int -> Int -> List Json.Encode.Value -> List Json.Encode.Value
-        tileToTileStampValue tileX tileY tileIndex acc =
-            Json.Encode.object
-                [ ( "x", Json.Encode.int (tileX * tileWidth) )
-                , ( "y", Json.Encode.int (tileY * tileHeight) )
-                , ( "bitmapIndex", Json.Encode.int tileIndex )
-                ]
+        tileToBitmapStampValue : Int -> Int -> Int -> List Json.Encode.Value -> List Json.Encode.Value
+        tileToBitmapStampValue tileX tileY tileIndex acc =
+            encodeBitmapStamp (tileX * tileWidth) (tileY * tileHeight) tileIndex
                 :: acc
     in
     Tilemap.map tilemap
-        |> Array2d.indexedFoldl tileToTileStampValue []
+        |> Array2d.indexedFoldl tileToBitmapStampValue []
         |> List.reverse
-        |> Json.Encode.list identity
+
+
+encodeBitmapStamp : Int -> Int -> Int -> Json.Encode.Value
+encodeBitmapStamp x y bitmapIndex =
+    Json.Encode.object
+        [ ( "x", Json.Encode.int x )
+        , ( "y", Json.Encode.int y )
+        , ( "bitmapIndex", Json.Encode.int bitmapIndex )
+        ]
 
 
 encodeBitmaps : List Bitmap -> Json.Encode.Value

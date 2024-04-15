@@ -3,6 +3,8 @@ module Avatar exposing
     , baseX
     , baseY
     , bitmap
+    , bitmapIndex
+    , bitmaps
     , collide
     , fromSprite
     , fromSprites
@@ -18,6 +20,7 @@ import Bitmap exposing (Bitmap)
 import Collider.Interface exposing (Collider)
 import Keys exposing (Keys)
 import Levers
+import List.Extra
 import Sprite exposing (Sprite)
 
 
@@ -115,9 +118,20 @@ fromSprites padding sprs =
 -- ACCESSORS
 
 
+bitmaps : Avatar a -> List Bitmap
+bitmaps (Avatar { sprites_ }) =
+    AvatarSprites.bitmaps sprites_
+
+
 bitmap : Avatar a -> Bitmap
 bitmap avatar =
     Sprite.bitmap (currentSprite avatar)
+
+
+bitmapIndex : Avatar a -> Int
+bitmapIndex avatar =
+    List.Extra.findIndex ((==) (bitmap avatar)) (bitmaps avatar)
+        |> Maybe.withDefault 0
 
 
 topLeftX : Avatar a -> Int

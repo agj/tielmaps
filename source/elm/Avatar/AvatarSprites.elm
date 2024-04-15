@@ -1,8 +1,10 @@
 module Avatar.AvatarSprites exposing
     ( AvatarSprites
+    , bitmaps
     , single
     )
 
+import Bitmap exposing (Bitmap)
 import Sprite exposing (Sprite)
 
 
@@ -25,3 +27,15 @@ single sprite =
     , jumpingRight = sprite
     , jumpingLeft = sprite
     }
+
+
+bitmaps : AvatarSprites a -> List Bitmap
+bitmaps avs =
+    [ avs.standingRight
+    , avs.standingLeft
+    , avs.runningLeft
+    , avs.runningRight
+    , avs.jumpingRight
+    , avs.jumpingLeft
+    ]
+        |> List.concatMap Sprite.bitmaps
