@@ -11,6 +11,7 @@ import Collider
 import Colors exposing (Colors)
 import Css exposing (alignItems, backgroundColor, center, displayFlex, hsl, justifyContent, margin, padding, pct, px, scale)
 import Css.Global exposing (global, selector)
+import Html exposing (Attribute)
 import Html.Attributes
 import Html.Styled exposing (Html, div, toUnstyled)
 import Html.Styled.Attributes exposing (css, height, width)
@@ -167,6 +168,20 @@ mainView { world, character, scale } =
                 |> World.currentScreen (Avatar.baseX character) (Avatar.baseY character)
                 |> Maybe.map Screen.colors
                 |> Maybe.withDefault Colors.default
+
+        currentScreenTilemap =
+            world
+                |> World.render2 character
+                |> Maybe.map Screen.tilemap
+                |> Maybe.withDefault (Tilemap.empty8x8Tile Levers.screenWidthInTiles Levers.screenHeightInTiles)
+
+        pixelRendererAttributes : List (Attribute msg)
+        pixelRendererAttributes =
+            [ Html.Attributes.style "transform"
+                ("scale({scale})"
+                    |> String.replace "{scale}" (String.fromInt scale)
+                )
+            ]
     in
     div
         [ css
@@ -183,17 +198,9 @@ mainView { world, character, scale } =
         [ PixelRenderer.element
             Levers.screenWidth
             Levers.screenHeight
-            [ Html.Attributes.style "transform"
-                ("scale({scale})"
-                    |> String.replace "{scale}" (String.fromInt scale)
-                )
-            ]
+            pixelRendererAttributes
             colors
-            (world
-                |> World.render2 character
-                |> Maybe.map Screen.tilemap
-                |> Maybe.withDefault (Tilemap.empty8x8Tile Levers.screenWidthInTiles Levers.screenHeightInTiles)
-            )
+            currentScreenTilemap
             |> Html.Styled.fromUnstyled
         ]
 
