@@ -48,7 +48,6 @@ main =
 
 type alias Model =
     { world : World Size22x22 Size8x8
-    , bitmap : Bitmap
     , character : Avatar Size8x8
     , keys : Keys
     , scale : Int
@@ -67,7 +66,6 @@ type alias Flags =
 init : Flags -> ( Model, Cmd Msg )
 init flags =
     ( { world = Worlds.testWorld
-      , bitmap = Bitmap.error
       , character =
             Avatar.fromSprites
                 { zero
@@ -111,16 +109,8 @@ update msg model =
                     model.character
                         |> Avatar.tick model.keys
                         |> Collider.collideAvatar model.world
-
-                ( bitmap, newWorld ) =
-                    model.world
-                        |> World.render newCharacter
             in
-            ( { model
-                | character = newCharacter
-                , world = newWorld
-                , bitmap = bitmap
-              }
+            ( { model | character = newCharacter }
             , Cmd.none
             )
 
@@ -170,7 +160,7 @@ globalStyles =
 
 
 mainView : Model -> Html Msg
-mainView { world, bitmap, character, scale } =
+mainView { world, character, scale } =
     let
         colors =
             world
@@ -190,7 +180,7 @@ mainView { world, bitmap, character, scale } =
             , backgroundColor (hsl 0 0 0.97)
             ]
         ]
-        [ PixelRenderer.element2
+        [ PixelRenderer.element
             Levers.screenWidth
             Levers.screenHeight
             [ Html.Attributes.style "transform"

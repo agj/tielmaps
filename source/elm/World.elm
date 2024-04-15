@@ -4,7 +4,6 @@ module World exposing
     , currentScreen
     , fromArray2d
     , heightInScreens
-    , render
     , render2
     , singleton
     , stitchHorizontally
@@ -145,46 +144,6 @@ tileHeight (World { tileHeight_ }) =
 currentScreen : Int -> Int -> World a b -> Maybe (Screen a b)
 currentScreen x y (World { screenWidthInPixels, screenHeightInPixels, screens }) =
     getScreenWrapping screens screenWidthInPixels screenHeightInPixels x y
-
-
-render : Avatar c -> World a b -> ( Bitmap, World a b )
-render avatar ((World ({ screenWidthInPixels, screenHeightInPixels, screens } as state)) as world) =
-    let
-        x =
-            Avatar.baseX avatar
-
-        y =
-            Avatar.baseY avatar
-
-        ( screenX, screenY ) =
-            getScreenPosWrapping screens screenWidthInPixels screenHeightInPixels x y
-
-        screenM =
-            Array2d.get screenX screenY screens
-    in
-    case screenM of
-        Just screen ->
-            let
-                ( bm, newScreen ) =
-                    Screen.toBitmapMemoized screen
-
-                xOffset =
-                    x - modBy screenWidthInPixels x
-
-                yOffset =
-                    y - modBy screenHeightInPixels y
-
-                bitmap =
-                    bm
-                        |> Bitmap.paintBitmap
-                            (Avatar.topLeftX avatar - xOffset)
-                            (Avatar.topLeftY avatar - yOffset)
-                            (Avatar.bitmap avatar)
-            in
-            ( bitmap, World { state | screens = Array2d.set screenX screenY newScreen screens } )
-
-        Nothing ->
-            ( Bitmap.error, world )
 
 
 render2 : Avatar c -> World a b -> Maybe (Screen a b)

@@ -1,4 +1,4 @@
-module PixelRenderer exposing (element, element2)
+module PixelRenderer exposing (element)
 
 import Array exposing (Array)
 import Array2d
@@ -9,26 +9,12 @@ import Colors exposing (Colors)
 import Html exposing (Html)
 import Html.Attributes
 import Json.Encode
-import List.Extra
 import Tile exposing (Tile)
 import Tilemap exposing (Tilemap)
 
 
-element : Int -> Int -> List (Html.Attribute msg) -> Colors -> Bitmap -> Html msg
-element w h attrs colors bm =
-    Html.node "pixel-renderer"
-        ([ Html.Attributes.width w
-         , Html.Attributes.height h
-         , Html.Attributes.property "scene"
-            (encodeBitmapAndColors colors.lightColor colors.darkColor bm)
-         ]
-            ++ attrs
-        )
-        []
-
-
-element2 : Int -> Int -> List (Html.Attribute msg) -> Colors -> Tilemap x -> Html msg
-element2 width height attrs colors tilemap =
+element : Int -> Int -> List (Html.Attribute msg) -> Colors -> Tilemap x -> Html msg
+element width height attrs colors tilemap =
     Html.node "pixel-renderer"
         ([ Html.Attributes.width width
          , Html.Attributes.height height
@@ -102,17 +88,6 @@ encodeBitmap bitmap =
                         -1
             )
         |> Json.Encode.array Json.Encode.int
-
-
-encodeBitmapAndColors : Color -> Color -> Bitmap -> Json.Encode.Value
-encodeBitmapAndColors lightColor darkColor bm =
-    Json.Encode.object
-        [ ( "lightColor", encodeColor lightColor )
-        , ( "darkColor", encodeColor darkColor )
-        , ( "bitmap"
-          , Bitmap.encode bm
-          )
-        ]
 
 
 encodeColors : List Color -> Json.Encode.Value
