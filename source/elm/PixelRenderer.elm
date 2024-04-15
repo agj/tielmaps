@@ -6,11 +6,13 @@ import Avatar exposing (Avatar)
 import Bitmap exposing (Bitmap)
 import Bitmap.Color
 import Color exposing (Color)
+import Color.Gradient exposing (Palette)
 import Colors exposing (Colors)
 import Html exposing (Html)
 import Html.Attributes
 import Json.Encode
 import Levers
+import Palette
 import Screen
 import Size exposing (Size22x22, Size8x8)
 import Tile exposing (Tile)
@@ -57,7 +59,7 @@ element width height attrs world avatar =
         ([ Html.Attributes.width width
          , Html.Attributes.height height
          , Html.Attributes.property "colors"
-            (encodeColors [ colors.darkColor, colors.lightColor ])
+            (encodeColors [ colors.darkColor, colors.lightColor, Palette.transparent ])
          , Html.Attributes.property "bitmaps"
             (encodeBitmaps (tilemapBitmaps ++ avatarBitmaps))
          , Html.Attributes.property "bitmapStamps"
@@ -129,7 +131,7 @@ encodePixels bitmap =
                         1
 
                     Bitmap.Color.Transparent ->
-                        -1
+                        2
             )
         |> Json.Encode.array Json.Encode.int
 
@@ -142,11 +144,12 @@ encodeColors =
 encodeColor : Color -> Json.Encode.Value
 encodeColor color =
     let
-        { red, green, blue } =
+        { red, green, blue, alpha } =
             Color.toRgba color
     in
     Json.Encode.object
         [ ( "red", Json.Encode.float red )
         , ( "green", Json.Encode.float green )
         , ( "blue", Json.Encode.float blue )
+        , ( "alpha", Json.Encode.float alpha )
         ]

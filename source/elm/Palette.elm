@@ -5,9 +5,10 @@ module Palette exposing
     , deepBlueSet
     , sunset
     , sunsetSet
+    , transparent
     )
 
-import Color exposing (Color)
+import Color exposing (Color, hsla, rgba)
 import Color.Manipulate as Color
 import Colors exposing (Colors)
 
@@ -46,6 +47,11 @@ deepBlue =
 sunset : Color
 sunset =
     hsl 21 93 48
+
+
+transparent : Color
+transparent =
+    rgba 0 0 0 0
 
 
 
