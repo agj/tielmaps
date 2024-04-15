@@ -5,6 +5,7 @@ module World exposing
     , fromArray2d
     , heightInScreens
     , render
+    , render2
     , singleton
     , stitchHorizontally
     , stitchVertically
@@ -184,6 +185,21 @@ render avatar ((World ({ screenWidthInPixels, screenHeightInPixels, screens } as
 
         Nothing ->
             ( Bitmap.error, world )
+
+
+render2 : Avatar c -> World a b -> Maybe (Screen a b)
+render2 avatar ((World ({ screenWidthInPixels, screenHeightInPixels, screens } as state)) as world) =
+    let
+        x =
+            Avatar.baseX avatar
+
+        y =
+            Avatar.baseY avatar
+
+        ( screenX, screenY ) =
+            getScreenPosWrapping screens screenWidthInPixels screenHeightInPixels x y
+    in
+    Array2d.get screenX screenY screens
 
 
 collider : World a b -> Collider.PointChecker

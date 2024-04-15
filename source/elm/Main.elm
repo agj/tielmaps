@@ -190,7 +190,7 @@ mainView { world, bitmap, character, scale } =
             , backgroundColor (hsl 0 0 0.97)
             ]
         ]
-        [ PixelRenderer.element
+        [ PixelRenderer.element2
             Levers.screenWidth
             Levers.screenHeight
             [ Html.Attributes.style "transform"
@@ -199,7 +199,11 @@ mainView { world, bitmap, character, scale } =
                 )
             ]
             colors
-            bitmap
+            (world
+                |> World.render2 character
+                |> Maybe.map Screen.tilemap
+                |> Maybe.withDefault (Tilemap.empty8x8Tile Levers.screenWidthInTiles Levers.screenHeightInTiles)
+            )
             |> Html.Styled.fromUnstyled
         ]
 

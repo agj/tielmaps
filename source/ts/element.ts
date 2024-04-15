@@ -163,10 +163,10 @@ class PixelRendererElement extends HTMLElement {
             const pixel = getPixel2(width, x, y, pixels);
             const color = this.colors[pixel];
 
-            imageData.data[offset + 0] = color?.red ?? 0;
-            imageData.data[offset + 1] = color?.green ?? 0;
-            imageData.data[offset + 2] = color?.blue ?? 0;
-            imageData.data[offset + 3] = color?.alpha ?? 1;
+            imageData.data[offset + 0] = (color?.red ?? 0) * 0xff;
+            imageData.data[offset + 1] = (color?.green ?? 0) * 0xff;
+            imageData.data[offset + 2] = (color?.blue ?? 0) * 0xff;
+            imageData.data[offset + 3] = (color?.alpha ?? 1) * 0xff;
           }
         }
       }
