@@ -1,10 +1,11 @@
 module World exposing
     ( World
+    , avatarPositionOnScreen
     , collider
     , currentScreen
     , fromArray2d
     , heightInScreens
-    , render
+    , screenAt
     , singleton
     , stitchHorizontally
     , stitchVertically
@@ -141,13 +142,13 @@ tileHeight (World { tileHeight_ }) =
     tileHeight_
 
 
-currentScreen : Int -> Int -> World a b -> Maybe (Screen a b)
-currentScreen x y (World { screenWidthInPixels, screenHeightInPixels, screens }) =
+screenAt : Int -> Int -> World a b -> Maybe (Screen a b)
+screenAt x y (World { screenWidthInPixels, screenHeightInPixels, screens }) =
     getScreenWrapping screens screenWidthInPixels screenHeightInPixels x y
 
 
-render : Avatar c -> World a b -> Maybe (Screen a b)
-render avatar ((World ({ screenWidthInPixels, screenHeightInPixels, screens } as state)) as world) =
+currentScreen : Avatar c -> World a b -> Maybe (Screen a b)
+currentScreen avatar (World { screenWidthInPixels, screenHeightInPixels, screens }) =
     let
         x =
             Avatar.baseX avatar
@@ -159,6 +160,26 @@ render avatar ((World ({ screenWidthInPixels, screenHeightInPixels, screens } as
             getScreenPosWrapping screens screenWidthInPixels screenHeightInPixels x y
     in
     Array2d.get screenX screenY screens
+
+
+avatarPositionOnScreen : Avatar c -> World a b -> ( Int, Int )
+avatarPositionOnScreen avatar (World { screenWidthInPixels, screenHeightInPixels }) =
+    let
+        x =
+            Avatar.baseX avatar
+
+        y =
+            Avatar.baseY avatar
+
+        xOffset =
+            x - modBy screenWidthInPixels x
+
+        yOffset =
+            y - modBy screenHeightInPixels y
+    in
+    ( Avatar.topLeftX avatar - xOffset
+    , Avatar.topLeftY avatar - yOffset
+    )
 
 
 collider : World a b -> Collider.PointChecker

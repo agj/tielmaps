@@ -1,7 +1,8 @@
 module PixelRenderer exposing (element)
 
 import Array exposing (Array)
-import Array2d
+import Array2d exposing (Array2d)
+import Avatar exposing (Avatar)
 import Bitmap exposing (Bitmap)
 import Bitmap.Color
 import Color exposing (Color)
@@ -9,17 +10,48 @@ import Colors exposing (Colors)
 import Html exposing (Html)
 import Html.Attributes
 import Json.Encode
+import Levers
+import Screen
+import Size exposing (Size22x22, Size8x8)
 import Tile exposing (Tile)
 import Tilemap exposing (Tilemap)
+import World exposing (World)
 
 
-element : Int -> Int -> List (Html.Attribute msg) -> Colors -> Tilemap x -> Html msg
-element width height attrs colors tilemap =
+element : Int -> Int -> List (Html.Attribute msg) -> World Size22x22 Size8x8 -> Avatar x -> Html msg
+element width height attrs world avatar =
     let
+        colors =
+            world
+                |> World.screenAt (Avatar.baseX avatar) (Avatar.baseY avatar)
+                |> Maybe.map Screen.colors
+                |> Maybe.withDefault Colors.default
+
+        tilemap =
+            world
+                |> World.currentScreen avatar
+                |> Maybe.map Screen.tilemap
+                |> Maybe.withDefault (Tilemap.empty8x8Tile Levers.screenWidthInTiles Levers.screenHeightInTiles)
+
         tilemapBitmaps =
             Tilemap.tiles tilemap
                 |> Array.toList
                 |> List.map Tile.bitmap
+
+        avatarBitmaps =
+            Avatar.bitmaps avatar
+
+        tilemapBitmapStamps =
+            encodeTilemapAsBitmapStamps tilemap
+
+        ( avatarX, avatarY ) =
+            World.avatarPositionOnScreen avatar world
+
+        avatarBitmapStamp =
+            encodeBitmapStamp
+                avatarX
+                avatarY
+                (Avatar.bitmapIndex avatar + List.length tilemapBitmaps)
     in
     Html.node "pixel-renderer"
         ([ Html.Attributes.width width
@@ -27,9 +59,9 @@ element width height attrs colors tilemap =
          , Html.Attributes.property "colors"
             (encodeColors [ colors.darkColor, colors.lightColor ])
          , Html.Attributes.property "bitmaps"
-            (encodeBitmaps tilemapBitmaps)
+            (encodeBitmaps (tilemapBitmaps ++ avatarBitmaps))
          , Html.Attributes.property "bitmapStamps"
-            (encodeTilemapAsBitmapStamps tilemap
+            ((tilemapBitmapStamps ++ [ avatarBitmapStamp ])
                 |> Json.Encode.list identity
             )
          ]

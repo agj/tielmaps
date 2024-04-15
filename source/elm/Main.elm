@@ -163,18 +163,6 @@ globalStyles =
 mainView : Model -> Html Msg
 mainView { world, character, scale } =
     let
-        colors =
-            world
-                |> World.currentScreen (Avatar.baseX character) (Avatar.baseY character)
-                |> Maybe.map Screen.colors
-                |> Maybe.withDefault Colors.default
-
-        currentScreenTilemap =
-            world
-                |> World.render character
-                |> Maybe.map Screen.tilemap
-                |> Maybe.withDefault (Tilemap.empty8x8Tile Levers.screenWidthInTiles Levers.screenHeightInTiles)
-
         pixelRendererAttributes : List (Attribute msg)
         pixelRendererAttributes =
             [ Html.Attributes.style "transform"
@@ -199,8 +187,8 @@ mainView { world, character, scale } =
             Levers.screenWidth
             Levers.screenHeight
             pixelRendererAttributes
-            colors
-            currentScreenTilemap
+            world
+            character
             |> Html.Styled.fromUnstyled
         ]
 
