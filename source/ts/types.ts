@@ -27,13 +27,13 @@ export type Color = {
 
 export type ZeroToOne = number;
 
-export type Tile = {
+export type Bitmap = {
   width: number;
   pixels: number[];
 };
 
-export type TileStamp = {
+export type BitmapStamp = {
   x: number;
   y: number;
-  tileIndex: number;
+  bitmapIndex: number;
 };

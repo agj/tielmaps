@@ -1,4 +1,4 @@
-import { Color, Tile, TileStamp } from "./types";
+import { Color, Bitmap, BitmapStamp } from "./types";
 
 if (!window["customElements"]) {
   throw new Error(
@@ -18,8 +18,8 @@ const getPixel = (
 class PixelRendererElement extends HTMLElement {
   private canvas?: HTMLCanvasElement;
   private context?: CanvasRenderingContext2D;
-  private tileStamps_: TileStamp[] = [];
-  tiles: Tile[] = [];
+  private bitmapStamps_: BitmapStamp[] = [];
+  bitmaps: Bitmap[] = [];
   colors: Color[] = [];
 
   static get observedAttributes() {
@@ -60,8 +60,8 @@ class PixelRendererElement extends HTMLElement {
     }
   }
 
-  set tileStamps(tileStamps: TileStamp[]) {
-    this.tileStamps_ = tileStamps;
+  set bitmapStamps(tileStamps: BitmapStamp[]) {
+    this.bitmapStamps_ = tileStamps;
     this.paintCanvas();
   }
 
@@ -88,7 +88,7 @@ class PixelRendererElement extends HTMLElement {
       return;
     }
 
-    const tileImages = this.tiles.map(({ width, pixels }) => {
+    const tileImages = this.bitmaps.map(({ width, pixels }) => {
       const height = Math.ceil(pixels.length / width);
       const imageData = this.context?.createImageData(width, height);
 
@@ -110,7 +110,7 @@ class PixelRendererElement extends HTMLElement {
       return imageData;
     });
 
-    this.tileStamps_.forEach(({ x, y, tileIndex }) => {
+    this.bitmapStamps_.forEach(({ x, y, bitmapIndex: tileIndex }) => {
       const tileImage = tileImages[tileIndex];
       if (tileImage) {
         this.context?.putImageData(tileImage, x, y);

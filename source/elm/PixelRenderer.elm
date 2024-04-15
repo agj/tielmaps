@@ -20,9 +20,9 @@ element width height attrs colors tilemap =
          , Html.Attributes.height height
          , Html.Attributes.property "colors"
             (encodeColors [ colors.darkColor, colors.lightColor ])
-         , Html.Attributes.property "tiles"
+         , Html.Attributes.property "bitmaps"
             (encodeTiles (Tilemap.tiles tilemap))
-         , Html.Attributes.property "tileStamps"
+         , Html.Attributes.property "bitmapStamps"
             (encodeTileStamps tilemap)
          ]
             ++ attrs
@@ -48,7 +48,7 @@ encodeTileStamps tilemap =
             Json.Encode.object
                 [ ( "x", Json.Encode.int (tileX * tileWidth) )
                 , ( "y", Json.Encode.int (tileY * tileHeight) )
-                , ( "tileIndex", Json.Encode.int tileIndex )
+                , ( "bitmapIndex", Json.Encode.int tileIndex )
                 ]
                 :: acc
     in
