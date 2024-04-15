@@ -82,7 +82,7 @@ encodeTile tile =
 encodeBitmap : Bitmap -> Json.Encode.Value
 encodeBitmap bitmap =
     Bitmap.pixels bitmap
-        |> Array2d.toArray
+        |> Array2d.toUnidimensional
         |> Array.map
             (\color ->
                 case color of

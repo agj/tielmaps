@@ -9,7 +9,6 @@ module Array2d exposing
     , map
     , repeat
     , set
-    , toArray
     , toUnidimensional
     , width
     )
@@ -138,11 +137,6 @@ height (Array2d { height_ }) =
     height_
 
 
-toArray : Array2d a -> Array a
-toArray (Array2d { array }) =
-    array
-
-
 
 -- MODIFICATION
 
@@ -177,11 +171,11 @@ indexedFoldl mapper init (Array2d { width_, array }) =
         |> List.Extra.indexedFoldl
             (\index a b ->
                 let
-                    y =
+                    x =
                         index |> modBy width_
 
-                    x =
-                        index - y
+                    y =
+                        index // width_
                 in
                 mapper x y a b
             )
