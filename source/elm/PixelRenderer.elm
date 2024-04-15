@@ -15,13 +15,19 @@ import Tilemap exposing (Tilemap)
 
 element : Int -> Int -> List (Html.Attribute msg) -> Colors -> Tilemap x -> Html msg
 element width height attrs colors tilemap =
+    let
+        tilemapBitmaps =
+            Tilemap.tiles tilemap
+                |> Array.toList
+                |> List.map Tile.bitmap
+    in
     Html.node "pixel-renderer"
         ([ Html.Attributes.width width
          , Html.Attributes.height height
          , Html.Attributes.property "colors"
             (encodeColors [ colors.darkColor, colors.lightColor ])
          , Html.Attributes.property "bitmaps"
-            (encodeTiles (Tilemap.tiles tilemap))
+            (encodeBitmaps tilemapBitmaps)
          , Html.Attributes.property "bitmapStamps"
             (encodeTileStamps tilemap)
          ]
@@ -58,22 +64,22 @@ encodeTileStamps tilemap =
         |> Json.Encode.list identity
 
 
-encodeTiles : Array (Tile x) -> Json.Encode.Value
-encodeTiles tiles =
-    Json.Encode.array encodeTile tiles
-
-
-encodeTile : Tile x -> Json.Encode.Value
-encodeTile tile =
-    Json.Encode.object
-        [ ( "width", Json.Encode.int (Tile.width tile) )
-        , ( "pixels", encodeBitmap (Tile.bitmap tile) )
-        ]
+encodeBitmaps : List Bitmap -> Json.Encode.Value
+encodeBitmaps bitmaps =
+    Json.Encode.list encodeBitmap bitmaps
 
 
 encodeBitmap : Bitmap -> Json.Encode.Value
 encodeBitmap bitmap =
-    Bitmap.pixels bitmap
+    Json.Encode.object
+        [ ( "width", Json.Encode.int (Bitmap.width bitmap) )
+        , ( "pixels", encodePixels (Bitmap.pixels bitmap) )
+        ]
+
+
+encodePixels : Array2d Bitmap.Color.Color -> Json.Encode.Value
+encodePixels bitmap =
+    bitmap
         |> Array2d.toUnidimensional
         |> Array.map
             (\color ->
@@ -102,12 +108,7 @@ encodeColor color =
             Color.toRgba color
     in
     Json.Encode.object
-        [ ( "red", encodeColorChannel red )
-        , ( "green", encodeColorChannel green )
-        , ( "blue", encodeColorChannel blue )
+        [ ( "red", Json.Encode.float red )
+        , ( "green", Json.Encode.float green )
+        , ( "blue", Json.Encode.float blue )
         ]
-
-
-encodeColorChannel : Float -> Json.Encode.Value
-encodeColorChannel channel =
-    Json.Encode.float channel
