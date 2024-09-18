@@ -1,11 +1,20 @@
-module Assets.Frames exposing (airborne, bob, hop, standing, toBitmap)
+module Assets.Frames exposing
+    ( airborneLeft
+    , airborneRight
+    , bobLeft
+    , bobRight
+    , hopLeft
+    , hopRight
+    , standingLeft
+    , standingRight
+    )
 
 import Bitmap exposing (Bitmap)
 import Bitmap.Color as Color
 import Size exposing (Size8x8)
 
 
-airborne =
+airborneRight =
     """
     █ █ █ █ █ █ █ █
     █ . . . . . . █
@@ -19,7 +28,12 @@ airborne =
         |> toBitmap
 
 
-hop =
+airborneLeft =
+    airborneRight
+        |> Bitmap.flipX
+
+
+hopRight =
     """
     █ █ █ █ █ █ █ █
     █ . . . . . . █
@@ -33,7 +47,12 @@ hop =
         |> toBitmap
 
 
-standing =
+hopLeft =
+    hopRight
+        |> Bitmap.flipX
+
+
+standingRight =
     """
     / / / / / / / /
     █ █ █ █ █ █ █ █
@@ -47,7 +66,12 @@ standing =
         |> toBitmap
 
 
-bob =
+standingLeft =
+    standingRight
+        |> Bitmap.flipX
+
+
+bobRight =
     """
     █ █ █ █ █ █ █ █
     █ . . . . . . █
@@ -59,6 +83,11 @@ bob =
     / █ / / / █ / /
     """
         |> toBitmap
+
+
+bobLeft =
+    bobRight
+        |> Bitmap.flipX
 
 
 

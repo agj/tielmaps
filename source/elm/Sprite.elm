@@ -12,7 +12,7 @@ module Sprite exposing
 import Bitmap exposing (Bitmap)
 import List.Nonempty exposing (Nonempty)
 import Size exposing (Size8x8)
-import Sprite.Frame as Frame exposing (HeldFrame)
+import Sprite.Frame as Frame exposing (Frame, HeldFrame)
 
 
 type Sprite
@@ -24,16 +24,16 @@ type Sprite
 
 
 type Animation
-    = Static (Bitmap Size8x8)
+    = Static Frame
     | Animated Int (Nonempty HeldFrame)
 
 
-static : Bitmap Size8x8 -> Sprite
-static bm =
+static : Frame -> Sprite
+static frame =
     Sprite
-        { width_ = Bitmap.width bm
-        , height_ = Bitmap.height bm
-        , animation = Static bm
+        { width_ = 8
+        , height_ = 8
+        , animation = Static frame
         }
 
 
@@ -71,8 +71,8 @@ tick ((Sprite state) as sprite) =
 bitmaps : Sprite -> List (Bitmap Size8x8)
 bitmaps (Sprite { animation }) =
     case animation of
-        Static bm ->
-            [ bm ]
+        Static frame ->
+            [ Frame.make 1 frame |> Frame.bitmap ]
 
         Animated _ frames ->
             frames
@@ -83,8 +83,8 @@ bitmaps (Sprite { animation }) =
 bitmap : Sprite -> Bitmap Size8x8
 bitmap (Sprite { animation }) =
     case animation of
-        Static bm ->
-            bm
+        Static frame ->
+            Frame.make 1 frame |> Frame.bitmap
 
         Animated ticks frames ->
             currentFrame ticks frames

@@ -1,5 +1,6 @@
 module Sprite.Frame exposing
-    ( HeldFrame
+    ( Frame(..)
+    , HeldFrame
     , bitmap
     , duration
     , height
@@ -7,17 +8,29 @@ module Sprite.Frame exposing
     , width
     )
 
+import Assets.Frames as Frames
 import Bitmap exposing (Bitmap)
 import Size exposing (Size8x8)
 
 
 type HeldFrame
-    = Frame Int (Bitmap Size8x8)
+    = Frame Int Frame
 
 
-make : Int -> Bitmap Size8x8 -> HeldFrame
-make dur b =
-    Frame dur b
+type Frame
+    = FrameAirborneRight
+    | FrameAirborneLeft
+    | FrameHopRight
+    | FrameHopLeft
+    | FrameStandingRight
+    | FrameStandingLeft
+    | FrameBobRight
+    | FrameBobLeft
+
+
+make : Int -> Frame -> HeldFrame
+make dur f =
+    Frame dur f
 
 
 
@@ -25,8 +38,31 @@ make dur b =
 
 
 bitmap : HeldFrame -> Bitmap Size8x8
-bitmap (Frame _ bm) =
-    bm
+bitmap (Frame _ f) =
+    case f of
+        FrameAirborneRight ->
+            Frames.airborneRight
+
+        FrameAirborneLeft ->
+            Frames.airborneLeft
+
+        FrameHopRight ->
+            Frames.hopRight
+
+        FrameHopLeft ->
+            Frames.hopLeft
+
+        FrameStandingRight ->
+            Frames.standingRight
+
+        FrameStandingLeft ->
+            Frames.standingLeft
+
+        FrameBobRight ->
+            Frames.bobRight
+
+        FrameBobLeft ->
+            Frames.bobLeft
 
 
 duration : HeldFrame -> Int
@@ -35,10 +71,12 @@ duration (Frame dur _) =
 
 
 width : HeldFrame -> Int
-width (Frame _ bm) =
-    Bitmap.width bm
+width heldFrame =
+    bitmap heldFrame
+        |> Bitmap.width
 
 
 height : HeldFrame -> Int
-height (Frame _ bm) =
-    Bitmap.height bm
+height heldFrame =
+    bitmap heldFrame
+        |> Bitmap.height
