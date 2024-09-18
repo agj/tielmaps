@@ -2,12 +2,10 @@ module Avatar exposing
     ( Avatar
     , baseX
     , baseY
-    , bitmap
-    , bitmapIndex
-    , bitmaps
     , collide
     , fromSprite
     , fromSprites
+    , graphic
     , repositionTopLeft
     , tick
     , topLeftX
@@ -16,12 +14,10 @@ module Avatar exposing
 
 import Avatar.AvatarSprites as AvatarSprites exposing (AvatarSprites)
 import Avatar.Padding exposing (Padding)
-import Bitmap exposing (Bitmap)
 import Collider.Interface exposing (Collider)
+import Graphic exposing (Graphic)
 import Keys exposing (Keys)
 import Levers
-import List.Extra
-import Size exposing (Size8x8)
 import Sprite exposing (Sprite)
 
 
@@ -119,20 +115,10 @@ fromSprites padding sprs =
 -- ACCESSORS
 
 
-bitmaps : Avatar -> List (Bitmap Size8x8)
-bitmaps (Avatar { sprites_ }) =
-    AvatarSprites.bitmaps sprites_
-
-
-bitmap : Avatar -> Bitmap Size8x8
-bitmap avatar =
-    Sprite.bitmap (currentSprite avatar)
-
-
-bitmapIndex : Avatar -> Int
-bitmapIndex avatar =
-    List.Extra.findIndex ((==) (bitmap avatar)) (bitmaps avatar)
-        |> Maybe.withDefault 0
+graphic : Avatar -> Graphic
+graphic avatar =
+    currentSprite avatar
+        |> Sprite.graphic
 
 
 topLeftX : Avatar -> Int

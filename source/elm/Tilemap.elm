@@ -1,19 +1,16 @@
 module Tilemap exposing
     ( Tilemap
-    , empty8x8Tile
+    , empty
     , fromString
     , height
-    , map
     , tiles
     , width
     )
 
-import Array exposing (Array)
 import Array2d exposing (Array2d)
 import Dict exposing (Dict)
 import Graphic exposing (Graphic)
 import Helper
-import List.Extra
 import Maybe.Extra as Maybe
 
 
@@ -21,18 +18,16 @@ type Tilemap
     = Tilemap
         { width_ : Int
         , height_ : Int
-        , tiles_ : Array Graphic
-        , map_ : Array2d Int
+        , tiles_ : Array2d Graphic
         }
 
 
-empty8x8Tile : Int -> Int -> Tilemap
-empty8x8Tile w h =
+empty : Int -> Int -> Tilemap
+empty w h =
     Tilemap
         { width_ = w
         , height_ = h
-        , tiles_ = Array.repeat 1 Graphic.Empty
-        , map_ = Array2d.repeat w h 0
+        , tiles_ = Array2d.repeat w h Graphic.Empty
         }
 
 
@@ -58,38 +53,21 @@ Note that spaces are always ignored.
 
 -}
 fromString : Dict Char Graphic -> String -> Maybe Tilemap
-fromString tiles_ str =
+fromString charToGraphicMap str =
     let
-        tilesList =
-            Dict.values tiles_
-
-        tilesArray : Array Graphic
-        tilesArray =
-            Dict.values tiles_
-                |> Array.fromList
-
-        charToTileIndex : Char -> Maybe Int
+        charToTileIndex : Char -> Maybe Graphic
         charToTileIndex ch =
-            Dict.get ch tiles_
-                |> Maybe.andThen (\tile_ -> List.Extra.findIndex ((==) tile_) tilesList)
-
-        map_ : Maybe (Array2d Int)
-        map_ =
-            Helper.stringToArray2d charToTileIndex str
+            Dict.get ch charToGraphicMap
     in
-    case map_ of
-        Just mapOk ->
-            Just
-                (Tilemap
-                    { width_ = Array2d.width mapOk
-                    , height_ = Array2d.height mapOk
-                    , tiles_ = tilesArray
-                    , map_ = mapOk
+    Helper.stringToArray2d charToTileIndex str
+        |> Maybe.map
+            (\tiles_ ->
+                Tilemap
+                    { width_ = Array2d.width tiles_
+                    , height_ = Array2d.height tiles_
+                    , tiles_ = tiles_
                     }
-                )
-
-        _ ->
-            Nothing
+            )
 
 
 
@@ -106,11 +84,6 @@ height (Tilemap { height_ }) =
     height_
 
 
-tiles : Tilemap -> Array Graphic
+tiles : Tilemap -> Array2d Graphic
 tiles (Tilemap { tiles_ }) =
     tiles_
-
-
-map : Tilemap -> Array2d Int
-map (Tilemap { map_ }) =
-    map_

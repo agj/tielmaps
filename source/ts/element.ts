@@ -19,7 +19,7 @@ class PixelRendererElement extends HTMLElement {
   private canvas?: HTMLCanvasElement;
   private context?: CanvasRenderingContext2D;
   private bitmapStamps_: BitmapStamp[] = [];
-  bitmaps: Bitmap[] = [];
+  private bitmaps_: Bitmap[] = [];
   colors: Color[] = [];
 
   static get observedAttributes() {
@@ -60,6 +60,10 @@ class PixelRendererElement extends HTMLElement {
     }
   }
 
+  set bitmaps(bitmaps: Bitmap[]) {
+    this.bitmaps_ = bitmaps;
+  }
+
   set bitmapStamps(tileStamps: BitmapStamp[]) {
     this.bitmapStamps_ = tileStamps;
     this.paintCanvas();
@@ -88,9 +92,10 @@ class PixelRendererElement extends HTMLElement {
       return;
     }
 
-    const tileImages = this.bitmaps.map(({ width, pixels }) => {
+    const tileImages = this.bitmaps_.map(({ width, pixels }) => {
       const height = Math.ceil(pixels.length / width);
       const imageData = this.context?.createImageData(width, height);
+      let hasTransparency = false;
 
       if (imageData) {
         for (let x = 0; x < width; x += 1) {
@@ -103,17 +108,25 @@ class PixelRendererElement extends HTMLElement {
             imageData.data[offset + 1] = (color?.green ?? 0) * 0xff;
             imageData.data[offset + 2] = (color?.blue ?? 0) * 0xff;
             imageData.data[offset + 3] = (color?.alpha ?? 1) * 0xff;
+
+            if ((color?.alpha ?? 1) < 1) {
+              hasTransparency = true;
+            }
           }
         }
       }
 
-      return imageData;
+      return imageData ? { image: imageData, hasTransparency } : undefined;
     });
 
     this.bitmapStamps_.forEach(({ x, y, bitmapIndex: tileIndex }) => {
       const tileImage = tileImages[tileIndex];
       if (tileImage) {
-        this.context?.putImageData(tileImage, x, y);
+        // if (tileImage.hasTransparency) {
+        //   this.context?.drawImage(createImageBitmap(tileImage.image), x, y);
+        // } else {
+        this.context?.putImageData(tileImage.image, x, y);
+        // }
       }
     });
   }

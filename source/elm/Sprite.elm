@@ -1,18 +1,15 @@
 module Sprite exposing
     ( Sprite
     , animated
-    , bitmap
-    , bitmaps
+    , graphic
     , height
     , static
     , tick
     , width
     )
 
-import Bitmap exposing (Bitmap)
 import Graphic exposing (Graphic)
 import List.Nonempty exposing (Nonempty)
-import Size exposing (Size8x8)
 import Sprite.HeldFrame as HeldFrame exposing (HeldFrame)
 
 
@@ -52,28 +49,15 @@ tick sprite =
                 Animated newTicks frames
 
 
-bitmaps : Sprite -> List (Bitmap Size8x8)
-bitmaps sprite =
+graphic : Sprite -> Graphic
+graphic sprite =
     case sprite of
         Static frame ->
-            [ Graphic.bitmap frame ]
-
-        Animated _ frames ->
-            frames
-                |> List.Nonempty.toList
-                |> List.map (HeldFrame.frame >> Graphic.bitmap)
-
-
-bitmap : Sprite -> Bitmap Size8x8
-bitmap sprite =
-    case sprite of
-        Static frame ->
-            Graphic.bitmap frame
+            frame
 
         Animated ticks frames ->
             currentFrame ticks frames
                 |> HeldFrame.frame
-                |> Graphic.bitmap
 
 
 width : Sprite -> Int

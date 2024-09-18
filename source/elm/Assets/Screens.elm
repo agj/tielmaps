@@ -195,7 +195,7 @@ toScreen colors string =
         tilemap =
             string
                 |> Tilemap.fromString charTiles
-                |> Maybe.withDefault (Tilemap.empty8x8Tile 0 0)
+                |> Maybe.withDefault (Tilemap.empty 0 0)
 
         collisionLayer =
             string

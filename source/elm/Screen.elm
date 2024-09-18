@@ -56,7 +56,7 @@ make22x22 colors_ m coll =
 empty22x22 : Colors -> Screen Size22x22
 empty22x22 colors_ =
     Screen
-        { tilemap_ = Tilemap.empty8x8Tile 22 22
+        { tilemap_ = Tilemap.empty 22 22
         , collisionLayer_ = CollisionLayer.empty 22 22
         , colors_ = colors_
         }
@@ -111,7 +111,7 @@ errorTilemap =
                 [ ( '#', Graphic.Error )
                 ]
             )
-        |> Maybe.withDefault (Tilemap.empty8x8Tile 0 0)
+        |> Maybe.withDefault (Tilemap.empty 0 0)
 
 
 fullTilemapString : String

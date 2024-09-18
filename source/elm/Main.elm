@@ -1,16 +1,20 @@
 module Main exposing (Msg(..), main, update, view)
 
+import Array
+import Array2d
 import Assets.Sprites as Sprites
 import Assets.Worlds as Worlds
 import Avatar exposing (Avatar)
 import Avatar.Padding exposing (zero)
 import Bitmap exposing (Bitmap)
+import Bitmap.Stamp exposing (BitmapStamp)
 import Browser
 import Browser.Events
 import Collider
 import Colors exposing (Colors)
 import Css exposing (alignItems, backgroundColor, center, displayFlex, hsl, justifyContent, margin, padding, pct, px, scale)
 import Css.Global exposing (global, selector)
+import Graphic
 import Html exposing (Attribute)
 import Html.Attributes
 import Html.Styled exposing (Html, div, toUnstyled)
@@ -163,6 +167,44 @@ globalStyles =
 mainView : Model -> Html Msg
 mainView { world, character, scale } =
     let
+        colors : Colors
+        colors =
+            world
+                |> World.screenAt (Avatar.baseX character) (Avatar.baseY character)
+                |> Maybe.map Screen.colors
+                |> Maybe.withDefault Colors.default
+
+        tilemap : Tilemap
+        tilemap =
+            world
+                |> World.currentScreen character
+                |> Maybe.map Screen.tilemap
+                |> Maybe.withDefault (Tilemap.empty Levers.screenWidthInTiles Levers.screenHeightInTiles)
+
+        ( avatarX, avatarY ) =
+            World.avatarPositionOnScreen character world
+
+        tilemapBitmapStamps : List BitmapStamp
+        tilemapBitmapStamps =
+            tilemap
+                |> Tilemap.tiles
+                |> Array2d.indexedFoldl
+                    (\x y graphic acc ->
+                        { x = x * 8
+                        , y = y * 8
+                        , bitmapIndex = Graphic.index graphic
+                        }
+                            :: acc
+                    )
+                    []
+
+        avatarBitmapStamp : BitmapStamp
+        avatarBitmapStamp =
+            { x = avatarX
+            , y = avatarY
+            , bitmapIndex = Avatar.graphic character |> Graphic.index
+            }
+
         pixelRendererAttributes : List (Attribute msg)
         pixelRendererAttributes =
             [ Html.Attributes.style "transform"
@@ -186,9 +228,10 @@ mainView { world, character, scale } =
         [ PixelRenderer.element
             Levers.screenWidth
             Levers.screenHeight
+            [ colors.darkColor, colors.lightColor ]
+            (Graphic.all |> List.map Graphic.bitmap)
+            (avatarBitmapStamp :: tilemapBitmapStamps |> List.reverse)
             pixelRendererAttributes
-            world
-            character
             |> Html.Styled.fromUnstyled
         ]
 

@@ -18,9 +18,6 @@ stringToArray2d mapper str =
                 |> List.map String.length
                 |> List.foldl max 0
 
-        h =
-            List.length rawLines
-
         lines =
             rawLines
                 |> List.map (String.padRight w '.')
