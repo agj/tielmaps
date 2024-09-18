@@ -17,43 +17,26 @@ import Sprite.HeldFrame as HeldFrame exposing (HeldFrame)
 
 
 type Sprite
-    = Sprite
-        { width_ : Int
-        , height_ : Int
-        , animation : Animation
-        }
-
-
-type Animation
     = Static Graphic
     | Animated Int (Nonempty HeldFrame)
 
 
 static : Graphic -> Sprite
 static frame =
-    Sprite
-        { width_ = 8
-        , height_ = 8
-        , animation = Static frame
-        }
+    Static frame
 
 
 animated : HeldFrame -> List HeldFrame -> Sprite
 animated firstFrame frames =
-    Sprite
-        { width_ = 8
-        , height_ = 8
-        , animation =
-            Animated 0
-                (List.Nonempty.singleton firstFrame
-                    |> List.Nonempty.replaceTail frames
-                )
-        }
+    Animated 0
+        (List.Nonempty.singleton firstFrame
+            |> List.Nonempty.replaceTail frames
+        )
 
 
 tick : Sprite -> Sprite
-tick ((Sprite state) as sprite) =
-    case state.animation of
+tick sprite =
+    case sprite of
         Static _ ->
             sprite
 
@@ -63,15 +46,15 @@ tick ((Sprite state) as sprite) =
                     ticks + 1
             in
             if newTicks >= totalTicks frames then
-                Sprite { state | animation = Animated 0 frames }
+                Animated 0 frames
 
             else
-                Sprite { state | animation = Animated newTicks frames }
+                Animated newTicks frames
 
 
 bitmaps : Sprite -> List (Bitmap Size8x8)
-bitmaps (Sprite { animation }) =
-    case animation of
+bitmaps sprite =
+    case sprite of
         Static frame ->
             [ Graphic.bitmap frame ]
 
@@ -82,8 +65,8 @@ bitmaps (Sprite { animation }) =
 
 
 bitmap : Sprite -> Bitmap Size8x8
-bitmap (Sprite { animation }) =
-    case animation of
+bitmap sprite =
+    case sprite of
         Static frame ->
             Graphic.bitmap frame
 
@@ -94,13 +77,13 @@ bitmap (Sprite { animation }) =
 
 
 width : Sprite -> Int
-width (Sprite { width_ }) =
-    width_
+width _ =
+    8
 
 
 height : Sprite -> Int
-height (Sprite { height_ }) =
-    height_
+height _ =
+    8
 
 
 
