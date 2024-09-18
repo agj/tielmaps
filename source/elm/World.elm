@@ -16,7 +16,6 @@ module World exposing
 
 import Array2d exposing (Array2d)
 import Avatar exposing (Avatar)
-import Bitmap exposing (Bitmap)
 import Collider.Interface as Collider
 import List.Extra as List
 import Maybe.Extra as Maybe
@@ -37,57 +36,40 @@ type World mapSize tileSize
 
 singleton : Screen a b -> World a b
 singleton screen =
-    let
-        tileWidth_ =
-            Screen.tileWidth screen
-
-        tileHeight_ =
-            Screen.tileHeight screen
-    in
     World
         { screens = Array2d.repeat 1 1 screen
-        , tileWidth_ = tileWidth_
-        , tileHeight_ = tileHeight_
+        , tileWidth_ = 8
+        , tileHeight_ = 8
         , screenWidthInTiles = Screen.widthInTiles screen
         , screenHeightInTiles = Screen.heightInTiles screen
-        , screenWidthInPixels = Screen.widthInTiles screen * tileWidth_
-        , screenHeightInPixels = Screen.heightInTiles screen * tileHeight_
+        , screenWidthInPixels = Screen.widthInTiles screen * 8
+        , screenHeightInPixels = Screen.heightInTiles screen * 8
         }
 
 
 fromArray2d : Array2d (Screen a b) -> Maybe (World a b)
 fromArray2d screens =
-    case Array2d.get 0 0 screens of
-        Just screen ->
-            let
-                tileWidth_ =
-                    Screen.tileWidth screen
-
-                tileHeight_ =
-                    Screen.tileHeight screen
-            in
-            Just
-                (World
+    Array2d.get 0 0 screens
+        |> Maybe.map
+            (\screen ->
+                World
                     { screens = screens
-                    , tileWidth_ = tileWidth_
-                    , tileHeight_ = tileHeight_
+                    , tileWidth_ = 8
+                    , tileHeight_ = 8
                     , screenWidthInTiles = Screen.widthInTiles screen
                     , screenHeightInTiles = Screen.heightInTiles screen
-                    , screenWidthInPixels = Screen.widthInTiles screen * tileWidth_
-                    , screenHeightInPixels = Screen.heightInTiles screen * tileHeight_
+                    , screenWidthInPixels = Screen.widthInTiles screen * 8
+                    , screenHeightInPixels = Screen.heightInTiles screen * 8
                     }
-                )
-
-        Nothing ->
-            Nothing
+            )
 
 
 stitchHorizontally : World a b -> World a b -> Maybe (World a b)
 stitchHorizontally (World left) (World right) =
-    case stitchArray2dX left.screens right.screens of
-        Just stitchedScreens ->
-            Just
-                (World
+    stitchArray2dX left.screens right.screens
+        |> Maybe.map
+            (\stitchedScreens ->
+                World
                     { screens = stitchedScreens
                     , tileWidth_ = left.tileWidth_
                     , tileHeight_ = left.tileHeight_
@@ -96,18 +78,15 @@ stitchHorizontally (World left) (World right) =
                     , screenWidthInPixels = left.screenWidthInPixels
                     , screenHeightInPixels = left.screenHeightInPixels
                     }
-                )
-
-        Nothing ->
-            Nothing
+            )
 
 
 stitchVertically : World a b -> World a b -> Maybe (World a b)
 stitchVertically (World top) (World bottom) =
-    case stitchArray2dY top.screens bottom.screens of
-        Just stitchedScreens ->
-            Just
-                (World
+    stitchArray2dY top.screens bottom.screens
+        |> Maybe.map
+            (\stitchedScreens ->
+                World
                     { screens = stitchedScreens
                     , tileWidth_ = top.tileWidth_
                     , tileHeight_ = top.tileHeight_
@@ -116,10 +95,7 @@ stitchVertically (World top) (World bottom) =
                     , screenWidthInPixels = top.screenWidthInPixels
                     , screenHeightInPixels = top.screenHeightInPixels
                     }
-                )
-
-        Nothing ->
-            Nothing
+            )
 
 
 widthInScreens : World a b -> Int

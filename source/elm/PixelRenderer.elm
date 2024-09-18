@@ -78,18 +78,12 @@ element width height attrs world avatar =
 -- ENCODERS
 
 
-encodeTilemapAsBitmapStamps : Tilemap a -> List Json.Encode.Value
+encodeTilemapAsBitmapStamps : Tilemap -> List Json.Encode.Value
 encodeTilemapAsBitmapStamps tilemap =
     let
-        tileWidth =
-            Tilemap.tileWidth tilemap
-
-        tileHeight =
-            Tilemap.tileHeight tilemap
-
         tileToBitmapStampValue : Int -> Int -> Int -> List Json.Encode.Value -> List Json.Encode.Value
         tileToBitmapStampValue tileX tileY tileIndex acc =
-            encodeBitmapStamp (tileX * tileWidth) (tileY * tileHeight) tileIndex
+            encodeBitmapStamp (tileX * 8) (tileY * 8) tileIndex
                 :: acc
     in
     Tilemap.map tilemap

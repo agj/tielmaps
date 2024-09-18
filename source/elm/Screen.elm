@@ -6,8 +6,6 @@ module Screen exposing
     , error22x22
     , heightInTiles
     , make22x22
-    , tileHeight
-    , tileWidth
     , tilemap
     , widthInTiles
     )
@@ -22,15 +20,13 @@ import Tilemap exposing (Tilemap)
 
 type Screen mapSize tileSize
     = Screen
-        { tilemap_ : Tilemap tileSize
+        { tilemap_ : Tilemap
         , collisionLayer_ : CollisionLayer
-        , tileWidth_ : Int
-        , tileHeight_ : Int
         , colors_ : Colors
         }
 
 
-make22x22 : Colors -> Tilemap a -> CollisionLayer -> Maybe (Screen Size22x22 a)
+make22x22 : Colors -> Tilemap -> CollisionLayer -> Maybe (Screen Size22x22 a)
 make22x22 colors_ m coll =
     let
         width_ =
@@ -49,8 +45,6 @@ make22x22 colors_ m coll =
             (Screen
                 { tilemap_ = m
                 , collisionLayer_ = coll
-                , tileWidth_ = Tilemap.tileWidth m
-                , tileHeight_ = Tilemap.tileHeight m
                 , colors_ = colors_
                 }
             )
@@ -64,8 +58,6 @@ empty22x22 colors_ =
     Screen
         { tilemap_ = Tilemap.empty8x8Tile 22 22
         , collisionLayer_ = CollisionLayer.empty 22 22
-        , tileWidth_ = 8
-        , tileHeight_ = 8
         , colors_ = colors_
         }
 
@@ -75,13 +67,11 @@ error22x22 =
     Screen
         { tilemap_ = errorTilemap
         , collisionLayer_ = CollisionLayer.empty 22 22
-        , tileWidth_ = 8
-        , tileHeight_ = 8
         , colors_ = Colors.default
         }
 
 
-tilemap : Screen a b -> Tilemap b
+tilemap : Screen a b -> Tilemap
 tilemap (Screen { tilemap_ }) =
     tilemap_
 
@@ -90,18 +80,8 @@ tilemap (Screen { tilemap_ }) =
 Normally called from within `Collider.collide`.
 -}
 collider : Screen a b -> Int -> Int -> Bool
-collider (Screen { collisionLayer_, tileWidth_, tileHeight_ }) x_ y_ =
-    CollisionLayer.getAt (x_ // tileWidth_) (y_ // tileHeight_) collisionLayer_
-
-
-tileWidth : Screen a b -> Int
-tileWidth (Screen { tileWidth_ }) =
-    tileWidth_
-
-
-tileHeight : Screen a b -> Int
-tileHeight (Screen { tileHeight_ }) =
-    tileHeight_
+collider (Screen { collisionLayer_ }) x_ y_ =
+    CollisionLayer.getAt (x_ // 8) (y_ // 8) collisionLayer_
 
 
 widthInTiles : Screen a b -> Int
@@ -123,7 +103,7 @@ colors (Screen { colors_ }) =
 -- INTERNAL
 
 
-errorTilemap : Tilemap Size8x8
+errorTilemap : Tilemap
 errorTilemap =
     fullTilemapString
         |> Tilemap.fromString
