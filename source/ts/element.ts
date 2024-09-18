@@ -87,39 +87,45 @@ class PixelRendererElement extends HTMLElement {
     this.canvas.height = height;
   }
 
-  private paintCanvas(): void {
+  private async paintCanvas(): Promise<void> {
     if (!this.canvas || !this.context) {
       return;
     }
 
-    const tileImages = this.bitmaps_.map(({ width, pixels }) => {
-      const height = Math.ceil(pixels.length / width);
-      const imageData = this.context?.createImageData(width, height);
-      let hasTransparency = false;
+    const tileImages = await Promise.all(
+      this.bitmaps_.map(async ({ width, pixels }) => {
+        const height = Math.ceil(pixels.length / width);
+        const imageData = this.context?.createImageData(width, height);
+        let hasTransparency = false;
 
-      if (!imageData) {
-        return;
-      }
+        if (!imageData) {
+          return;
+        }
 
-      for (let x = 0; x < width; x += 1) {
-        for (let y = 0; y < height; y += 1) {
-          const offset = x * 4 + width * 4 * y;
-          const pixel = getPixel(width, x, y, pixels);
-          const color = this.colors[pixel];
+        for (let x = 0; x < width; x += 1) {
+          for (let y = 0; y < height; y += 1) {
+            const offset = x * 4 + width * 4 * y;
+            const pixel = getPixel(width, x, y, pixels);
+            const color = this.colors[pixel];
 
-          imageData.data[offset + 0] = (color?.red ?? 0) * 0xff;
-          imageData.data[offset + 1] = (color?.green ?? 0) * 0xff;
-          imageData.data[offset + 2] = (color?.blue ?? 0) * 0xff;
-          imageData.data[offset + 3] = (color?.alpha ?? 1) * 0xff;
+            imageData.data[offset + 0] = (color?.red ?? 0) * 0xff;
+            imageData.data[offset + 1] = (color?.green ?? 0) * 0xff;
+            imageData.data[offset + 2] = (color?.blue ?? 0) * 0xff;
+            imageData.data[offset + 3] = (color?.alpha ?? 1) * 0xff;
 
-          if ((color?.alpha ?? 1) < 1) {
-            hasTransparency = true;
+            if ((color?.alpha ?? 1) < 1) {
+              hasTransparency = true;
+            }
           }
         }
-      }
 
-      return imageData ? { image: imageData, hasTransparency } : undefined;
-    });
+        if (hasTransparency) {
+          return await createImageBitmap(imageData);
+        }
+
+        return imageData;
+      }),
+    );
 
     this.bitmapStamps_.forEach(async ({ x, y, bitmapIndex: tileIndex }) => {
       const tileImage = tileImages[tileIndex];
@@ -128,11 +134,10 @@ class PixelRendererElement extends HTMLElement {
         return;
       }
 
-      if (tileImage.hasTransparency) {
-        const image = await createImageBitmap(tileImage.image);
-        this.context?.drawImage(image, x, y);
+      if (tileImage instanceof ImageBitmap) {
+        this.context?.drawImage(tileImage, x, y);
       } else {
-        this.context?.putImageData(tileImage.image, x, y);
+        this.context?.putImageData(tileImage, x, y);
       }
     });
   }
