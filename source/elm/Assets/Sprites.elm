@@ -127,20 +127,20 @@ jumpingLeft =
         |> Sprite.static
 
 
-frame : Int -> Bitmap -> Frame Size8x8
+frame : Int -> Bitmap Size8x8 -> Frame Size8x8
 frame n bm =
     bm
         |> toTile
         |> Frame.make n
 
 
-toBitmap : String -> Bitmap
+toBitmap : String -> Bitmap Size8x8
 toBitmap str =
     str
-        |> Bitmap.fromString Color.defaultMap
-        |> Maybe.withDefault Bitmap.error
+        |> Bitmap.fromString8x8 Color.defaultMap
+        |> Maybe.withDefault Bitmap.error8x8
 
 
-toTile : Bitmap -> Tile Size8x8
+toTile : Bitmap Size8x8 -> Tile Size8x8
 toTile =
     Tile.make8x8 >> Maybe.withDefault Tile.error8x8

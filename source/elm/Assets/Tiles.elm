@@ -240,7 +240,7 @@ doorBottom =
 -- PRIVATE
 
 
-topLeftCurvedSolidBitmap : Bitmap
+topLeftCurvedSolidBitmap : Bitmap Size8x8
 topLeftCurvedSolidBitmap =
     """
     . █ █ █ █ █ █ █
@@ -252,11 +252,11 @@ topLeftCurvedSolidBitmap =
     █ █ █ █ █ █ █ █
     █ █ █ █ █ █ █ █
     """
-        |> Bitmap.fromString Color.defaultMap
-        |> Maybe.withDefault Bitmap.error
+        |> Bitmap.fromString8x8 Color.defaultMap
+        |> Maybe.withDefault Bitmap.error8x8
 
 
-topCurvedSolidBitmap : Bitmap
+topCurvedSolidBitmap : Bitmap Size8x8
 topCurvedSolidBitmap =
     """
     . █ █ █ █ █ █ .
@@ -268,11 +268,11 @@ topCurvedSolidBitmap =
     █ █ █ █ █ █ █ █
     █ █ █ █ █ █ █ █
     """
-        |> Bitmap.fromString Color.defaultMap
-        |> Maybe.withDefault Bitmap.error
+        |> Bitmap.fromString8x8 Color.defaultMap
+        |> Maybe.withDefault Bitmap.error8x8
 
 
-pillarTopBitmap : Bitmap
+pillarTopBitmap : Bitmap Size8x8
 pillarTopBitmap =
     """
     █ . . . . . . █
@@ -284,11 +284,11 @@ pillarTopBitmap =
     . █ . . . . █ .
     . █ . . . . █ .
     """
-        |> Bitmap.fromString Color.defaultMap
-        |> Maybe.withDefault Bitmap.error
+        |> Bitmap.fromString8x8 Color.defaultMap
+        |> Maybe.withDefault Bitmap.error8x8
 
 
-bitmapToTile : Bitmap -> Tile Size8x8
+bitmapToTile : Bitmap Size8x8 -> Tile Size8x8
 bitmapToTile =
     Tile.make8x8 >> Maybe.withDefault Tile.error8x8
 
@@ -296,6 +296,6 @@ bitmapToTile =
 toTile : String -> Tile Size8x8
 toTile string =
     string
-        |> Bitmap.fromString Color.defaultMap
-        |> Maybe.withDefault Bitmap.error
+        |> Bitmap.fromString8x8 Color.defaultMap
+        |> Maybe.withDefault Bitmap.error8x8
         |> bitmapToTile

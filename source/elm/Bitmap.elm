@@ -1,6 +1,7 @@
 module Bitmap exposing
     ( Bitmap
     , empty8x8
+    , emptyAnySize
     , encode
     , error8x8
     , flipX
@@ -24,7 +25,7 @@ import Bitmap.Color as Color exposing (Color(..), ColorMap)
 import Helper
 import Json.Encode as Encode exposing (Value)
 import Maybe.Extra as Maybe
-import Size exposing (Size8x8)
+import Size exposing (Size8x8, SizeAny)
 
 
 type Bitmap size
@@ -82,6 +83,11 @@ fromString8x8 cMap str =
 empty8x8 : Bitmap Size8x8
 empty8x8 =
     solid8x8 Transparent
+
+
+emptyAnySize : Int -> Int -> Bitmap SizeAny
+emptyAnySize w h =
+    solid w h Transparent
 
 
 solid8x8 : Color -> Bitmap Size8x8
@@ -158,7 +164,7 @@ paintPixel x y color ((Bitmap w h pixels_) as bm) =
         bm
 
 
-paintBitmap : Int -> Int -> Bitmap a -> Bitmap a -> Bitmap a
+paintBitmap : Int -> Int -> Bitmap a -> Bitmap b -> Bitmap b
 paintBitmap x y source target =
     let
         sourceW =
@@ -285,17 +291,12 @@ transform fn ((Bitmap w h _) as bitmap) =
             else
                 iterator nextX nextY newBm
     in
-    empty w h
+    solid w h Transparent
         |> iterator 0 0
 
 
 
 -- INTERNAL
-
-
-empty : Int -> Int -> Bitmap a
-empty w h =
-    solid w h Transparent
 
 
 solid : Int -> Int -> Color -> Bitmap a

@@ -118,12 +118,12 @@ fromSprites padding sprs =
 -- ACCESSORS
 
 
-bitmaps : Avatar a -> List Bitmap
+bitmaps : Avatar a -> List (Bitmap a)
 bitmaps (Avatar { sprites_ }) =
     AvatarSprites.bitmaps sprites_
 
 
-bitmap : Avatar a -> Bitmap
+bitmap : Avatar a -> Bitmap a
 bitmap avatar =
     Sprite.bitmap (currentSprite avatar)
 

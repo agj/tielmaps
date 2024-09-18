@@ -20,7 +20,7 @@ import Tilemap exposing (Tilemap)
 import World exposing (World)
 
 
-element : Int -> Int -> List (Html.Attribute msg) -> World Size22x22 Size8x8 -> Avatar x -> Html msg
+element : Int -> Int -> List (Html.Attribute msg) -> World Size22x22 Size8x8 -> Avatar Size8x8 -> Html msg
 element width height attrs world avatar =
     let
         colors =
@@ -35,11 +35,13 @@ element width height attrs world avatar =
                 |> Maybe.map Screen.tilemap
                 |> Maybe.withDefault (Tilemap.empty8x8Tile Levers.screenWidthInTiles Levers.screenHeightInTiles)
 
+        tilemapBitmaps : List (Bitmap Size8x8)
         tilemapBitmaps =
             Tilemap.tiles tilemap
                 |> Array.toList
                 |> List.map Tile.bitmap
 
+        avatarBitmaps : List (Bitmap Size8x8)
         avatarBitmaps =
             Avatar.bitmaps avatar
 
@@ -104,12 +106,12 @@ encodeBitmapStamp x y bitmapIndex =
         ]
 
 
-encodeBitmaps : List Bitmap -> Json.Encode.Value
+encodeBitmaps : List (Bitmap a) -> Json.Encode.Value
 encodeBitmaps bitmaps =
     Json.Encode.list encodeBitmap bitmaps
 
 
-encodeBitmap : Bitmap -> Json.Encode.Value
+encodeBitmap : Bitmap a -> Json.Encode.Value
 encodeBitmap bitmap =
     Json.Encode.object
         [ ( "width", Json.Encode.int (Bitmap.width bitmap) )

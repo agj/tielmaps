@@ -24,7 +24,7 @@ type Sprite size
 
 
 type Animation size
-    = Static Bitmap
+    = Static (Bitmap size)
     | Animated Int (Nonempty (Frame size))
 
 
@@ -68,7 +68,7 @@ tick ((Sprite state) as sprite) =
                 Sprite { state | animation = Animated newTicks frames }
 
 
-bitmaps : Sprite a -> List Bitmap
+bitmaps : Sprite a -> List (Bitmap a)
 bitmaps (Sprite { animation }) =
     case animation of
         Static bm ->
@@ -80,7 +80,7 @@ bitmaps (Sprite { animation }) =
                 |> List.map Frame.bitmap
 
 
-bitmap : Sprite a -> Bitmap
+bitmap : Sprite a -> Bitmap a
 bitmap (Sprite { animation }) =
     case animation of
         Static bm ->

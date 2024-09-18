@@ -19,7 +19,7 @@ import Bitmap.Color as Color
 import CollisionLayer exposing (CollisionLayer)
 import Colors exposing (Colors)
 import Dict
-import Size exposing (Size22x22, Size8x8)
+import Size exposing (Size22x22, Size8x8, SizeAny)
 import Tile
 import Tilemap exposing (Tilemap)
 
@@ -129,7 +129,7 @@ heightInTiles (Screen { tilemap_ }) =
     Tilemap.height tilemap_
 
 
-toBitmapMemoized : Screen a b -> ( Bitmap, Screen a b )
+toBitmapMemoized : Screen a b -> ( Bitmap SizeAny, Screen a b )
 toBitmapMemoized (Screen ({ tilemap_ } as state)) =
     let
         ( bitmap, newTilemap ) =

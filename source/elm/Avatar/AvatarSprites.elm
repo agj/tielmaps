@@ -29,7 +29,7 @@ single sprite =
     }
 
 
-bitmaps : AvatarSprites a -> List Bitmap
+bitmaps : AvatarSprites a -> List (Bitmap a)
 bitmaps avs =
     [ avs.standingRight
     , avs.standingLeft

@@ -12,7 +12,7 @@ import Tile exposing (Tile)
 
 
 type Frame size
-    = Frame Int Bitmap
+    = Frame Int (Bitmap size)
 
 
 make : Int -> Tile a -> Frame a
@@ -24,7 +24,7 @@ make dur t =
 -- ACCESSORS
 
 
-bitmap : Frame a -> Bitmap
+bitmap : Frame a -> Bitmap a
 bitmap (Frame _ bm) =
     bm
 

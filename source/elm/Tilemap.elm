@@ -21,7 +21,7 @@ import Dict exposing (Dict)
 import Helper
 import List.Extra
 import Maybe.Extra as Maybe
-import Size exposing (Size8x8)
+import Size exposing (Size8x8, SizeAny)
 import Tile exposing (Tile)
 
 
@@ -35,29 +35,25 @@ type Tilemap tileSize
         , map_ : Array2d Int
 
         -- Old:
-        , bitmaps : Array2d Bitmap
-        , bitmapMemo : Maybe Bitmap
+        , bitmaps : Array2d (Bitmap tileSize)
+        , bitmapMemo : Maybe (Bitmap SizeAny)
         }
 
 
 empty8x8Tile : Int -> Int -> Tilemap Size8x8
 empty8x8Tile w h =
-    let
-        make tileW tileH =
-            Tilemap
-                { width_ = w
-                , height_ = h
-                , tileWidth_ = tileW
-                , tileHeight_ = tileH
-                , tiles_ = Array.repeat 1 Tile.empty8x8
-                , map_ = Array2d.repeat w h 0
+    Tilemap
+        { width_ = w
+        , height_ = h
+        , tileWidth_ = 8
+        , tileHeight_ = 8
+        , tiles_ = Array.repeat 1 Tile.empty8x8
+        , map_ = Array2d.repeat w h 0
 
-                -- Old:
-                , bitmaps = Array2d.repeat w h (Bitmap.empty tileW tileH)
-                , bitmapMemo = Nothing
-                }
-    in
-    make 8 8
+        -- Old:
+        , bitmaps = Array2d.repeat w h Bitmap.empty8x8
+        , bitmapMemo = Nothing
+        }
 
 
 {-| Takes a specially formatted string and a Dict of Char to tile (Bitmap) mappings,
@@ -110,7 +106,7 @@ fromString tiles_ str =
                 map_ =
                     Helper.stringToArray2d charToTileIndex str
 
-                bitmaps : Maybe (Array2d Bitmap)
+                bitmaps : Maybe (Array2d (Bitmap a))
                 bitmaps =
                     map_
                         |> Maybe.map
@@ -172,7 +168,7 @@ tileHeight (Tilemap { tileHeight_ }) =
     tileHeight_
 
 
-tile : Int -> Int -> Tilemap a -> Maybe Bitmap
+tile : Int -> Int -> Tilemap a -> Maybe (Bitmap a)
 tile x y (Tilemap { bitmaps }) =
     bitmaps
         |> Array2d.get x y
@@ -203,9 +199,10 @@ setTile x y t (Tilemap ({ bitmaps } as state)) =
         }
 
 
-toBitmap : Tilemap a -> Bitmap
+toBitmap : Tilemap a -> Bitmap SizeAny
 toBitmap ((Tilemap { width_, height_, tileWidth_, tileHeight_ }) as tilemap) =
     let
+        iterator : Int -> Int -> Bitmap SizeAny -> Bitmap SizeAny
         iterator row col bm =
             let
                 nextRow =
@@ -239,11 +236,11 @@ toBitmap ((Tilemap { width_, height_, tileWidth_, tileHeight_ }) as tilemap) =
             else
                 iterator nextRow nextCol newBm
     in
-    Bitmap.empty (width_ * tileWidth_) (height_ * tileHeight_)
+    Bitmap.emptyAnySize (width_ * tileWidth_) (height_ * tileHeight_)
         |> iterator 0 0
 
 
-toBitmapMemoized : Tilemap a -> ( Bitmap, Tilemap a )
+toBitmapMemoized : Tilemap a -> ( Bitmap SizeAny, Tilemap a )
 toBitmapMemoized ((Tilemap ({ bitmapMemo } as state)) as tilemap) =
     case bitmapMemo of
         Just bitmap ->

@@ -15,20 +15,20 @@ import Size exposing (Size8x8)
 
 
 type Tile size
-    = Tile Bitmap
+    = Tile (Bitmap size)
 
 
 empty8x8 : Tile Size8x8
 empty8x8 =
-    Tile (Bitmap.empty 8 8)
+    Tile Bitmap.empty8x8
 
 
 solid8x8 : Color -> Tile Size8x8
 solid8x8 color =
-    Tile (Bitmap.solid color 8 8)
+    Tile (Bitmap.solid8x8 color)
 
 
-make8x8 : Bitmap -> Maybe (Tile Size8x8)
+make8x8 : Bitmap Size8x8 -> Maybe (Tile Size8x8)
 make8x8 bm =
     if checkSize 8 8 bm then
         Just (Tile bm)
@@ -39,7 +39,7 @@ make8x8 bm =
 
 error8x8 : Tile Size8x8
 error8x8 =
-    Bitmap.error
+    Bitmap.error8x8
         |> Tile
 
 
@@ -47,7 +47,7 @@ error8x8 =
 -- ACCESSORS
 
 
-bitmap : Tile a -> Bitmap
+bitmap : Tile a -> Bitmap a
 bitmap (Tile bm) =
     bm
 
@@ -66,6 +66,6 @@ height (Tile bm) =
 -- INTERNAL
 
 
-checkSize : Int -> Int -> Bitmap -> Bool
+checkSize : Int -> Int -> Bitmap Size8x8 -> Bool
 checkSize w h bm =
     Bitmap.width bm == w && Bitmap.height bm == h
