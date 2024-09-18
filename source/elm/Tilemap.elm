@@ -31,7 +31,7 @@ empty8x8Tile w h =
     Tilemap
         { width_ = w
         , height_ = h
-        , tiles_ = Array.repeat 1 Graphic.empty8x8
+        , tiles_ = Array.repeat 1 Graphic.Empty
         , map_ = Array2d.repeat w h 0
         }
 

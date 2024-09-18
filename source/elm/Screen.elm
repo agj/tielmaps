@@ -108,7 +108,7 @@ errorTilemap =
     fullTilemapString
         |> Tilemap.fromString
             (Dict.fromList
-                [ ( '#', Graphic.error8x8 )
+                [ ( '#', Graphic.Error )
                 ]
             )
         |> Maybe.withDefault (Tilemap.empty8x8Tile 0 0)

@@ -1,8 +1,6 @@
 module Graphic exposing
     ( Graphic(..)
     , bitmap
-    , empty8x8
-    , error8x8
     , height
     , width
     )
@@ -10,13 +8,14 @@ module Graphic exposing
 import Assets.Bitmaps as Bitmaps
 import Bitmap exposing (Bitmap)
 import Bitmap.Color exposing (Color(..))
+import List.Extra
 import Size exposing (Size8x8)
 
 
 type Graphic
-    = Empty
+    = Error
+    | Empty
     | Solid
-    | Error
     | TileDirt
     | TileGrass
     | TileBrick
@@ -60,14 +59,14 @@ error8x8 =
 bitmap : Graphic -> Bitmap Size8x8
 bitmap tile =
     case tile of
+        Error ->
+            Bitmaps.error
+
         Empty ->
             Bitmaps.empty
 
         Solid ->
             Bitmaps.solid
-
-        Error ->
-            Bitmaps.error
 
         TileDirt ->
             Bitmaps.tileDirt
