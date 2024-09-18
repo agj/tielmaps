@@ -9,16 +9,14 @@ module Screen exposing
     , tileHeight
     , tileWidth
     , tilemap
-    , toBitmapMemoized
     , widthInTiles
     )
 
-import Bitmap exposing (Bitmap)
 import CollisionLayer exposing (CollisionLayer)
 import Colors exposing (Colors)
 import Dict
 import Graphic
-import Size exposing (Size22x22, Size8x8, SizeAny)
+import Size exposing (Size22x22, Size8x8)
 import Tilemap exposing (Tilemap)
 
 
@@ -114,15 +112,6 @@ widthInTiles (Screen { tilemap_ }) =
 heightInTiles : Screen a b -> Int
 heightInTiles (Screen { tilemap_ }) =
     Tilemap.height tilemap_
-
-
-toBitmapMemoized : Screen a b -> ( Bitmap SizeAny, Screen a b )
-toBitmapMemoized (Screen ({ tilemap_ } as state)) =
-    let
-        ( bitmap, newTilemap ) =
-            Tilemap.toBitmapMemoized tilemap_
-    in
-    ( bitmap, Screen { state | tilemap_ = newTilemap } )
 
 
 colors : Screen a b -> Colors

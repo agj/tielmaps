@@ -4,13 +4,9 @@ module Tilemap exposing
     , fromString
     , height
     , map
-    , setTile
-    , tile
     , tileHeight
     , tileWidth
     , tiles
-    , toBitmap
-    , toBitmapMemoized
     , width
     )
 
@@ -22,7 +18,7 @@ import Graphic exposing (Graphic)
 import Helper
 import List.Extra
 import Maybe.Extra as Maybe
-import Size exposing (Size8x8, SizeAny)
+import Size exposing (Size8x8)
 
 
 type Tilemap tileSize
@@ -33,10 +29,6 @@ type Tilemap tileSize
         , tileHeight_ : Int
         , tiles_ : Array Graphic
         , map_ : Array2d Int
-
-        -- Old:
-        , bitmaps : Array2d (Bitmap tileSize)
-        , bitmapMemo : Maybe (Bitmap SizeAny)
         }
 
 
@@ -49,10 +41,6 @@ empty8x8Tile w h =
         , tileHeight_ = 8
         , tiles_ = Array.repeat 1 Graphic.empty8x8
         , map_ = Array2d.repeat w h 0
-
-        -- Old:
-        , bitmaps = Array2d.repeat w h Bitmap.empty8x8
-        , bitmapMemo = Nothing
         }
 
 
@@ -130,10 +118,6 @@ fromString tiles_ str =
                             , tileHeight_ = th
                             , tiles_ = tilesArray
                             , map_ = mapOk
-
-                            -- Old:
-                            , bitmaps = bitmapsOk
-                            , bitmapMemo = Nothing
                             }
                         )
 
@@ -168,12 +152,6 @@ tileHeight (Tilemap { tileHeight_ }) =
     tileHeight_
 
 
-tile : Int -> Int -> Tilemap a -> Maybe (Bitmap a)
-tile x y (Tilemap { bitmaps }) =
-    bitmaps
-        |> Array2d.get x y
-
-
 tiles : Tilemap a -> Array Graphic
 tiles (Tilemap { tiles_ }) =
     tiles_
@@ -182,73 +160,3 @@ tiles (Tilemap { tiles_ }) =
 map : Tilemap a -> Array2d Int
 map (Tilemap { map_ }) =
     map_
-
-
-
--- SETTERS
-
-
-setTile : Int -> Int -> Graphic -> Tilemap Size8x8 -> Tilemap Size8x8
-setTile x y t (Tilemap ({ bitmaps } as state)) =
-    Tilemap
-        { state
-            | bitmaps =
-                bitmaps
-                    |> Array2d.set x y (Graphic.bitmap t)
-            , bitmapMemo = Nothing
-        }
-
-
-toBitmap : Tilemap a -> Bitmap SizeAny
-toBitmap ((Tilemap { width_, height_, tileWidth_, tileHeight_ }) as tilemap) =
-    let
-        iterator : Int -> Int -> Bitmap SizeAny -> Bitmap SizeAny
-        iterator row col bm =
-            let
-                nextRow =
-                    if row >= width_ - 1 then
-                        0
-
-                    else
-                        row + 1
-
-                nextCol =
-                    if nextRow == 0 then
-                        col + 1
-
-                    else
-                        col
-
-                curTile =
-                    tile row col tilemap
-
-                newBm =
-                    case curTile of
-                        Just ct ->
-                            Bitmap.paintBitmap (tileWidth_ * row) (tileHeight_ * col) ct bm
-
-                        Nothing ->
-                            bm
-            in
-            if nextCol >= height_ then
-                newBm
-
-            else
-                iterator nextRow nextCol newBm
-    in
-    Bitmap.emptyAnySize (width_ * tileWidth_) (height_ * tileHeight_)
-        |> iterator 0 0
-
-
-toBitmapMemoized : Tilemap a -> ( Bitmap SizeAny, Tilemap a )
-toBitmapMemoized ((Tilemap ({ bitmapMemo } as state)) as tilemap) =
-    case bitmapMemo of
-        Just bitmap ->
-            ( bitmap, tilemap )
-
-        Nothing ->
-            let
-                bitmap =
-                    toBitmap tilemap
-            in
-            ( bitmap, Tilemap { state | bitmapMemo = Just bitmap } )
