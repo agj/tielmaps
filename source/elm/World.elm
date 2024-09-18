@@ -123,7 +123,7 @@ screenAt x y (World { screenWidthInPixels, screenHeightInPixels, screens }) =
     getScreenWrapping screens screenWidthInPixels screenHeightInPixels x y
 
 
-currentScreen : Avatar c -> World a -> Maybe (Screen a)
+currentScreen : Avatar -> World a -> Maybe (Screen a)
 currentScreen avatar (World { screenWidthInPixels, screenHeightInPixels, screens }) =
     let
         x =
@@ -138,7 +138,7 @@ currentScreen avatar (World { screenWidthInPixels, screenHeightInPixels, screens
     Array2d.get screenX screenY screens
 
 
-avatarPositionOnScreen : Avatar c -> World a -> ( Int, Int )
+avatarPositionOnScreen : Avatar -> World a -> ( Int, Int )
 avatarPositionOnScreen avatar (World { screenWidthInPixels, screenHeightInPixels }) =
     let
         x =

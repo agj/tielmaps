@@ -20,7 +20,7 @@ import Tilemap exposing (Tilemap)
 import World exposing (World)
 
 
-element : Int -> Int -> List (Html.Attribute msg) -> World Size22x22 -> Avatar Size8x8 -> Html msg
+element : Int -> Int -> List (Html.Attribute msg) -> World Size22x22 -> Avatar -> Html msg
 element width height attrs world avatar =
     let
         colors =

@@ -49,7 +49,7 @@ main =
 
 type alias Model =
     { world : World Size22x22
-    , character : Avatar Size8x8
+    , character : Avatar
     , keys : Keys
     , scale : Int
     }
