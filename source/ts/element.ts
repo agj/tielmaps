@@ -2,7 +2,7 @@ import { Color, Bitmap, BitmapStamp } from "./types";
 
 if (!window["customElements"]) {
   throw new Error(
-    "window.customElements does not exist. Please use an appropriate polyfill"
+    "window.customElements does not exist. Please use an appropriate polyfill",
   );
 }
 
@@ -10,7 +10,7 @@ const getPixel = (
   width: number,
   x: number,
   y: number,
-  pixels: number[]
+  pixels: number[],
 ): number => {
   return pixels[x + width * y] ?? -1;
 };
@@ -97,21 +97,23 @@ class PixelRendererElement extends HTMLElement {
       const imageData = this.context?.createImageData(width, height);
       let hasTransparency = false;
 
-      if (imageData) {
-        for (let x = 0; x < width; x += 1) {
-          for (let y = 0; y < height; y += 1) {
-            const offset = x * 4 + width * 4 * y;
-            const pixel = getPixel(width, x, y, pixels);
-            const color = this.colors[pixel];
+      if (!imageData) {
+        return;
+      }
 
-            imageData.data[offset + 0] = (color?.red ?? 0) * 0xff;
-            imageData.data[offset + 1] = (color?.green ?? 0) * 0xff;
-            imageData.data[offset + 2] = (color?.blue ?? 0) * 0xff;
-            imageData.data[offset + 3] = (color?.alpha ?? 1) * 0xff;
+      for (let x = 0; x < width; x += 1) {
+        for (let y = 0; y < height; y += 1) {
+          const offset = x * 4 + width * 4 * y;
+          const pixel = getPixel(width, x, y, pixels);
+          const color = this.colors[pixel];
 
-            if ((color?.alpha ?? 1) < 1) {
-              hasTransparency = true;
-            }
+          imageData.data[offset + 0] = (color?.red ?? 0) * 0xff;
+          imageData.data[offset + 1] = (color?.green ?? 0) * 0xff;
+          imageData.data[offset + 2] = (color?.blue ?? 0) * 0xff;
+          imageData.data[offset + 3] = (color?.alpha ?? 1) * 0xff;
+
+          if ((color?.alpha ?? 1) < 1) {
+            hasTransparency = true;
           }
         }
       }
@@ -119,14 +121,18 @@ class PixelRendererElement extends HTMLElement {
       return imageData ? { image: imageData, hasTransparency } : undefined;
     });
 
-    this.bitmapStamps_.forEach(({ x, y, bitmapIndex: tileIndex }) => {
+    this.bitmapStamps_.forEach(async ({ x, y, bitmapIndex: tileIndex }) => {
       const tileImage = tileImages[tileIndex];
-      if (tileImage) {
-        // if (tileImage.hasTransparency) {
-        //   this.context?.drawImage(createImageBitmap(tileImage.image), x, y);
-        // } else {
+
+      if (!tileImage) {
+        return;
+      }
+
+      if (tileImage.hasTransparency) {
+        const image = await createImageBitmap(tileImage.image);
+        this.context?.drawImage(image, x, y);
+      } else {
         this.context?.putImageData(tileImage.image, x, y);
-        // }
       }
     });
   }

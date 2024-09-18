@@ -1,4 +1,4 @@
-module PixelRenderer exposing (element, encodeBitmapStamp)
+module PixelRenderer exposing (element)
 
 import Array exposing (Array)
 import Array2d exposing (Array2d)
@@ -13,15 +13,17 @@ import Graphic exposing (Graphic)
 import Html exposing (Html)
 import Html.Attributes
 import Json.Encode
+import Palette
 import Size exposing (Size8x8)
 import Tilemap exposing (Tilemap)
 
 
-element : Int -> Int -> List Color -> List (Bitmap Size8x8) -> List BitmapStamp -> List (Html.Attribute msg) -> Html msg
+element : Int -> Int -> Colors -> List (Bitmap a) -> List BitmapStamp -> List (Html.Attribute msg) -> Html msg
 element width height colors bitmaps bitmapStamps attrs =
     let
         encodedColors =
-            Json.Encode.list encodeColor colors
+            [ colors.darkColor, colors.lightColor, Palette.transparent ]
+                |> Json.Encode.list encodeColor
 
         encodedBitmaps =
             Json.Encode.list encodeBitmap bitmaps

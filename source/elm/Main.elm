@@ -1,6 +1,5 @@
 module Main exposing (Msg(..), main, update, view)
 
-import Array
 import Array2d
 import Assets.Sprites as Sprites
 import Assets.Worlds as Worlds
@@ -228,7 +227,7 @@ mainView { world, character, scale } =
         [ PixelRenderer.element
             Levers.screenWidth
             Levers.screenHeight
-            [ colors.darkColor, colors.lightColor ]
+            colors
             (Graphic.all |> List.map Graphic.bitmap)
             (avatarBitmapStamp :: tilemapBitmapStamps |> List.reverse)
             pixelRendererAttributes
