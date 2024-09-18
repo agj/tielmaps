@@ -88,46 +88,16 @@ class PixelRendererElement extends HTMLElement {
   }
 
   private async paintCanvas(): Promise<void> {
-    if (!this.canvas || !this.context) {
+    const context = this.context;
+    if (!this.canvas || !context) {
       return;
     }
 
     const tileImages = await Promise.all(
-      this.bitmaps_.map(async ({ width, pixels }) => {
-        const height = Math.ceil(pixels.length / width);
-        const imageData = this.context?.createImageData(width, height);
-        let hasTransparency = false;
-
-        if (!imageData) {
-          return;
-        }
-
-        for (let x = 0; x < width; x += 1) {
-          for (let y = 0; y < height; y += 1) {
-            const offset = x * 4 + width * 4 * y;
-            const pixel = getPixel(width, x, y, pixels);
-            const color = this.colors[pixel];
-
-            imageData.data[offset + 0] = (color?.red ?? 0) * 0xff;
-            imageData.data[offset + 1] = (color?.green ?? 0) * 0xff;
-            imageData.data[offset + 2] = (color?.blue ?? 0) * 0xff;
-            imageData.data[offset + 3] = (color?.alpha ?? 1) * 0xff;
-
-            if ((color?.alpha ?? 1) < 1) {
-              hasTransparency = true;
-            }
-          }
-        }
-
-        if (hasTransparency) {
-          return await createImageBitmap(imageData);
-        }
-
-        return imageData;
-      }),
+      this.bitmaps_.map(bitmapToImage(context, this.colors)),
     );
 
-    this.bitmapStamps_.forEach(async ({ x, y, bitmapIndex: tileIndex }) => {
+    this.bitmapStamps_.forEach(({ x, y, bitmapIndex: tileIndex }): void => {
       const tileImage = tileImages[tileIndex];
 
       if (!tileImage) {
@@ -135,12 +105,50 @@ class PixelRendererElement extends HTMLElement {
       }
 
       if (tileImage instanceof ImageBitmap) {
-        this.context?.drawImage(tileImage, x, y);
+        context.drawImage(tileImage, x, y);
       } else {
-        this.context?.putImageData(tileImage, x, y);
+        context.putImageData(tileImage, x, y);
       }
     });
   }
 }
+
+const bitmapToImage =
+  (context: CanvasRenderingContext2D, colors: Color[]) =>
+  async ({
+    width,
+    pixels,
+  }: Bitmap): Promise<ImageData | ImageBitmap | undefined> => {
+    const height = Math.ceil(pixels.length / width);
+    const imageData = context.createImageData(width, height);
+    let hasTransparency = false;
+
+    if (!imageData) {
+      return;
+    }
+
+    for (let x = 0; x < width; x += 1) {
+      for (let y = 0; y < height; y += 1) {
+        const offset = x * 4 + width * 4 * y;
+        const pixel = getPixel(width, x, y, pixels);
+        const color = colors[pixel];
+
+        imageData.data[offset + 0] = (color?.red ?? 0) * 0xff;
+        imageData.data[offset + 1] = (color?.green ?? 0) * 0xff;
+        imageData.data[offset + 2] = (color?.blue ?? 0) * 0xff;
+        imageData.data[offset + 3] = (color?.alpha ?? 1) * 0xff;
+
+        if ((color?.alpha ?? 1) < 1) {
+          hasTransparency = true;
+        }
+      }
+    }
+
+    if (hasTransparency) {
+      return await createImageBitmap(imageData);
+    }
+
+    return imageData;
+  };
 
 customElements.define("pixel-renderer", PixelRendererElement);
