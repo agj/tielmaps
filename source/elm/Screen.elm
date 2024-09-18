@@ -14,11 +14,11 @@ import CollisionLayer exposing (CollisionLayer)
 import Colors exposing (Colors)
 import Dict
 import Graphic
-import Size exposing (Size22x22, Size8x8)
+import Size exposing (Size22x22)
 import Tilemap exposing (Tilemap)
 
 
-type Screen mapSize tileSize
+type Screen mapSize
     = Screen
         { tilemap_ : Tilemap
         , collisionLayer_ : CollisionLayer
@@ -26,7 +26,7 @@ type Screen mapSize tileSize
         }
 
 
-make22x22 : Colors -> Tilemap -> CollisionLayer -> Maybe (Screen Size22x22 a)
+make22x22 : Colors -> Tilemap -> CollisionLayer -> Maybe (Screen Size22x22)
 make22x22 colors_ m coll =
     let
         width_ =
@@ -53,7 +53,7 @@ make22x22 colors_ m coll =
         Nothing
 
 
-empty22x22 : Colors -> Screen Size22x22 Size8x8
+empty22x22 : Colors -> Screen Size22x22
 empty22x22 colors_ =
     Screen
         { tilemap_ = Tilemap.empty8x8Tile 22 22
@@ -62,7 +62,7 @@ empty22x22 colors_ =
         }
 
 
-error22x22 : Screen Size22x22 Size8x8
+error22x22 : Screen Size22x22
 error22x22 =
     Screen
         { tilemap_ = errorTilemap
@@ -71,7 +71,7 @@ error22x22 =
         }
 
 
-tilemap : Screen a b -> Tilemap
+tilemap : Screen a -> Tilemap
 tilemap (Screen { tilemap_ }) =
     tilemap_
 
@@ -79,22 +79,22 @@ tilemap (Screen { tilemap_ }) =
 {-| Checks whether there's a solid object at position x, y.
 Normally called from within `Collider.collide`.
 -}
-collider : Screen a b -> Int -> Int -> Bool
+collider : Screen a -> Int -> Int -> Bool
 collider (Screen { collisionLayer_ }) x_ y_ =
     CollisionLayer.getAt (x_ // 8) (y_ // 8) collisionLayer_
 
 
-widthInTiles : Screen a b -> Int
+widthInTiles : Screen a -> Int
 widthInTiles (Screen { tilemap_ }) =
     Tilemap.width tilemap_
 
 
-heightInTiles : Screen a b -> Int
+heightInTiles : Screen a -> Int
 heightInTiles (Screen { tilemap_ }) =
     Tilemap.height tilemap_
 
 
-colors : Screen a b -> Colors
+colors : Screen a -> Colors
 colors (Screen { colors_ }) =
     colors_
 

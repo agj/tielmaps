@@ -22,9 +22,9 @@ import Maybe.Extra as Maybe
 import Screen exposing (Screen)
 
 
-type World mapSize tileSize
+type World mapSize
     = World
-        { screens : Array2d (Screen mapSize tileSize)
+        { screens : Array2d (Screen mapSize)
         , tileWidth_ : Int
         , tileHeight_ : Int
         , screenWidthInTiles : Int
@@ -34,7 +34,7 @@ type World mapSize tileSize
         }
 
 
-singleton : Screen a b -> World a b
+singleton : Screen a -> World a
 singleton screen =
     World
         { screens = Array2d.repeat 1 1 screen
@@ -47,7 +47,7 @@ singleton screen =
         }
 
 
-fromArray2d : Array2d (Screen a b) -> Maybe (World a b)
+fromArray2d : Array2d (Screen a) -> Maybe (World a)
 fromArray2d screens =
     Array2d.get 0 0 screens
         |> Maybe.map
@@ -64,7 +64,7 @@ fromArray2d screens =
             )
 
 
-stitchHorizontally : World a b -> World a b -> Maybe (World a b)
+stitchHorizontally : World a -> World a -> Maybe (World a)
 stitchHorizontally (World left) (World right) =
     stitchArray2dX left.screens right.screens
         |> Maybe.map
@@ -81,7 +81,7 @@ stitchHorizontally (World left) (World right) =
             )
 
 
-stitchVertically : World a b -> World a b -> Maybe (World a b)
+stitchVertically : World a -> World a -> Maybe (World a)
 stitchVertically (World top) (World bottom) =
     stitchArray2dY top.screens bottom.screens
         |> Maybe.map
@@ -98,32 +98,32 @@ stitchVertically (World top) (World bottom) =
             )
 
 
-widthInScreens : World a b -> Int
+widthInScreens : World a -> Int
 widthInScreens (World { screens }) =
     Array2d.width screens
 
 
-heightInScreens : World a b -> Int
+heightInScreens : World a -> Int
 heightInScreens (World { screens }) =
     Array2d.height screens
 
 
-tileWidth : World a b -> Int
+tileWidth : World a -> Int
 tileWidth (World { tileWidth_ }) =
     tileWidth_
 
 
-tileHeight : World a b -> Int
+tileHeight : World a -> Int
 tileHeight (World { tileHeight_ }) =
     tileHeight_
 
 
-screenAt : Int -> Int -> World a b -> Maybe (Screen a b)
+screenAt : Int -> Int -> World a -> Maybe (Screen a)
 screenAt x y (World { screenWidthInPixels, screenHeightInPixels, screens }) =
     getScreenWrapping screens screenWidthInPixels screenHeightInPixels x y
 
 
-currentScreen : Avatar c -> World a b -> Maybe (Screen a b)
+currentScreen : Avatar c -> World a -> Maybe (Screen a)
 currentScreen avatar (World { screenWidthInPixels, screenHeightInPixels, screens }) =
     let
         x =
@@ -138,7 +138,7 @@ currentScreen avatar (World { screenWidthInPixels, screenHeightInPixels, screens
     Array2d.get screenX screenY screens
 
 
-avatarPositionOnScreen : Avatar c -> World a b -> ( Int, Int )
+avatarPositionOnScreen : Avatar c -> World a -> ( Int, Int )
 avatarPositionOnScreen avatar (World { screenWidthInPixels, screenHeightInPixels }) =
     let
         x =
@@ -158,7 +158,7 @@ avatarPositionOnScreen avatar (World { screenWidthInPixels, screenHeightInPixels
     )
 
 
-collider : World a b -> Collider.PointChecker
+collider : World a -> Collider.PointChecker
 collider (World { screenWidthInPixels, screenHeightInPixels, screens }) x y =
     let
         screenM =
@@ -176,7 +176,7 @@ collider (World { screenWidthInPixels, screenHeightInPixels, screens }) x y =
 -- INTERNAL
 
 
-getScreenWrapping : Array2d (Screen a b) -> Int -> Int -> Int -> Int -> Maybe (Screen a b)
+getScreenWrapping : Array2d (Screen a) -> Int -> Int -> Int -> Int -> Maybe (Screen a)
 getScreenWrapping screens screenWidthInPixels screenHeightInPixels x_ y_ =
     let
         ( x, y ) =
@@ -185,7 +185,7 @@ getScreenWrapping screens screenWidthInPixels screenHeightInPixels x_ y_ =
     Array2d.get x y screens
 
 
-getScreenPosWrapping : Array2d (Screen a b) -> Int -> Int -> Int -> Int -> ( Int, Int )
+getScreenPosWrapping : Array2d (Screen a) -> Int -> Int -> Int -> Int -> ( Int, Int )
 getScreenPosWrapping screens screenWidthInPixels screenHeightInPixels x_ y_ =
     let
         x =
