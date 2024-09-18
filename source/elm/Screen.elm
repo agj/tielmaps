@@ -44,14 +44,10 @@ make22x22 colors_ m coll =
             Tilemap.height m
     in
     if
-        width_
-            == 22
-            && height_
-            == 22
-            && CollisionLayer.width coll
-            == 22
-            && CollisionLayer.height coll
-            == 22
+        (width_ == 22)
+            && (height_ == 22)
+            && (CollisionLayer.width coll == 22)
+            && (CollisionLayer.height coll == 22)
     then
         Just
             (Screen
