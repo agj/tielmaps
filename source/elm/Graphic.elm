@@ -1,7 +1,9 @@
 module Graphic exposing
     ( Graphic(..)
+    , all
     , bitmap
     , height
+    , index
     , width
     )
 
@@ -42,18 +44,36 @@ type Graphic
     | AvatarBobLeft
 
 
-empty8x8 : Graphic
-empty8x8 =
-    Empty
-
-
-error8x8 : Graphic
-error8x8 =
-    Error
-
-
-
--- ACCESSORS
+all : List Graphic
+all =
+    [ Error
+    , Empty
+    , Solid
+    , TileDirt
+    , TileGrass
+    , TileBrick
+    , TileStone
+    , TileHollow
+    , TileTopLeftCurvedSolid
+    , TileTopRightCurvedSolid
+    , TileBottomLeftCurvedSolid
+    , TileTopCurvedSolid
+    , TileRightCurvedSolid
+    , TilePillarMiddle
+    , TilePillarTop
+    , TilePillarBottom
+    , TileBush
+    , TileDoorTop
+    , TileDoorBottom
+    , AvatarAirborneRight
+    , AvatarAirborneLeft
+    , AvatarHopRight
+    , AvatarHopLeft
+    , AvatarStandingRight
+    , AvatarStandingLeft
+    , AvatarBobRight
+    , AvatarBobLeft
+    ]
 
 
 bitmap : Graphic -> Bitmap Size8x8
@@ -139,6 +159,13 @@ bitmap tile =
 
         AvatarBobLeft ->
             Bitmaps.avatarBobLeft
+
+
+index : Graphic -> Int
+index graphic =
+    all
+        |> List.Extra.findIndex ((==) graphic)
+        |> Maybe.withDefault 0
 
 
 width : Graphic -> Int
