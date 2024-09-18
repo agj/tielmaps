@@ -1,10 +1,10 @@
 module TilemapTest exposing (..)
 
-import Assets.Tiles as Tiles
 import Dict exposing (Dict)
 import Expect
 import Size exposing (Size8x8)
 import Test exposing (..)
+import Tile exposing (Tile)
 import Tilemap exposing (Tilemap)
 
 
@@ -18,7 +18,7 @@ setTile =
                         Tilemap.toBitmapMemoized tilemapMemoized
                 in
                 tilemapMemoized
-                    |> Tilemap.setTile 0 0 Tiles.hollow
+                    |> Tilemap.setTile 0 0 Tile.TileHollow
                     |> Tilemap.toBitmapMemoized
                     |> Tuple.first
                     |> Expect.notEqual bitmapBefore
@@ -51,8 +51,9 @@ tilemapString =
     """
 
 
+charTiles : Dict Char Tile
 charTiles =
     Dict.fromList
-        [ ( '.', Tiles.empty )
-        , ( '█', Tiles.solid )
+        [ ( '.', Tile.TileEmpty )
+        , ( '█', Tile.TileSolid )
         ]

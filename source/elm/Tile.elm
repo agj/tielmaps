@@ -1,71 +1,122 @@
 module Tile exposing
-    ( Tile
+    ( Tile(..)
     , bitmap
     , empty8x8
     , error8x8
     , height
-    , make8x8
-    , solid8x8
     , width
     )
 
+import Assets.Tiles as Tiles
 import Bitmap exposing (Bitmap)
 import Bitmap.Color exposing (Color(..))
 import Size exposing (Size8x8)
 
 
-type Tile size
-    = Tile (Bitmap size)
+type Tile
+    = TileEmpty
+    | TileSolid
+    | TileError
+    | TileDirt
+    | TileGrass
+    | TileBrick
+    | TileStone
+    | TileHollow
+    | TileTopLeftCurvedSolid
+    | TileTopRightCurvedSolid
+    | TileBottomLeftCurvedSolid
+    | TileTopCurvedSolid
+    | TileRightCurvedSolid
+    | TilePillarMiddle
+    | TilePillarTop
+    | TilePillarBottom
+    | TileBush
+    | TileDoorTop
+    | TileDoorBottom
 
 
-empty8x8 : Tile Size8x8
+empty8x8 : Tile
 empty8x8 =
-    Tile Bitmap.empty8x8
+    TileEmpty
 
 
-solid8x8 : Color -> Tile Size8x8
-solid8x8 color =
-    Tile (Bitmap.solid8x8 color)
-
-
-make8x8 : Bitmap Size8x8 -> Maybe (Tile Size8x8)
-make8x8 bm =
-    if checkSize 8 8 bm then
-        Just (Tile bm)
-
-    else
-        Nothing
-
-
-error8x8 : Tile Size8x8
+error8x8 : Tile
 error8x8 =
-    Bitmap.error8x8
-        |> Tile
+    TileError
 
 
 
 -- ACCESSORS
 
 
-bitmap : Tile a -> Bitmap a
-bitmap (Tile bm) =
-    bm
+bitmap : Tile -> Bitmap Size8x8
+bitmap tile =
+    case tile of
+        TileEmpty ->
+            Tiles.empty
+
+        TileSolid ->
+            Tiles.solid
+
+        TileError ->
+            Bitmap.error8x8
+
+        TileDirt ->
+            Tiles.dirt
+
+        TileGrass ->
+            Tiles.grass
+
+        TileBrick ->
+            Tiles.brick
+
+        TileStone ->
+            Tiles.stone
+
+        TileHollow ->
+            Tiles.hollow
+
+        TileTopLeftCurvedSolid ->
+            Tiles.topLeftCurvedSolid
+
+        TileTopRightCurvedSolid ->
+            Tiles.topRightCurvedSolid
+
+        TileBottomLeftCurvedSolid ->
+            Tiles.bottomLeftCurvedSolid
+
+        TileTopCurvedSolid ->
+            Tiles.topCurvedSolid
+
+        TileRightCurvedSolid ->
+            Tiles.rightCurvedSolid
+
+        TilePillarMiddle ->
+            Tiles.pillarMiddle
+
+        TilePillarTop ->
+            Tiles.pillarTop
+
+        TilePillarBottom ->
+            Tiles.pillarBottom
+
+        TileBush ->
+            Tiles.bush
+
+        TileDoorTop ->
+            Tiles.doorTop
+
+        TileDoorBottom ->
+            Tiles.doorBottom
 
 
-width : Tile a -> Int
-width (Tile bm) =
-    Bitmap.width bm
+width : Tile -> Int
+width tile =
+    bitmap tile
+        |> Bitmap.width
 
 
-height : Tile a -> Int
-height (Tile bm) =
-    Bitmap.height bm
-
-
-
--- INTERNAL
-
-
-checkSize : Int -> Int -> Bitmap Size8x8 -> Bool
-checkSize w h bm =
-    Bitmap.width bm == w && Bitmap.height bm == h
+height : Tile -> Int
+height tile =
+    bitmap tile
+        |> Bitmap.height

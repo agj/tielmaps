@@ -31,7 +31,7 @@ type Tilemap tileSize
         , height_ : Int
         , tileWidth_ : Int
         , tileHeight_ : Int
-        , tiles_ : Array (Tile tileSize)
+        , tiles_ : Array Tile
         , map_ : Array2d Int
 
         -- Old:
@@ -77,7 +77,7 @@ This will produce a 4 × 4 tiles Tilemap, wrapped in a Just if all's correct.
 Note that spaces are always ignored.
 
 -}
-fromString : Dict Char (Tile a) -> String -> Maybe (Tilemap a)
+fromString : Dict Char Tile -> String -> Maybe (Tilemap Size8x8)
 fromString tiles_ str =
     let
         tilesList =
@@ -92,7 +92,7 @@ fromString tiles_ str =
                 th =
                     Tile.height t
 
-                tilesArray : Array (Tile a)
+                tilesArray : Array Tile
                 tilesArray =
                     Dict.values tiles_
                         |> Array.fromList
@@ -106,7 +106,7 @@ fromString tiles_ str =
                 map_ =
                     Helper.stringToArray2d charToTileIndex str
 
-                bitmaps : Maybe (Array2d (Bitmap a))
+                bitmaps : Maybe (Array2d (Bitmap Size8x8))
                 bitmaps =
                     map_
                         |> Maybe.map
@@ -174,7 +174,7 @@ tile x y (Tilemap { bitmaps }) =
         |> Array2d.get x y
 
 
-tiles : Tilemap a -> Array (Tile a)
+tiles : Tilemap a -> Array Tile
 tiles (Tilemap { tiles_ }) =
     tiles_
 
@@ -188,7 +188,7 @@ map (Tilemap { map_ }) =
 -- SETTERS
 
 
-setTile : Int -> Int -> Tile a -> Tilemap a -> Tilemap a
+setTile : Int -> Int -> Tile -> Tilemap Size8x8 -> Tilemap Size8x8
 setTile x y t (Tilemap ({ bitmaps } as state)) =
     Tilemap
         { state

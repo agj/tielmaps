@@ -11,8 +11,8 @@ module Sprite exposing
 
 import Bitmap exposing (Bitmap)
 import List.Nonempty exposing (Nonempty)
+import Size exposing (Size8x8)
 import Sprite.Frame as Frame exposing (Frame)
-import Tile exposing (Tile)
 
 
 type Sprite size
@@ -28,12 +28,12 @@ type Animation size
     | Animated Int (Nonempty (Frame size))
 
 
-static : Tile a -> Sprite a
-static tile =
+static : Bitmap Size8x8 -> Sprite Size8x8
+static bm =
     Sprite
-        { width_ = Tile.width tile
-        , height_ = Tile.height tile
-        , animation = Static (Tile.bitmap tile)
+        { width_ = Bitmap.width bm
+        , height_ = Bitmap.height bm
+        , animation = Static bm
         }
 
 

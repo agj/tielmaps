@@ -8,16 +8,16 @@ module Sprite.Frame exposing
     )
 
 import Bitmap exposing (Bitmap)
-import Tile exposing (Tile)
+import Size exposing (Size8x8)
 
 
 type Frame size
     = Frame Int (Bitmap size)
 
 
-make : Int -> Tile a -> Frame a
-make dur t =
-    Frame dur (Tile.bitmap t)
+make : Int -> Bitmap Size8x8 -> Frame Size8x8
+make dur b =
+    Frame dur b
 
 
 

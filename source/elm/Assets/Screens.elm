@@ -1,13 +1,13 @@
 module Assets.Screens exposing (testScreen1, testScreen2, testScreen3, testScreen4, testScreen5, testScreen6)
 
-import Assets.Tiles as Tiles
 import CollisionLayer
 import Colors exposing (Colors)
-import Dict
+import Dict exposing (Dict)
 import Levers
 import Palette
 import Screen exposing (Screen)
 import Size exposing (Size22x22, Size8x8)
+import Tile exposing (Tile)
 import Tilemap
 
 
@@ -209,19 +209,20 @@ toScreen colors string =
         |> Maybe.withDefault Screen.error22x22
 
 
+charTiles : Dict Char Tile
 charTiles =
     Dict.fromList
-        [ ( '.', Tiles.empty )
-        , ( '▓', Tiles.dirt )
-        , ( '▒', Tiles.brick )
-        , ( '▀', Tiles.grass )
-        , ( '▚', Tiles.stone )
-        , ( '╥', Tiles.pillarTop )
-        , ( '║', Tiles.pillarMiddle )
-        , ( '╨', Tiles.pillarBottom )
-        , ( '◍', Tiles.bush )
-        , ( '△', Tiles.doorTop )
-        , ( '▯', Tiles.doorBottom )
+        [ ( '.', Tile.TileEmpty )
+        , ( '▓', Tile.TileDirt )
+        , ( '▒', Tile.TileBrick )
+        , ( '▀', Tile.TileGrass )
+        , ( '▚', Tile.TileStone )
+        , ( '╥', Tile.TilePillarTop )
+        , ( '║', Tile.TilePillarMiddle )
+        , ( '╨', Tile.TilePillarBottom )
+        , ( '◍', Tile.TileBush )
+        , ( '△', Tile.TileDoorTop )
+        , ( '▯', Tile.TileDoorBottom )
         ]
 
 
