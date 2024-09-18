@@ -2,9 +2,13 @@ module Assets.Bitmaps exposing
     ( avatarAirborneLeft
     , avatarAirborneRight
     , avatarBobLeft
+    , avatarBobRight
     , avatarHopLeft
+    , avatarHopRight
     , avatarStandingLeft
+    , avatarStandingRight
     , empty
+    , error
     , solid
     , tileBottomLeftCurvedSolid
     , tileBrick
@@ -55,6 +59,21 @@ solid =
     █ █ █ █ █ █ █ █
     █ █ █ █ █ █ █ █
     █ █ █ █ █ █ █ █
+    """
+        |> toBitmap
+
+
+error : Bitmap Size8x8
+error =
+    """
+    █ . . . . . . █
+    . █ . . . . █ .
+    . . █ . . █ . .
+    . . . █ █ . . .
+    . . . █ █ . . .
+    . . █ . . █ . .
+    . █ . . . . █ .
+    █ . . . . . . █
     """
         |> toBitmap
 

@@ -18,7 +18,7 @@ setTile =
                         Tilemap.toBitmapMemoized tilemapMemoized
                 in
                 tilemapMemoized
-                    |> Tilemap.setTile 0 0 Tile.TileHollow
+                    |> Tilemap.setTile 0 0 Graphic.TileHollow
                     |> Tilemap.toBitmapMemoized
                     |> Tuple.first
                     |> Expect.notEqual bitmapBefore

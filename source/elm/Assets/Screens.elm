@@ -213,16 +213,16 @@ charTiles : Dict Char Graphic
 charTiles =
     Dict.fromList
         [ ( '.', Graphic.Empty )
-        , ( '▓', Graphic.Dirt )
-        , ( '▒', Graphic.Brick )
-        , ( '▀', Graphic.Grass )
-        , ( '▚', Graphic.Stone )
-        , ( '╥', Graphic.PillarTop )
-        , ( '║', Graphic.PillarMiddle )
-        , ( '╨', Graphic.PillarBottom )
-        , ( '◍', Graphic.Bush )
-        , ( '△', Graphic.DoorTop )
-        , ( '▯', Graphic.DoorBottom )
+        , ( '▓', Graphic.TileDirt )
+        , ( '▒', Graphic.TileBrick )
+        , ( '▀', Graphic.TileGrass )
+        , ( '▚', Graphic.TileStone )
+        , ( '╥', Graphic.TilePillarTop )
+        , ( '║', Graphic.TilePillarMiddle )
+        , ( '╨', Graphic.TilePillarBottom )
+        , ( '◍', Graphic.TileBush )
+        , ( '△', Graphic.TileDoorTop )
+        , ( '▯', Graphic.TileDoorBottom )
         ]
 
 

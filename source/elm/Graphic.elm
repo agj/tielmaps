@@ -7,7 +7,7 @@ module Graphic exposing
     , width
     )
 
-import Assets.Tiles as Tiles
+import Assets.Bitmaps as Bitmaps
 import Bitmap exposing (Bitmap)
 import Bitmap.Color exposing (Color(..))
 import Size exposing (Size8x8)
@@ -17,22 +17,22 @@ type Graphic
     = Empty
     | Solid
     | Error
-    | Dirt
-    | Grass
-    | Brick
-    | Stone
-    | Hollow
-    | TopLeftCurvedSolid
-    | TopRightCurvedSolid
-    | BottomLeftCurvedSolid
-    | TopCurvedSolid
-    | RightCurvedSolid
-    | PillarMiddle
-    | PillarTop
-    | PillarBottom
-    | Bush
-    | DoorTop
-    | DoorBottom
+    | TileDirt
+    | TileGrass
+    | TileBrick
+    | TileStone
+    | TileHollow
+    | TileTopLeftCurvedSolid
+    | TileTopRightCurvedSolid
+    | TileBottomLeftCurvedSolid
+    | TileTopCurvedSolid
+    | TileRightCurvedSolid
+    | TilePillarMiddle
+    | TilePillarTop
+    | TilePillarBottom
+    | TileBush
+    | TileDoorTop
+    | TileDoorBottom
 
 
 empty8x8 : Graphic
@@ -53,61 +53,61 @@ bitmap : Graphic -> Bitmap Size8x8
 bitmap tile =
     case tile of
         Empty ->
-            Tiles.empty
+            Bitmaps.empty
 
         Solid ->
-            Tiles.solid
+            Bitmaps.solid
 
         Error ->
-            Bitmap.error8x8
+            Bitmaps.error
 
-        Dirt ->
-            Tiles.dirt
+        TileDirt ->
+            Bitmaps.tileDirt
 
-        Grass ->
-            Tiles.grass
+        TileGrass ->
+            Bitmaps.tileGrass
 
-        Brick ->
-            Tiles.brick
+        TileBrick ->
+            Bitmaps.tileBrick
 
-        Stone ->
-            Tiles.stone
+        TileStone ->
+            Bitmaps.tileStone
 
-        Hollow ->
-            Tiles.hollow
+        TileHollow ->
+            Bitmaps.tileHollow
 
-        TopLeftCurvedSolid ->
-            Tiles.topLeftCurvedSolid
+        TileTopLeftCurvedSolid ->
+            Bitmaps.tileTopLeftCurvedSolid
 
-        TopRightCurvedSolid ->
-            Tiles.topRightCurvedSolid
+        TileTopRightCurvedSolid ->
+            Bitmaps.tileTopRightCurvedSolid
 
-        BottomLeftCurvedSolid ->
-            Tiles.bottomLeftCurvedSolid
+        TileBottomLeftCurvedSolid ->
+            Bitmaps.tileBottomLeftCurvedSolid
 
-        TopCurvedSolid ->
-            Tiles.topCurvedSolid
+        TileTopCurvedSolid ->
+            Bitmaps.tileTopCurvedSolid
 
-        RightCurvedSolid ->
-            Tiles.rightCurvedSolid
+        TileRightCurvedSolid ->
+            Bitmaps.tileRightCurvedSolid
 
-        PillarMiddle ->
-            Tiles.pillarMiddle
+        TilePillarMiddle ->
+            Bitmaps.tilePillarMiddle
 
-        PillarTop ->
-            Tiles.pillarTop
+        TilePillarTop ->
+            Bitmaps.tilePillarTop
 
-        PillarBottom ->
-            Tiles.pillarBottom
+        TilePillarBottom ->
+            Bitmaps.tilePillarBottom
 
-        Bush ->
-            Tiles.bush
+        TileBush ->
+            Bitmaps.tileBush
 
-        DoorTop ->
-            Tiles.doorTop
+        TileDoorTop ->
+            Bitmaps.tileDoorTop
 
-        DoorBottom ->
-            Tiles.doorBottom
+        TileDoorBottom ->
+            Bitmaps.tileDoorBottom
 
 
 width : Graphic -> Int

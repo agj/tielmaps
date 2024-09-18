@@ -5,7 +5,7 @@ module Sprite.Frame exposing
     , width
     )
 
-import Assets.Frames as Frames
+import Assets.Bitmaps as Bitmaps
 import Bitmap exposing (Bitmap)
 import Size exposing (Size8x8)
 
@@ -29,28 +29,28 @@ bitmap : Frame -> Bitmap Size8x8
 bitmap f =
     case f of
         FrameAirborneRight ->
-            Frames.airborneRight
+            Bitmaps.avatarAirborneRight
 
         FrameAirborneLeft ->
-            Frames.airborneLeft
+            Bitmaps.avatarAirborneLeft
 
         FrameHopRight ->
-            Frames.hopRight
+            Bitmaps.avatarHopRight
 
         FrameHopLeft ->
-            Frames.hopLeft
+            Bitmaps.avatarHopLeft
 
         FrameStandingRight ->
-            Frames.standingRight
+            Bitmaps.avatarStandingRight
 
         FrameStandingLeft ->
-            Frames.standingLeft
+            Bitmaps.avatarStandingLeft
 
         FrameBobRight ->
-            Frames.bobRight
+            Bitmaps.avatarBobRight
 
         FrameBobLeft ->
-            Frames.bobLeft
+            Bitmaps.avatarBobLeft
 
 
 width : Frame -> Int
