@@ -5,7 +5,7 @@ import Bitmap exposing (Bitmap)
 import Bitmap.Color as Color
 import Size exposing (Size8x8)
 import Sprite exposing (Sprite)
-import Sprite.Frame as Frame exposing (Frame)
+import Sprite.Frame as Frame exposing (HeldFrame)
 
 
 avatarSprites : AvatarSprites Size8x8
@@ -124,7 +124,7 @@ jumpingLeft =
         |> Sprite.static
 
 
-frame : Int -> Bitmap Size8x8 -> Frame Size8x8
+frame : Int -> Bitmap Size8x8 -> HeldFrame Size8x8
 frame n bm =
     bm
         |> Frame.make n

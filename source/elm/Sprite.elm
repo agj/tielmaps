@@ -12,7 +12,7 @@ module Sprite exposing
 import Bitmap exposing (Bitmap)
 import List.Nonempty exposing (Nonempty)
 import Size exposing (Size8x8)
-import Sprite.Frame as Frame exposing (Frame)
+import Sprite.Frame as Frame exposing (HeldFrame)
 
 
 type Sprite size
@@ -25,7 +25,7 @@ type Sprite size
 
 type Animation size
     = Static (Bitmap size)
-    | Animated Int (Nonempty (Frame size))
+    | Animated Int (Nonempty (HeldFrame size))
 
 
 static : Bitmap Size8x8 -> Sprite Size8x8
@@ -37,7 +37,7 @@ static bm =
         }
 
 
-animated : Frame a -> List (Frame a) -> Sprite a
+animated : HeldFrame a -> List (HeldFrame a) -> Sprite a
 animated firstFrame frames =
     Sprite
         { width_ = Frame.width firstFrame
@@ -105,12 +105,12 @@ height (Sprite { height_ }) =
 -- INTERNAL
 
 
-totalTicks : Nonempty (Frame a) -> Int
+totalTicks : Nonempty (HeldFrame a) -> Int
 totalTicks frames =
     List.Nonempty.foldl (\f acc -> Frame.duration f + acc) 0 frames
 
 
-currentFrame : Int -> Nonempty (Frame a) -> Frame a
+currentFrame : Int -> Nonempty (HeldFrame a) -> HeldFrame a
 currentFrame ticks frames =
     let
         iterate n f fs =

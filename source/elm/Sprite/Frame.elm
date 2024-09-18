@@ -1,5 +1,5 @@
 module Sprite.Frame exposing
-    ( Frame
+    ( HeldFrame
     , bitmap
     , duration
     , height
@@ -11,11 +11,11 @@ import Bitmap exposing (Bitmap)
 import Size exposing (Size8x8)
 
 
-type Frame size
+type HeldFrame size
     = Frame Int (Bitmap size)
 
 
-make : Int -> Bitmap Size8x8 -> Frame Size8x8
+make : Int -> Bitmap Size8x8 -> HeldFrame Size8x8
 make dur b =
     Frame dur b
 
@@ -24,21 +24,21 @@ make dur b =
 -- ACCESSORS
 
 
-bitmap : Frame a -> Bitmap a
+bitmap : HeldFrame a -> Bitmap a
 bitmap (Frame _ bm) =
     bm
 
 
-duration : Frame a -> Int
+duration : HeldFrame a -> Int
 duration (Frame dur _) =
     dur
 
 
-width : Frame a -> Int
+width : HeldFrame a -> Int
 width (Frame _ bm) =
     Bitmap.width bm
 
 
-height : Frame a -> Int
+height : HeldFrame a -> Int
 height (Frame _ bm) =
     Bitmap.height bm
