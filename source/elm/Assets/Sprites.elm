@@ -1,8 +1,8 @@
 module Assets.Sprites exposing (avatarSprites)
 
 import Avatar.AvatarSprites exposing (AvatarSprites)
+import Graphic
 import Sprite exposing (Sprite)
-import Sprite.Frame as Frame
 import Sprite.HeldFrame as HeldFrame
 
 
@@ -24,46 +24,46 @@ avatarSprites =
 standingRight : Sprite
 standingRight =
     Sprite.animated
-        (HeldFrame.make 7 Frame.FrameStandingRight)
-        [ HeldFrame.make 7 Frame.FrameBobRight
+        (HeldFrame.make 7 Graphic.AvatarStandingRight)
+        [ HeldFrame.make 7 Graphic.AvatarBobRight
         ]
 
 
 standingLeft : Sprite
 standingLeft =
     Sprite.animated
-        (HeldFrame.make 7 Frame.FrameStandingLeft)
-        [ HeldFrame.make 7 Frame.FrameBobLeft
+        (HeldFrame.make 7 Graphic.AvatarStandingLeft)
+        [ HeldFrame.make 7 Graphic.AvatarBobLeft
         ]
 
 
 runningRight : Sprite
 runningRight =
     Sprite.animated
-        (HeldFrame.make 4 Frame.FrameAirborneRight)
-        [ HeldFrame.make 4 Frame.FrameStandingRight
-        , HeldFrame.make 4 Frame.FrameHopRight
-        , HeldFrame.make 4 Frame.FrameStandingRight
+        (HeldFrame.make 4 Graphic.AvatarAirborneRight)
+        [ HeldFrame.make 4 Graphic.AvatarStandingRight
+        , HeldFrame.make 4 Graphic.AvatarHopRight
+        , HeldFrame.make 4 Graphic.AvatarStandingRight
         ]
 
 
 runningLeft : Sprite
 runningLeft =
     Sprite.animated
-        (HeldFrame.make 4 Frame.FrameAirborneLeft)
-        [ HeldFrame.make 4 Frame.FrameStandingLeft
-        , HeldFrame.make 4 Frame.FrameHopLeft
-        , HeldFrame.make 4 Frame.FrameStandingLeft
+        (HeldFrame.make 4 Graphic.AvatarAirborneLeft)
+        [ HeldFrame.make 4 Graphic.AvatarStandingLeft
+        , HeldFrame.make 4 Graphic.AvatarHopLeft
+        , HeldFrame.make 4 Graphic.AvatarStandingLeft
         ]
 
 
 jumpingRight : Sprite
 jumpingRight =
-    Frame.FrameAirborneRight
+    Graphic.AvatarAirborneRight
         |> Sprite.static
 
 
 jumpingLeft : Sprite
 jumpingLeft =
-    Frame.FrameAirborneLeft
+    Graphic.AvatarAirborneLeft
         |> Sprite.static

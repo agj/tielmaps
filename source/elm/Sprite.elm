@@ -10,9 +10,9 @@ module Sprite exposing
     )
 
 import Bitmap exposing (Bitmap)
+import Graphic exposing (Graphic)
 import List.Nonempty exposing (Nonempty)
 import Size exposing (Size8x8)
-import Sprite.Frame as Frame exposing (Frame)
 import Sprite.HeldFrame as HeldFrame exposing (HeldFrame)
 
 
@@ -25,11 +25,11 @@ type Sprite
 
 
 type Animation
-    = Static Frame
+    = Static Graphic
     | Animated Int (Nonempty HeldFrame)
 
 
-static : Frame -> Sprite
+static : Graphic -> Sprite
 static frame =
     Sprite
         { width_ = 8
@@ -41,8 +41,8 @@ static frame =
 animated : HeldFrame -> List HeldFrame -> Sprite
 animated firstFrame frames =
     Sprite
-        { width_ = HeldFrame.frame firstFrame |> Frame.width
-        , height_ = HeldFrame.frame firstFrame |> Frame.height
+        { width_ = 8
+        , height_ = 8
         , animation =
             Animated 0
                 (List.Nonempty.singleton firstFrame
@@ -73,24 +73,24 @@ bitmaps : Sprite -> List (Bitmap Size8x8)
 bitmaps (Sprite { animation }) =
     case animation of
         Static frame ->
-            [ Frame.bitmap frame ]
+            [ Graphic.bitmap frame ]
 
         Animated _ frames ->
             frames
                 |> List.Nonempty.toList
-                |> List.map (HeldFrame.frame >> Frame.bitmap)
+                |> List.map (HeldFrame.frame >> Graphic.bitmap)
 
 
 bitmap : Sprite -> Bitmap Size8x8
 bitmap (Sprite { animation }) =
     case animation of
         Static frame ->
-            Frame.bitmap frame
+            Graphic.bitmap frame
 
         Animated ticks frames ->
             currentFrame ticks frames
                 |> HeldFrame.frame
-                |> Frame.bitmap
+                |> Graphic.bitmap
 
 
 width : Sprite -> Int

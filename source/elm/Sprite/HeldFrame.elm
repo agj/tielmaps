@@ -1,18 +1,18 @@
 module Sprite.HeldFrame exposing (HeldFrame, duration, frame, make)
 
-import Sprite.Frame exposing (Frame)
+import Graphic exposing (Graphic)
 
 
 type HeldFrame
-    = HeldFrame Int Frame
+    = HeldFrame Int Graphic
 
 
-make : Int -> Frame -> HeldFrame
+make : Int -> Graphic -> HeldFrame
 make dur f =
     HeldFrame dur f
 
 
-frame : HeldFrame -> Frame
+frame : HeldFrame -> Graphic
 frame (HeldFrame _ f) =
     f
 

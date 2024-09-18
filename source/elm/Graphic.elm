@@ -33,6 +33,14 @@ type Graphic
     | TileBush
     | TileDoorTop
     | TileDoorBottom
+    | AvatarAirborneRight
+    | AvatarAirborneLeft
+    | AvatarHopRight
+    | AvatarHopLeft
+    | AvatarStandingRight
+    | AvatarStandingLeft
+    | AvatarBobRight
+    | AvatarBobLeft
 
 
 empty8x8 : Graphic
@@ -108,6 +116,30 @@ bitmap tile =
 
         TileDoorBottom ->
             Bitmaps.tileDoorBottom
+
+        AvatarAirborneRight ->
+            Bitmaps.avatarAirborneRight
+
+        AvatarAirborneLeft ->
+            Bitmaps.avatarAirborneLeft
+
+        AvatarHopRight ->
+            Bitmaps.avatarHopRight
+
+        AvatarHopLeft ->
+            Bitmaps.avatarHopLeft
+
+        AvatarStandingRight ->
+            Bitmaps.avatarStandingRight
+
+        AvatarStandingLeft ->
+            Bitmaps.avatarStandingLeft
+
+        AvatarBobRight ->
+            Bitmaps.avatarBobRight
+
+        AvatarBobLeft ->
+            Bitmaps.avatarBobLeft
 
 
 width : Graphic -> Int
