@@ -21,11 +21,12 @@ import Collider.Interface exposing (Collider)
 import Keys exposing (Keys)
 import Levers
 import List.Extra
+import Size exposing (Size8x8)
 import Sprite exposing (Sprite)
 
 
 type Avatar a
-    = Avatar (Data a)
+    = Avatar Data
 
 
 type Motion
@@ -42,8 +43,8 @@ type CanJumpStatus
     | CannotJump
 
 
-type alias Data a =
-    { sprites_ : AvatarSprites a
+type alias Data =
+    { sprites_ : AvatarSprites
     , x : Int
     , y : Int
     , prevX : Int
@@ -78,7 +79,7 @@ type Facing
 You also need to supply a Padding, which defines
 how far into the Sprite should the collision box be calculated.
 -}
-fromSprite : Padding -> Sprite a -> Avatar a
+fromSprite : Padding -> Sprite -> Avatar a
 fromSprite padding spr =
     fromSprites padding (AvatarSprites.single spr)
 
@@ -88,7 +89,7 @@ which defines a Sprite for each possible state the Avatar can be in.
 You also need to supply a Padding, which defines
 how far into the Sprite should the collision box be calculated.
 -}
-fromSprites : Padding -> AvatarSprites a -> Avatar a
+fromSprites : Padding -> AvatarSprites -> Avatar a
 fromSprites padding sprs =
     let
         width_ =
@@ -118,12 +119,12 @@ fromSprites padding sprs =
 -- ACCESSORS
 
 
-bitmaps : Avatar a -> List (Bitmap a)
+bitmaps : Avatar a -> List (Bitmap Size8x8)
 bitmaps (Avatar { sprites_ }) =
     AvatarSprites.bitmaps sprites_
 
 
-bitmap : Avatar a -> Bitmap a
+bitmap : Avatar a -> Bitmap Size8x8
 bitmap avatar =
     Sprite.bitmap (currentSprite avatar)
 
@@ -303,7 +304,7 @@ collide collider (Avatar ({ x, y, prevX, prevY, width_, height_, motion, padding
 -- INTERNAL
 
 
-currentSprite : Avatar a -> Sprite a
+currentSprite : Avatar a -> Sprite
 currentSprite (Avatar { sprites_, pose, facing }) =
     case ( pose, facing ) of
         ( PoseStanding, FacingRight ) ->
@@ -325,7 +326,7 @@ currentSprite (Avatar { sprites_, pose, facing }) =
             sprites_.jumpingLeft
 
 
-mapCurrentSprite : (Sprite a -> Sprite a) -> Avatar a -> Avatar a
+mapCurrentSprite : (Sprite -> Sprite) -> Avatar a -> Avatar a
 mapCurrentSprite mapper (Avatar ({ sprites_, pose, facing } as data)) =
     Avatar
         { data

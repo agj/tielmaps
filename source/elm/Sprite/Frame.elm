@@ -11,11 +11,11 @@ import Bitmap exposing (Bitmap)
 import Size exposing (Size8x8)
 
 
-type HeldFrame size
-    = Frame Int (Bitmap size)
+type HeldFrame
+    = Frame Int (Bitmap Size8x8)
 
 
-make : Int -> Bitmap Size8x8 -> HeldFrame Size8x8
+make : Int -> Bitmap Size8x8 -> HeldFrame
 make dur b =
     Frame dur b
 
@@ -24,21 +24,21 @@ make dur b =
 -- ACCESSORS
 
 
-bitmap : HeldFrame a -> Bitmap a
+bitmap : HeldFrame -> Bitmap Size8x8
 bitmap (Frame _ bm) =
     bm
 
 
-duration : HeldFrame a -> Int
+duration : HeldFrame -> Int
 duration (Frame dur _) =
     dur
 
 
-width : HeldFrame a -> Int
+width : HeldFrame -> Int
 width (Frame _ bm) =
     Bitmap.width bm
 
 
-height : HeldFrame a -> Int
+height : HeldFrame -> Int
 height (Frame _ bm) =
     Bitmap.height bm

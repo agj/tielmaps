@@ -15,20 +15,20 @@ import Size exposing (Size8x8)
 import Sprite.Frame as Frame exposing (HeldFrame)
 
 
-type Sprite size
+type Sprite
     = Sprite
         { width_ : Int
         , height_ : Int
-        , animation : Animation size
+        , animation : Animation
         }
 
 
-type Animation size
-    = Static (Bitmap size)
-    | Animated Int (Nonempty (HeldFrame size))
+type Animation
+    = Static (Bitmap Size8x8)
+    | Animated Int (Nonempty HeldFrame)
 
 
-static : Bitmap Size8x8 -> Sprite Size8x8
+static : Bitmap Size8x8 -> Sprite
 static bm =
     Sprite
         { width_ = Bitmap.width bm
@@ -37,7 +37,7 @@ static bm =
         }
 
 
-animated : HeldFrame a -> List (HeldFrame a) -> Sprite a
+animated : HeldFrame -> List HeldFrame -> Sprite
 animated firstFrame frames =
     Sprite
         { width_ = Frame.width firstFrame
@@ -50,7 +50,7 @@ animated firstFrame frames =
         }
 
 
-tick : Sprite a -> Sprite a
+tick : Sprite -> Sprite
 tick ((Sprite state) as sprite) =
     case state.animation of
         Static _ ->
@@ -68,7 +68,7 @@ tick ((Sprite state) as sprite) =
                 Sprite { state | animation = Animated newTicks frames }
 
 
-bitmaps : Sprite a -> List (Bitmap a)
+bitmaps : Sprite -> List (Bitmap Size8x8)
 bitmaps (Sprite { animation }) =
     case animation of
         Static bm ->
@@ -80,7 +80,7 @@ bitmaps (Sprite { animation }) =
                 |> List.map Frame.bitmap
 
 
-bitmap : Sprite a -> Bitmap a
+bitmap : Sprite -> Bitmap Size8x8
 bitmap (Sprite { animation }) =
     case animation of
         Static bm ->
@@ -91,12 +91,12 @@ bitmap (Sprite { animation }) =
                 |> Frame.bitmap
 
 
-width : Sprite a -> Int
+width : Sprite -> Int
 width (Sprite { width_ }) =
     width_
 
 
-height : Sprite a -> Int
+height : Sprite -> Int
 height (Sprite { height_ }) =
     height_
 
@@ -105,12 +105,12 @@ height (Sprite { height_ }) =
 -- INTERNAL
 
 
-totalTicks : Nonempty (HeldFrame a) -> Int
+totalTicks : Nonempty HeldFrame -> Int
 totalTicks frames =
     List.Nonempty.foldl (\f acc -> Frame.duration f + acc) 0 frames
 
 
-currentFrame : Int -> Nonempty (HeldFrame a) -> HeldFrame a
+currentFrame : Int -> Nonempty HeldFrame -> HeldFrame
 currentFrame ticks frames =
     let
         iterate n f fs =

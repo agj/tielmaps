@@ -8,7 +8,7 @@ import Sprite exposing (Sprite)
 import Sprite.Frame as Frame exposing (HeldFrame)
 
 
-avatarSprites : AvatarSprites Size8x8
+avatarSprites : AvatarSprites
 avatarSprites =
     { runningRight = runningRight
     , runningLeft = runningLeft
@@ -75,7 +75,7 @@ pictures =
     }
 
 
-standingRight : Sprite Size8x8
+standingRight : Sprite
 standingRight =
     Sprite.animated
         (frame 7 pictures.standing)
@@ -83,7 +83,7 @@ standingRight =
         ]
 
 
-standingLeft : Sprite Size8x8
+standingLeft : Sprite
 standingLeft =
     Sprite.animated
         (frame 7 (Bitmap.flipX pictures.standing))
@@ -91,7 +91,7 @@ standingLeft =
         ]
 
 
-runningRight : Sprite Size8x8
+runningRight : Sprite
 runningRight =
     Sprite.animated
         (frame 4 pictures.airborne)
@@ -101,7 +101,7 @@ runningRight =
         ]
 
 
-runningLeft : Sprite Size8x8
+runningLeft : Sprite
 runningLeft =
     Sprite.animated
         (frame 4 (Bitmap.flipX pictures.airborne))
@@ -111,20 +111,20 @@ runningLeft =
         ]
 
 
-jumpingRight : Sprite Size8x8
+jumpingRight : Sprite
 jumpingRight =
     pictures.airborne
         |> Sprite.static
 
 
-jumpingLeft : Sprite Size8x8
+jumpingLeft : Sprite
 jumpingLeft =
     pictures.airborne
         |> Bitmap.flipX
         |> Sprite.static
 
 
-frame : Int -> Bitmap Size8x8 -> HeldFrame Size8x8
+frame : Int -> Bitmap Size8x8 -> HeldFrame
 frame n bm =
     bm
         |> Frame.make n
