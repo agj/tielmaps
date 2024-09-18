@@ -8,6 +8,7 @@ import Bitmap.Color
 import Color exposing (Color)
 import Color.Gradient exposing (Palette)
 import Colors exposing (Colors)
+import Graphic exposing (Graphic)
 import Html exposing (Html)
 import Html.Attributes
 import Json.Encode
@@ -15,7 +16,6 @@ import Levers
 import Palette
 import Screen
 import Size exposing (Size22x22, Size8x8)
-import Tile exposing (Tile)
 import Tilemap exposing (Tilemap)
 import World exposing (World)
 
@@ -39,7 +39,7 @@ element width height attrs world avatar =
         tilemapBitmaps =
             Tilemap.tiles tilemap
                 |> Array.toList
-                |> List.map Tile.bitmap
+                |> List.map Graphic.bitmap
 
         avatarBitmaps : List (Bitmap Size8x8)
         avatarBitmaps =

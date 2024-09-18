@@ -17,8 +17,8 @@ import Bitmap exposing (Bitmap)
 import CollisionLayer exposing (CollisionLayer)
 import Colors exposing (Colors)
 import Dict
+import Graphic
 import Size exposing (Size22x22, Size8x8, SizeAny)
-import Tile
 import Tilemap exposing (Tilemap)
 
 
@@ -139,7 +139,7 @@ errorTilemap =
     fullTilemapString
         |> Tilemap.fromString
             (Dict.fromList
-                [ ( '#', Tile.error8x8 )
+                [ ( '#', Graphic.error8x8 )
                 ]
             )
         |> Maybe.withDefault (Tilemap.empty8x8Tile 0 0)

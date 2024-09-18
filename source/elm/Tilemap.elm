@@ -18,11 +18,11 @@ import Array exposing (Array)
 import Array2d exposing (Array2d)
 import Bitmap exposing (Bitmap)
 import Dict exposing (Dict)
+import Graphic exposing (Graphic)
 import Helper
 import List.Extra
 import Maybe.Extra as Maybe
 import Size exposing (Size8x8, SizeAny)
-import Tile exposing (Tile)
 
 
 type Tilemap tileSize
@@ -31,7 +31,7 @@ type Tilemap tileSize
         , height_ : Int
         , tileWidth_ : Int
         , tileHeight_ : Int
-        , tiles_ : Array Tile
+        , tiles_ : Array Graphic
         , map_ : Array2d Int
 
         -- Old:
@@ -47,7 +47,7 @@ empty8x8Tile w h =
         , height_ = h
         , tileWidth_ = 8
         , tileHeight_ = 8
-        , tiles_ = Array.repeat 1 Tile.empty8x8
+        , tiles_ = Array.repeat 1 Graphic.empty8x8
         , map_ = Array2d.repeat w h 0
 
         -- Old:
@@ -77,7 +77,7 @@ This will produce a 4 × 4 tiles Tilemap, wrapped in a Just if all's correct.
 Note that spaces are always ignored.
 
 -}
-fromString : Dict Char Tile -> String -> Maybe (Tilemap Size8x8)
+fromString : Dict Char Graphic -> String -> Maybe (Tilemap Size8x8)
 fromString tiles_ str =
     let
         tilesList =
@@ -87,12 +87,12 @@ fromString tiles_ str =
         t :: _ ->
             let
                 tw =
-                    Tile.width t
+                    Graphic.width t
 
                 th =
-                    Tile.height t
+                    Graphic.height t
 
-                tilesArray : Array Tile
+                tilesArray : Array Graphic
                 tilesArray =
                     Dict.values tiles_
                         |> Array.fromList
@@ -116,7 +116,7 @@ fromString tiles_ str =
                                         (\tileIndex ->
                                             Array.get tileIndex tilesArray
                                                 |> Maybe.withDefault t
-                                                |> Tile.bitmap
+                                                |> Graphic.bitmap
                                         )
                             )
             in
@@ -174,7 +174,7 @@ tile x y (Tilemap { bitmaps }) =
         |> Array2d.get x y
 
 
-tiles : Tilemap a -> Array Tile
+tiles : Tilemap a -> Array Graphic
 tiles (Tilemap { tiles_ }) =
     tiles_
 
@@ -188,13 +188,13 @@ map (Tilemap { map_ }) =
 -- SETTERS
 
 
-setTile : Int -> Int -> Tile -> Tilemap Size8x8 -> Tilemap Size8x8
+setTile : Int -> Int -> Graphic -> Tilemap Size8x8 -> Tilemap Size8x8
 setTile x y t (Tilemap ({ bitmaps } as state)) =
     Tilemap
         { state
             | bitmaps =
                 bitmaps
-                    |> Array2d.set x y (Tile.bitmap t)
+                    |> Array2d.set x y (Graphic.bitmap t)
             , bitmapMemo = Nothing
         }
 

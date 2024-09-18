@@ -2,9 +2,9 @@ module TilemapTest exposing (..)
 
 import Dict exposing (Dict)
 import Expect
+import Graphic exposing (Graphic)
 import Size exposing (Size8x8)
 import Test exposing (..)
-import Tile exposing (Tile)
 import Tilemap exposing (Tilemap)
 
 
@@ -51,9 +51,9 @@ tilemapString =
     """
 
 
-charTiles : Dict Char Tile
+charTiles : Dict Char Graphic
 charTiles =
     Dict.fromList
-        [ ( '.', Tile.TileEmpty )
-        , ( '█', Tile.TileSolid )
+        [ ( '.', Graphic.Empty )
+        , ( '█', Graphic.Solid )
         ]
