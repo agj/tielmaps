@@ -1,10 +1,9 @@
 module Assets.Sprites exposing (avatarSprites)
 
 import Avatar.AvatarSprites exposing (AvatarSprites)
-import Bitmap exposing (Bitmap)
-import Size exposing (Size8x8)
 import Sprite exposing (Sprite)
-import Sprite.Frame as Frame exposing (HeldFrame)
+import Sprite.Frame as Frame
+import Sprite.HeldFrame as HeldFrame
 
 
 avatarSprites : AvatarSprites
@@ -25,36 +24,36 @@ avatarSprites =
 standingRight : Sprite
 standingRight =
     Sprite.animated
-        (Frame.make 7 Frame.FrameStandingRight)
-        [ Frame.make 7 Frame.FrameBobRight
+        (HeldFrame.make 7 Frame.FrameStandingRight)
+        [ HeldFrame.make 7 Frame.FrameBobRight
         ]
 
 
 standingLeft : Sprite
 standingLeft =
     Sprite.animated
-        (Frame.make 7 Frame.FrameStandingLeft)
-        [ Frame.make 7 Frame.FrameBobLeft
+        (HeldFrame.make 7 Frame.FrameStandingLeft)
+        [ HeldFrame.make 7 Frame.FrameBobLeft
         ]
 
 
 runningRight : Sprite
 runningRight =
     Sprite.animated
-        (Frame.make 4 Frame.FrameAirborneRight)
-        [ Frame.make 4 Frame.FrameStandingRight
-        , Frame.make 4 Frame.FrameHopRight
-        , Frame.make 4 Frame.FrameStandingRight
+        (HeldFrame.make 4 Frame.FrameAirborneRight)
+        [ HeldFrame.make 4 Frame.FrameStandingRight
+        , HeldFrame.make 4 Frame.FrameHopRight
+        , HeldFrame.make 4 Frame.FrameStandingRight
         ]
 
 
 runningLeft : Sprite
 runningLeft =
     Sprite.animated
-        (Frame.make 4 Frame.FrameAirborneLeft)
-        [ Frame.make 4 Frame.FrameStandingLeft
-        , Frame.make 4 Frame.FrameHopLeft
-        , Frame.make 4 Frame.FrameStandingLeft
+        (HeldFrame.make 4 Frame.FrameAirborneLeft)
+        [ HeldFrame.make 4 Frame.FrameStandingLeft
+        , HeldFrame.make 4 Frame.FrameHopLeft
+        , HeldFrame.make 4 Frame.FrameStandingLeft
         ]
 
 
