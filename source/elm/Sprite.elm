@@ -40,8 +40,8 @@ static frame =
 animated : HeldFrame -> List HeldFrame -> Sprite
 animated firstFrame frames =
     Sprite
-        { width_ = Frame.width firstFrame
-        , height_ = Frame.height firstFrame
+        { width_ = Frame.frame firstFrame |> Frame.width
+        , height_ = Frame.frame firstFrame |> Frame.height
         , animation =
             Animated 0
                 (List.Nonempty.singleton firstFrame
@@ -72,22 +72,23 @@ bitmaps : Sprite -> List (Bitmap Size8x8)
 bitmaps (Sprite { animation }) =
     case animation of
         Static frame ->
-            [ Frame.make 1 frame |> Frame.bitmap ]
+            [ Frame.bitmap frame ]
 
         Animated _ frames ->
             frames
                 |> List.Nonempty.toList
-                |> List.map Frame.bitmap
+                |> List.map (Frame.frame >> Frame.bitmap)
 
 
 bitmap : Sprite -> Bitmap Size8x8
 bitmap (Sprite { animation }) =
     case animation of
         Static frame ->
-            Frame.make 1 frame |> Frame.bitmap
+            Frame.bitmap frame
 
         Animated ticks frames ->
             currentFrame ticks frames
+                |> Frame.frame
                 |> Frame.bitmap
 
 
