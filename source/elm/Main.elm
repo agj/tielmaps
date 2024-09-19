@@ -101,12 +101,14 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     let
+        ignore : ( Model, Cmd msg )
         ignore =
             ( model, Cmd.none )
     in
     case msg of
         Ticked ->
             let
+                newCharacter : Avatar
                 newCharacter =
                     model.character
                         |> Avatar.tick model.keys
@@ -268,9 +270,11 @@ decodeKeyWith msg =
 getScale : Viewport -> Int
 getScale { width, height } =
     let
+        scaleX : Int
         scaleX =
             width // Levers.screenWidth
 
+        scaleY : Int
         scaleY =
             height // Levers.screenHeight
     in

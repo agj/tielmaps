@@ -39,6 +39,7 @@ tick sprite =
 
         Animated ticks frames ->
             let
+                newTicks : Int
                 newTicks =
                     ticks + 1
             in
@@ -82,8 +83,10 @@ totalTicks frames =
 currentFrame : Int -> Nonempty HeldFrame -> HeldFrame
 currentFrame ticks frames =
     let
+        iterate : Int -> HeldFrame -> List HeldFrame -> HeldFrame
         iterate n f fs =
             let
+                currentFrameDuration : Int
                 currentFrameDuration =
                     HeldFrame.duration f
             in

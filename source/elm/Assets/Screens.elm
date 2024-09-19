@@ -8,7 +8,7 @@ import Levers
 import Palette
 import Screen exposing (Screen)
 import Size exposing (Size22x22)
-import Tilemap
+import Tilemap exposing (Tilemap)
 
 
 testScreen6 : Screen Size22x22
@@ -192,11 +192,13 @@ testScreen1 =
 toScreen : Colors -> String -> Screen Size22x22
 toScreen colors string =
     let
+        tilemap : Tilemap
         tilemap =
             string
                 |> Tilemap.fromString charTiles
                 |> Maybe.withDefault (Tilemap.empty 0 0)
 
+        collisionLayer : CollisionLayer.CollisionLayer
         collisionLayer =
             string
                 |> CollisionLayer.fromString

@@ -16,13 +16,16 @@ import Palette
 element : Int -> Int -> Colors -> List (Bitmap a) -> List BitmapStamp -> List (Html.Attribute msg) -> Html msg
 element width height colors bitmaps bitmapStamps attrs =
     let
+        encodedColors : Json.Encode.Value
         encodedColors =
             [ colors.darkColor, colors.lightColor, Palette.transparent ]
                 |> Json.Encode.list encodeColor
 
+        encodedBitmaps : Json.Encode.Value
         encodedBitmaps =
             Json.Encode.list encodeBitmap bitmaps
 
+        encodedBitmapStamps : Json.Encode.Value
         encodedBitmapStamps =
             Json.Encode.list encodeBitmapStamp bitmapStamps
     in

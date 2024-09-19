@@ -58,9 +58,11 @@ fromList width_ list =
 
     else
         let
+            listLength : Int
             listLength =
                 List.length list
 
+            height_ : Int
             height_ =
                 listLength // width_
         in
@@ -84,12 +86,15 @@ forceFromList width_ filler list =
 
     else
         let
+            listLength : Int
             listLength =
                 List.length list
 
+            remain : Int
             remain =
                 remainderBy width_ listLength
 
+            lack : Int
             lack =
                 if listLength == 0 then
                     width_
@@ -100,10 +105,12 @@ forceFromList width_ filler list =
                 else
                     width_ - remain
 
+            filledList : List a
             filledList =
                 list
                     ++ List.repeat lack filler
 
+            height_ : Int
             height_ =
                 List.length filledList // width_
         in
@@ -171,9 +178,11 @@ indexedFoldl mapper init (Array2d { width_, array }) =
         |> List.Extra.indexedFoldl
             (\index a b ->
                 let
+                    x : Int
                     x =
                         index |> modBy width_
 
+                    y : Int
                     y =
                         index // width_
                 in

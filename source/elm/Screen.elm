@@ -29,9 +29,11 @@ type Screen mapSize
 make22x22 : Colors -> Tilemap -> CollisionLayer -> Maybe (Screen Size22x22)
 make22x22 colors_ m coll =
     let
+        width_ : Int
         width_ =
             Tilemap.width m
 
+        height_ : Int
         height_ =
             Tilemap.height m
     in

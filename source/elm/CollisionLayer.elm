@@ -29,9 +29,11 @@ solid w h =
 fromString : List Char -> String -> Maybe CollisionLayer
 fromString solids str =
     let
+        mapper : Char -> Maybe Bool
         mapper ch =
             Just (List.member ch solids)
 
+        mapped : Maybe (Array2d Bool)
         mapped =
             Helper.stringToArray2d mapper str
     in

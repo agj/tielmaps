@@ -54,6 +54,7 @@ by passing a Bitmap.Color.ColorMap which defines which character is which color.
 fromString8x8 : ColorMap -> String -> Maybe (Bitmap Size8x8)
 fromString8x8 cMap str =
     let
+        mapper : Char -> Maybe Color
         mapper ch =
             if ch == cMap.dark then
                 Just Dark
@@ -67,6 +68,7 @@ fromString8x8 cMap str =
             else
                 Nothing
 
+        maybeResult : Maybe (Array2d Color)
         maybeResult =
             Helper.stringToArray2d mapper str
     in
@@ -184,8 +186,10 @@ flipY ((Bitmap _ h _) as bm) =
 transform : (Int -> Int -> ( Int, Int )) -> Bitmap a -> Bitmap a
 transform fn ((Bitmap w h _) as bitmap) =
     let
+        iterator : Int -> Int -> Bitmap b -> Bitmap b
         iterator x y bm =
             let
+                nextX : Int
                 nextX =
                     if x >= w - 1 then
                         0
@@ -193,6 +197,7 @@ transform fn ((Bitmap w h _) as bitmap) =
                     else
                         x + 1
 
+                nextY : Int
                 nextY =
                     if nextX == 0 then
                         y + 1
@@ -203,6 +208,7 @@ transform fn ((Bitmap w h _) as bitmap) =
                 ( tx, ty ) =
                     fn x y
 
+                newBm : Bitmap b
                 newBm =
                     paintPixel
                         tx

@@ -7,17 +7,20 @@ import Maybe.Extra as Maybe
 stringToArray2d : (Char -> Maybe a) -> String -> Maybe (Array2d a)
 stringToArray2d mapper str =
     let
+        rawLines : List String
         rawLines =
             str
                 |> String.lines
                 |> List.map removeSpaces
                 |> List.filter (not << String.isEmpty)
 
+        w : Int
         w =
             rawLines
                 |> List.map String.length
                 |> List.foldl max 0
 
+        lines : List String
         lines =
             rawLines
                 |> List.map (String.padRight w '.')

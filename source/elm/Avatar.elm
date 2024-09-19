@@ -88,9 +88,11 @@ how far into the Sprite should the collision box be calculated.
 fromSprites : Padding -> AvatarSprites -> Avatar
 fromSprites padding sprs =
     let
+        width_ : Int
         width_ =
             Sprite.width sprs.standingRight
 
+        height_ : Int
         height_ =
             Sprite.height sprs.standingRight
     in
@@ -151,6 +153,7 @@ Takes care of gravity, jumping and left-right movement.
 tick : Keys -> Avatar -> Avatar
 tick keys (Avatar ({ y, x, prevX, motion, facing } as data)) =
     let
+        newX : Int
         newX =
             case Keys.direction keys of
                 Keys.Static ->
@@ -162,6 +165,7 @@ tick keys (Avatar ({ y, x, prevX, motion, facing } as data)) =
                 Keys.Right ->
                     x + Levers.runSpeed
 
+        newY : Int
         newY =
             case newMotion of
                 Jumping _ ->
@@ -170,6 +174,7 @@ tick keys (Avatar ({ y, x, prevX, motion, facing } as data)) =
                 _ ->
                     y + Levers.gravity
 
+        newMotion : Motion
         newMotion =
             -- The next position is always either Jumping or Falling.
             -- It's set as OnGround only when colliding against the floor!
@@ -251,9 +256,11 @@ collide collider (Avatar ({ x, y, prevX, prevY, width_, height_, motion, padding
                 , height = height_ - padding.top - padding.bottom
                 }
 
+        newX : Int
         newX =
             newXPre - padding.left
 
+        newY : Int
         newY =
             newYPre - padding.top
     in
@@ -341,6 +348,7 @@ mapCurrentSprite mapper (Avatar ({ sprites_, pose, facing } as data)) =
 getPose : Motion -> Int -> Int -> Pose
 getPose motion x_ prevX =
     let
+        onGround : Pose
         onGround =
             if x_ == prevX then
                 PoseStanding

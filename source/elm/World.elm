@@ -88,9 +88,11 @@ screenAt x y (World { screenWidthInPixels, screenHeightInPixels, screens }) =
 currentScreen : Avatar -> World a -> Maybe (Screen a)
 currentScreen avatar (World { screenWidthInPixels, screenHeightInPixels, screens }) =
     let
+        x : Int
         x =
             Avatar.baseX avatar
 
+        y : Int
         y =
             Avatar.baseY avatar
 
@@ -103,15 +105,19 @@ currentScreen avatar (World { screenWidthInPixels, screenHeightInPixels, screens
 avatarPositionOnScreen : Avatar -> World a -> ( Int, Int )
 avatarPositionOnScreen avatar (World { screenWidthInPixels, screenHeightInPixels }) =
     let
+        x : Int
         x =
             Avatar.baseX avatar
 
+        y : Int
         y =
             Avatar.baseY avatar
 
+        xOffset : Int
         xOffset =
             x - modBy screenWidthInPixels x
 
+        yOffset : Int
         yOffset =
             y - modBy screenHeightInPixels y
     in
@@ -123,6 +129,7 @@ avatarPositionOnScreen avatar (World { screenWidthInPixels, screenHeightInPixels
 collider : World a -> Collider.PointChecker
 collider (World { screenWidthInPixels, screenHeightInPixels, screens }) x y =
     let
+        screenM : Maybe (Screen a)
         screenM =
             getScreenWrapping screens screenWidthInPixels screenHeightInPixels x y
     in
@@ -150,15 +157,19 @@ getScreenWrapping screens screenWidthInPixels screenHeightInPixels x_ y_ =
 getScreenPosWrapping : Array2d (Screen a) -> Int -> Int -> Int -> Int -> ( Int, Int )
 getScreenPosWrapping screens screenWidthInPixels screenHeightInPixels x_ y_ =
     let
+        x : Int
         x =
             floor (toFloat x_ / toFloat screenWidthInPixels)
 
+        y : Int
         y =
             floor (toFloat y_ / toFloat screenHeightInPixels)
 
+        w : Int
         w =
             Array2d.width screens
 
+        h : Int
         h =
             Array2d.height screens
     in
