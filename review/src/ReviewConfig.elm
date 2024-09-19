@@ -17,6 +17,7 @@ import NoExposingEverything
 import NoImportingEverything
 import NoMissingTypeAnnotation
 import NoMissingTypeAnnotationInLetIn
+import NoMissingTypeExpose
 import NoUnused.CustomTypeConstructorArgs
 import NoUnused.CustomTypeConstructors
 import NoUnused.Dependencies
@@ -48,4 +49,5 @@ config =
         |> Rule.ignoreErrorsForDirectories [ "tests/" ]
     , NoMissingTypeAnnotationInLetIn.rule
         |> Rule.ignoreErrorsForDirectories [ "tests/" ]
+    , NoMissingTypeExpose.rule
     ]
