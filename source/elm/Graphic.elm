@@ -1,5 +1,5 @@
 module Graphic exposing
-    ( Graphic(..)
+    ( Graphic
     , all
     , avatarAirborneLeft
     , avatarAirborneRight
@@ -9,10 +9,9 @@ module Graphic exposing
     , avatarHopRight
     , avatarStandingLeft
     , avatarStandingRight
-    , bitmap
     , empty
     , error
-    , index
+    , getIndex
     , solid
     , tileBottomLeftCurvedSolid
     , tileBrick
@@ -30,6 +29,7 @@ module Graphic exposing
     , tileTopCurvedSolid
     , tileTopLeftCurvedSolid
     , tileTopRightCurvedSolid
+    , toBitmap
     )
 
 import Assets.Bitmaps as Bitmaps
@@ -50,13 +50,13 @@ all =
         |> List.map Graphic
 
 
-index : Graphic -> Int
-index (Graphic index_) =
+getIndex : Graphic -> Int
+getIndex (Graphic index_) =
     index_
 
 
-bitmap : Graphic -> Bitmap Size8x8
-bitmap (Graphic index_) =
+toBitmap : Graphic -> Bitmap Size8x8
+toBitmap (Graphic index_) =
     indexBitmapDict
         |> Dict.get index_
         |> Maybe.withDefault Bitmaps.error

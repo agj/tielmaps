@@ -191,7 +191,7 @@ mainView { world, character, scale } =
                     (\x y graphic acc ->
                         { x = x * 8
                         , y = y * 8
-                        , bitmapIndex = Graphic.index graphic
+                        , bitmapIndex = Graphic.getIndex graphic
                         }
                             :: acc
                     )
@@ -201,7 +201,7 @@ mainView { world, character, scale } =
         avatarBitmapStamp =
             { x = avatarX
             , y = avatarY
-            , bitmapIndex = Avatar.graphic character |> Graphic.index
+            , bitmapIndex = Avatar.graphic character |> Graphic.getIndex
             }
 
         pixelRendererAttributes : List (Attribute msg)
@@ -228,7 +228,7 @@ mainView { world, character, scale } =
             Levers.screenWidth
             Levers.screenHeight
             colors
-            (Graphic.all |> List.map Graphic.bitmap)
+            (Graphic.all |> List.map Graphic.toBitmap)
             (avatarBitmapStamp :: tilemapBitmapStamps |> List.reverse)
             pixelRendererAttributes
             |> Html.Styled.fromUnstyled
