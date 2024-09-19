@@ -1,14 +1,43 @@
 # Tielmaps
 
-This is a foundation for a pixel platformer game playable on a computer (not a mobile device). You can see the code on [Github][tm-github]. You can also play what this compiles down to on [Github Pages][tm-ghpages]. Press the left and right keys to move sideways, and space to jump. Feel free to fork and make your own game!
+This is a foundation for a pixel platformer game playable on a computer (not a mobile device, currently).
 
-I started this (still in-progress) project to sate my curiosity. I wanted to learn more about the [Elm programming language][elm], and try making a web browser-runnable, barebones pixel platformer game basically from the ground up, while focusing only on its core elements.
+- See the code on [Github][tm-github].
+- Play what this compiles down to on [Github Pages][tm-ghpages].
 
-All graphics are drawn using plain text. The idea of designing the pixel art and levels by writing “ASCII art” sounded really fun, like how the limitations of coding on old home computers was (probably) like. Making it monochrome also arose from the idea of reducing things to their minimal essence. I didn't wanna make a complex game, just a technical foundation that could foreseeably be expanded upon in future projects, either by myself or any others.
+Controls:
 
-So I wanna make this an easy to hack codebase, sensibly organized for easy comprehension, and release it for: people interested in making their own platformer, but who don't know where to start; game makers interested in Elm who want a working example; or programmers interested in purely functional, strongly-typed languages who want to see how a game could be structured under that paradigm.
+| key   | result         |
+| ----- | -------------- |
+| ← →   | Move sideways. |
+| space | Jump.          |
 
-I myself am learning through this process, so I don't claim I have the right approach, and it'll probably change as it moves forward. So far it still needs a lot of work, but feel welcome to send your feedback this way!
+Feel free to fork and make your own game!
+
+![Screenshot of the demo game](./screenshot.png)
+
+## Introduction
+
+I started this (still in-progress) project to sate my own curiosity. I wanted to learn more about the [Elm programming language][elm], and try making a web browser-runnable, barebones pixel platformer game basically from the ground up, while focusing only on its core elements.
+
+I wanted to make this as self-contained as possible, so graphics are drawn using an 8 × 8 grid of “ASCII art” and then passed through a function that transforms it into structured data. Map screens are also designed in this same way. It's actually a really fun way of drawing the art and designing the levels, I think!
+
+```
+█ █ █ █ █ █ █ █
+█ . . . . . . █
+█ . . █ . █ . █
+█ . . . . . . █
+█ █ █ █ █ █ █ █
+/ █ / / █ █ / /
+█ █ / / / / █ /
+/ / / / / / / /
+```
+
+I also went for a monochrome art style, wanting to reduce things to their minimal essence. The idea is not to make a complex game, just a technical foundation that could foreseeably be expanded upon.
+
+So I hope that this is an easy to hack codebase, sensibly organized for easy comprehension. It's intended for people interested in making their own platformer, but who don't know where to start; game makers interested in Elm who want a working example; or programmers interested in purely functional, strongly-typed languages who want to see how a game could be structured under that paradigm.
+
+I myself am learning through this process, so I don't claim I have the right approach, and it'll probably change as it moves forward. Feel welcome to fork and extend, or to send feedback this way!
 
 — agj
 
@@ -25,28 +54,30 @@ I myself am learning through this process, so I don't claim I have the right app
 
 ## The code
 
-The files are organized in this way:
+The files are organized this way:
 
 - `source/` holds all the source files.
   - `elm/` holds the Elm code that does all the magic.
     - `Main.elm` is the Elm entry point. **Start looking here!**
     - `Assets/` has files with pictures of tiles, sprites and tilemaps, which are used in the demo level.
-    - `Main.d.ts` is a Typescript types declaration file. Basically just makes the Elm code more understandable to Typescript code.
-  - `ts/index.ts` holds some wrapping Typescript code for the Elm stuff. The few lines of code that receive data from the Elm side and actually place pixels on the screen are here.
+    - `Main.d.ts` is a TypeScript types declaration file. Basically just makes the Elm code more understandable to TypeScript code.
+  - `ts/index.ts` holds some wrapping TypeScript code for the Elm stuff. The few lines of code that receive data from the Elm side and actually place pixels on the screen are here.
   - `html/index.html` is just the single HTML file that will hold all the other stuff.
 - `tests/` has some unit tests. Not very important unless you care about those.
 - `benchmarks/` has some code that checks how fast or slow some code is. Also not very important. This folder is set up as a separate Elm project with its own dependencies.
 - `elm.json` has all the [Elm configuration][elmjson] in it, like the packages this project depends on.
 - `package.json` has the [Node configuration][packagejson], including its package dependencies. Defines some scripts to simplify development (read more about that in the following section).
-- `ts-config.json` has the [Typescript configuration][tsconfig]; basically some rules on how to interpret the code and convert to Javascript.
-- `.parcelrc` tells Parcel that it should use the Typescript compiler for the Typescript code.
+- `ts-config.json` has the [TypeScript configuration][tsconfig]; basically some rules on how to interpret the code and convert to JavaScript.
+- `.parcelrc` tells Parcel that it should use the TypeScript compiler for the TypeScript code.
 - `.env` contains [environment variables][envvar], specifically one that tells Parcel not to use the Elm debugger, because it sadly slows down this application due to its many events per second.
 
 ## Hack it
 
-You'll need [Node][node] 14 or higher installed. After downloading or cloning this repository into your computer, go into that directory in a terminal and run `npm install`. This will install other dependencies automatically, like the [Parcel][parcel] bundler.
+To start, you'll need [Node][node] 14 or higher installed.
 
-The bulk of the code is written in [Elm][elm], but a bit of it is [Typescript][ts], which is just Javascript with types (which helps by giving errors if you use things incorrectly).
+After downloading or cloning this repository into your computer, go into that directory in a terminal and run `npm install`. This will install other dependencies, like the [Parcel][parcel] bundler.
+
+The bulk of the code is written in [Elm][elm], but a bit of it is [TypeScript][ts] (just JavaScript with types).
 
 Running the `npm run build` command will create the output HTML and JS files inside the `dist/` folder.
 
