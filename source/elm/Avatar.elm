@@ -263,6 +263,28 @@ collide collider (Avatar ({ x, y, prevX, prevY, width_, height_, motion, padding
         newY : Int
         newY =
             newYPre - padding.top
+
+        newMotion : Motion
+        newMotion =
+            if newY < y then
+                -- Collider bounced us back up.
+                case motion of
+                    OnGround canJumpStatus ->
+                        OnGround canJumpStatus
+
+                    Falling canJumpStatus ->
+                        OnGround canJumpStatus
+
+                    Jumping _ ->
+                        -- Normally, this should never occur.
+                        OnGround CannotJump
+
+            else if newY > y then
+                -- Collider bounced us back down.
+                Falling CannotJump
+
+            else
+                motion
     in
     Avatar
         { data
@@ -270,26 +292,7 @@ collide collider (Avatar ({ x, y, prevX, prevY, width_, height_, motion, padding
             , y = newY
             , prevX = newX
             , prevY = newY
-            , motion =
-                if newY < y then
-                    -- Collider bounced us back up.
-                    case motion of
-                        OnGround canJumpStatus ->
-                            OnGround canJumpStatus
-
-                        Falling canJumpStatus ->
-                            OnGround canJumpStatus
-
-                        Jumping _ ->
-                            -- Normally, this should never occur.
-                            OnGround CannotJump
-
-                else if newY > y then
-                    -- Collider bounced us back down.
-                    Falling CannotJump
-
-                else
-                    motion
+            , motion = newMotion
         }
 
 
