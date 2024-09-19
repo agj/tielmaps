@@ -1,7 +1,7 @@
 module Utils exposing (..)
 
+import Basics.Extra exposing (minSafeInteger)
 import Fuzz exposing (Fuzzer)
-import Random
 
 
 positiveInt : Fuzzer Int
@@ -26,7 +26,7 @@ twoOrGreater =
 
 zeroOrLess : Fuzzer Int
 zeroOrLess =
-    Fuzz.intRange Random.minInt 0
+    Fuzz.intRange minSafeInteger 0
 
 
 zeroOrLessTwice : Fuzzer ( Int, Int )
