@@ -110,7 +110,7 @@ errorTilemap =
     fullTilemapString
         |> Tilemap.fromString
             (Dict.fromList
-                [ ( '#', Graphic.Error )
+                [ ( '#', Graphic.error )
                 ]
             )
         |> Maybe.withDefault (Tilemap.empty 0 0)

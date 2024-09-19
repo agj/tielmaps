@@ -26,7 +26,7 @@ empty w h =
     Tilemap
         { width_ = w
         , height_ = h
-        , tiles_ = Array2d.repeat w h Graphic.Empty
+        , tiles_ = Array2d.repeat w h Graphic.empty
         }
 
 

@@ -214,17 +214,17 @@ toScreen colors string =
 charTiles : Dict Char Graphic
 charTiles =
     Dict.fromList
-        [ ( '.', Graphic.Empty )
-        , ( '▓', Graphic.TileDirt )
-        , ( '▒', Graphic.TileBrick )
-        , ( '▀', Graphic.TileGrass )
-        , ( '▚', Graphic.TileStone )
-        , ( '╥', Graphic.TilePillarTop )
-        , ( '║', Graphic.TilePillarMiddle )
-        , ( '╨', Graphic.TilePillarBottom )
-        , ( '◍', Graphic.TileBush )
-        , ( '△', Graphic.TileDoorTop )
-        , ( '▯', Graphic.TileDoorBottom )
+        [ ( '.', Graphic.empty )
+        , ( '▓', Graphic.tileDirt )
+        , ( '▒', Graphic.tileBrick )
+        , ( '▀', Graphic.tileGrass )
+        , ( '▚', Graphic.tileStone )
+        , ( '╥', Graphic.tilePillarTop )
+        , ( '║', Graphic.tilePillarMiddle )
+        , ( '╨', Graphic.tilePillarBottom )
+        , ( '◍', Graphic.tileBush )
+        , ( '△', Graphic.tileDoorTop )
+        , ( '▯', Graphic.tileDoorBottom )
         ]
 
 

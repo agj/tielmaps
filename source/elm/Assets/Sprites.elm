@@ -25,46 +25,46 @@ avatarSprites =
 standingRight : Sprite
 standingRight =
     Sprite.animated
-        (HeldFrame.make (Levers.durationGiven60Fps 14) Graphic.AvatarStandingRight)
-        [ HeldFrame.make (Levers.durationGiven60Fps 14) Graphic.AvatarBobRight
+        (HeldFrame.make (Levers.durationGiven60Fps 14) Graphic.avatarStandingRight)
+        [ HeldFrame.make (Levers.durationGiven60Fps 14) Graphic.avatarBobRight
         ]
 
 
 standingLeft : Sprite
 standingLeft =
     Sprite.animated
-        (HeldFrame.make (Levers.durationGiven60Fps 14) Graphic.AvatarStandingLeft)
-        [ HeldFrame.make (Levers.durationGiven60Fps 14) Graphic.AvatarBobLeft
+        (HeldFrame.make (Levers.durationGiven60Fps 14) Graphic.avatarStandingLeft)
+        [ HeldFrame.make (Levers.durationGiven60Fps 14) Graphic.avatarBobLeft
         ]
 
 
 runningRight : Sprite
 runningRight =
     Sprite.animated
-        (HeldFrame.make (Levers.durationGiven60Fps 4) Graphic.AvatarAirborneRight)
-        [ HeldFrame.make (Levers.durationGiven60Fps 4) Graphic.AvatarStandingRight
-        , HeldFrame.make (Levers.durationGiven60Fps 4) Graphic.AvatarHopRight
-        , HeldFrame.make (Levers.durationGiven60Fps 4) Graphic.AvatarStandingRight
+        (HeldFrame.make (Levers.durationGiven60Fps 4) Graphic.avatarAirborneRight)
+        [ HeldFrame.make (Levers.durationGiven60Fps 4) Graphic.avatarStandingRight
+        , HeldFrame.make (Levers.durationGiven60Fps 4) Graphic.avatarHopRight
+        , HeldFrame.make (Levers.durationGiven60Fps 4) Graphic.avatarStandingRight
         ]
 
 
 runningLeft : Sprite
 runningLeft =
     Sprite.animated
-        (HeldFrame.make (Levers.durationGiven60Fps 4) Graphic.AvatarAirborneLeft)
-        [ HeldFrame.make (Levers.durationGiven60Fps 4) Graphic.AvatarStandingLeft
-        , HeldFrame.make (Levers.durationGiven60Fps 4) Graphic.AvatarHopLeft
-        , HeldFrame.make (Levers.durationGiven60Fps 4) Graphic.AvatarStandingLeft
+        (HeldFrame.make (Levers.durationGiven60Fps 4) Graphic.avatarAirborneLeft)
+        [ HeldFrame.make (Levers.durationGiven60Fps 4) Graphic.avatarStandingLeft
+        , HeldFrame.make (Levers.durationGiven60Fps 4) Graphic.avatarHopLeft
+        , HeldFrame.make (Levers.durationGiven60Fps 4) Graphic.avatarStandingLeft
         ]
 
 
 jumpingRight : Sprite
 jumpingRight =
-    Graphic.AvatarAirborneRight
+    Graphic.avatarAirborneRight
         |> Sprite.static
 
 
 jumpingLeft : Sprite
 jumpingLeft =
-    Graphic.AvatarAirborneLeft
+    Graphic.avatarAirborneLeft
         |> Sprite.static
