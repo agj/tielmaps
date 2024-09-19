@@ -243,7 +243,7 @@ subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
         [ Browser.Events.onResize (\w h -> Resized (Viewport w h))
-        , Time.every (toFloat Levers.framesPerSecond) Ticked
+        , Time.every (1000 / toFloat Levers.framesPerSecond) Ticked
         , Browser.Events.onKeyDown (decodeKeyWith PressedKey)
         , Browser.Events.onKeyUp (decodeKeyWith ReleasedKey)
         ]

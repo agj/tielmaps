@@ -2,6 +2,7 @@ module Assets.Sprites exposing (avatarSprites)
 
 import Avatar.AvatarSprites exposing (AvatarSprites)
 import Graphic
+import Levers
 import Sprite exposing (Sprite)
 import Sprite.HeldFrame as HeldFrame
 
@@ -24,36 +25,36 @@ avatarSprites =
 standingRight : Sprite
 standingRight =
     Sprite.animated
-        (HeldFrame.make 7 Graphic.AvatarStandingRight)
-        [ HeldFrame.make 7 Graphic.AvatarBobRight
+        (HeldFrame.make (Levers.durationGiven60Fps 14) Graphic.AvatarStandingRight)
+        [ HeldFrame.make (Levers.durationGiven60Fps 14) Graphic.AvatarBobRight
         ]
 
 
 standingLeft : Sprite
 standingLeft =
     Sprite.animated
-        (HeldFrame.make 7 Graphic.AvatarStandingLeft)
-        [ HeldFrame.make 7 Graphic.AvatarBobLeft
+        (HeldFrame.make (Levers.durationGiven60Fps 14) Graphic.AvatarStandingLeft)
+        [ HeldFrame.make (Levers.durationGiven60Fps 14) Graphic.AvatarBobLeft
         ]
 
 
 runningRight : Sprite
 runningRight =
     Sprite.animated
-        (HeldFrame.make 4 Graphic.AvatarAirborneRight)
-        [ HeldFrame.make 4 Graphic.AvatarStandingRight
-        , HeldFrame.make 4 Graphic.AvatarHopRight
-        , HeldFrame.make 4 Graphic.AvatarStandingRight
+        (HeldFrame.make (Levers.durationGiven60Fps 4) Graphic.AvatarAirborneRight)
+        [ HeldFrame.make (Levers.durationGiven60Fps 4) Graphic.AvatarStandingRight
+        , HeldFrame.make (Levers.durationGiven60Fps 4) Graphic.AvatarHopRight
+        , HeldFrame.make (Levers.durationGiven60Fps 4) Graphic.AvatarStandingRight
         ]
 
 
 runningLeft : Sprite
 runningLeft =
     Sprite.animated
-        (HeldFrame.make 4 Graphic.AvatarAirborneLeft)
-        [ HeldFrame.make 4 Graphic.AvatarStandingLeft
-        , HeldFrame.make 4 Graphic.AvatarHopLeft
-        , HeldFrame.make 4 Graphic.AvatarStandingLeft
+        (HeldFrame.make (Levers.durationGiven60Fps 4) Graphic.AvatarAirborneLeft)
+        [ HeldFrame.make (Levers.durationGiven60Fps 4) Graphic.AvatarStandingLeft
+        , HeldFrame.make (Levers.durationGiven60Fps 4) Graphic.AvatarHopLeft
+        , HeldFrame.make (Levers.durationGiven60Fps 4) Graphic.AvatarStandingLeft
         ]
 
 
