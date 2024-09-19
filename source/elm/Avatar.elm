@@ -88,12 +88,12 @@ how far into the Sprite should the collision box be calculated.
 fromSprites : Padding -> AvatarSprites -> Avatar
 fromSprites padding sprs =
     let
-        width_ : Int
-        width_ =
+        width : Int
+        width =
             Sprite.width sprs.standingRight
 
-        height_ : Int
-        height_ =
+        height : Int
+        height =
             Sprite.height sprs.standingRight
     in
     Avatar
@@ -102,10 +102,10 @@ fromSprites padding sprs =
         , y = 0
         , prevX = 0
         , prevY = 0
-        , width_ = width_
-        , height_ = height_
-        , baseOffsetX = padding.left + round (toFloat (width_ - padding.left - padding.right) / 2)
-        , baseOffsetY = height_ - padding.bottom
+        , width_ = width
+        , height_ = height
+        , baseOffsetX = padding.left + round (toFloat (width - padding.left - padding.right) / 2)
+        , baseOffsetY = height - padding.bottom
         , padding = padding
         , motion = Falling CanJump
         , pose = PoseStanding

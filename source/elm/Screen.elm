@@ -29,17 +29,17 @@ type Screen mapSize
 make22x22 : Colors -> Tilemap -> CollisionLayer -> Maybe (Screen Size22x22)
 make22x22 colors_ m coll =
     let
-        width_ : Int
-        width_ =
+        width : Int
+        width =
             Tilemap.width m
 
-        height_ : Int
-        height_ =
+        height : Int
+        height =
             Tilemap.height m
     in
     if
-        (width_ == 22)
-            && (height_ == 22)
+        (width == 22)
+            && (height == 22)
             && (CollisionLayer.width coll == 22)
             && (CollisionLayer.height coll == 22)
     then
@@ -82,8 +82,8 @@ tilemap (Screen { tilemap_ }) =
 Normally called from within `Collider.collide`.
 -}
 collider : Screen a -> Int -> Int -> Bool
-collider (Screen { collisionLayer_ }) x_ y_ =
-    CollisionLayer.getAt (x_ // 8) (y_ // 8) collisionLayer_
+collider (Screen { collisionLayer_ }) x y =
+    CollisionLayer.getAt (x // 8) (y // 8) collisionLayer_
 
 
 widthInTiles : Screen a -> Int

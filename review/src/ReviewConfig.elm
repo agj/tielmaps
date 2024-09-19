@@ -18,6 +18,9 @@ import NoImportingEverything
 import NoMissingTypeAnnotation
 import NoMissingTypeAnnotationInLetIn
 import NoMissingTypeExpose
+import NoRedundantlyQualifiedType
+import NoSimpleLetBody
+import NoUnnecessaryTrailingUnderscore
 import NoUnused.CustomTypeConstructorArgs
 import NoUnused.CustomTypeConstructors
 import NoUnused.Dependencies
@@ -50,4 +53,8 @@ config =
     , NoMissingTypeAnnotationInLetIn.rule
         |> Rule.ignoreErrorsForDirectories [ "tests/" ]
     , NoMissingTypeExpose.rule
+    , NoRedundantlyQualifiedType.rule
+    , NoUnnecessaryTrailingUnderscore.rule
+    , NoSimpleLetBody.rule
     ]
+        |> List.map (Rule.ignoreErrorsForDirectories [ "tests/VerifyExamples" ])

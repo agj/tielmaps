@@ -1,6 +1,6 @@
 module Assets.Screens exposing (testScreen1, testScreen2, testScreen3, testScreen4, testScreen5, testScreen6)
 
-import CollisionLayer
+import CollisionLayer exposing (CollisionLayer)
 import Colors exposing (Colors)
 import Dict exposing (Dict)
 import Graphic exposing (Graphic)
@@ -198,7 +198,7 @@ toScreen colors string =
                 |> Tilemap.fromString charTiles
                 |> Maybe.withDefault (Tilemap.empty 0 0)
 
-        collisionLayer : CollisionLayer.CollisionLayer
+        collisionLayer : CollisionLayer
         collisionLayer =
             string
                 |> CollisionLayer.fromString
