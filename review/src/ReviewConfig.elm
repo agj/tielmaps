@@ -11,6 +11,10 @@ when inside the directory containing this file.
 
 -}
 
+import Docs.NoMissing exposing (allModules, onlyExposed)
+import NoConfusingPrefixOperator
+import NoExposingEverything
+import NoImportingEverything
 import NoUnused.CustomTypeConstructorArgs
 import NoUnused.CustomTypeConstructors
 import NoUnused.Dependencies
@@ -33,4 +37,9 @@ config =
     , NoUnused.Variables.rule
         |> Rule.ignoreErrorsForDirectories [ "tests/" ]
     , Simplify.rule Simplify.defaults
+    , NoConfusingPrefixOperator.rule
+    , NoExposingEverything.rule
+        |> Rule.ignoreErrorsForDirectories [ "tests/" ]
+    , NoImportingEverything.rule []
+        |> Rule.ignoreErrorsForDirectories [ "tests/" ]
     ]

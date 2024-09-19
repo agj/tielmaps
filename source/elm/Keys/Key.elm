@@ -1,4 +1,4 @@
-module Keys.Key exposing (..)
+module Keys.Key exposing (Key(..), decodeEvent, fromCode)
 
 import Json.Decode as D
 

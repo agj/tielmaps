@@ -1,4 +1,4 @@
-module Bitmap.Stamp exposing (..)
+module Bitmap.Stamp exposing (BitmapStamp)
 
 
 type alias BitmapStamp =

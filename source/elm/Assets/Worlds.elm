@@ -1,4 +1,4 @@
-module Assets.Worlds exposing (..)
+module Assets.Worlds exposing (testWorld)
 
 import Array2d
 import Assets.Screens as Screens
