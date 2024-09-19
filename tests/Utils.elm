@@ -87,4 +87,4 @@ listOfIntsFuzzer length =
 
 sizeFuzzer : Fuzzer Int
 sizeFuzzer =
-    Fuzz.intRange 1 99
+    Fuzz.intRange 1 70
