@@ -82,6 +82,7 @@ error =
 -- AVATAR
 
 
+avatarAirborneRight : Bitmap Size8x8
 avatarAirborneRight =
     """
     █ █ █ █ █ █ █ █
@@ -96,11 +97,13 @@ avatarAirborneRight =
         |> toBitmap
 
 
+avatarAirborneLeft : Bitmap Size8x8
 avatarAirborneLeft =
     avatarAirborneRight
         |> Bitmap.flipX
 
 
+avatarHopRight : Bitmap Size8x8
 avatarHopRight =
     """
     █ █ █ █ █ █ █ █
@@ -115,11 +118,13 @@ avatarHopRight =
         |> toBitmap
 
 
+avatarHopLeft : Bitmap Size8x8
 avatarHopLeft =
     avatarHopRight
         |> Bitmap.flipX
 
 
+avatarStandingRight : Bitmap Size8x8
 avatarStandingRight =
     """
     / / / / / / / /
@@ -134,11 +139,13 @@ avatarStandingRight =
         |> toBitmap
 
 
+avatarStandingLeft : Bitmap Size8x8
 avatarStandingLeft =
     avatarStandingRight
         |> Bitmap.flipX
 
 
+avatarBobRight : Bitmap Size8x8
 avatarBobRight =
     """
     █ █ █ █ █ █ █ █
@@ -153,6 +160,7 @@ avatarBobRight =
         |> toBitmap
 
 
+avatarBobLeft : Bitmap Size8x8
 avatarBobLeft =
     avatarBobRight
         |> Bitmap.flipX

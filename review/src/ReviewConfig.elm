@@ -15,6 +15,7 @@ import Docs.NoMissing exposing (allModules, onlyExposed)
 import NoConfusingPrefixOperator
 import NoExposingEverything
 import NoImportingEverything
+import NoMissingTypeAnnotation
 import NoUnused.CustomTypeConstructorArgs
 import NoUnused.CustomTypeConstructors
 import NoUnused.Dependencies
@@ -41,5 +42,7 @@ config =
     , NoExposingEverything.rule
         |> Rule.ignoreErrorsForDirectories [ "tests/" ]
     , NoImportingEverything.rule []
+        |> Rule.ignoreErrorsForDirectories [ "tests/" ]
+    , NoMissingTypeAnnotation.rule
         |> Rule.ignoreErrorsForDirectories [ "tests/" ]
     ]

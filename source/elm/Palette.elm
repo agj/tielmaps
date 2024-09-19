@@ -19,10 +19,12 @@ caveSet =
     standardSet cave
 
 
+deepBlueSet : Colors
 deepBlueSet =
     standardSet deepBlue
 
 
+sunsetSet : Colors
 sunsetSet =
     standardSet sunset
 
@@ -55,6 +57,7 @@ transparent =
 -- INTERNAL
 
 
+standardSet : Color -> Colors
 standardSet color =
     { darkColor = color
     , lightColor = lighten 0.7 color
