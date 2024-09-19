@@ -58,5 +58,10 @@ config =
     , NoUnnecessaryTrailingUnderscore.rule
     , NoSimpleLetBody.rule
     , NoUnoptimizedRecursion.rule (optOutWithComment "not tail-call optimized")
+    , Docs.NoMissing.rule
+        { document = onlyExposed
+        , from = allModules
+        }
+        |> Rule.ignoreErrorsForDirectories [ "tests/" ]
     ]
         |> List.map (Rule.ignoreErrorsForDirectories [ "tests/VerifyExamples" ])
