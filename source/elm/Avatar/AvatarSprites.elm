@@ -6,17 +6,17 @@ module Avatar.AvatarSprites exposing
 import Sprite exposing (Sprite)
 
 
-type alias AvatarSprites a =
-    { standingRight : Sprite a
-    , standingLeft : Sprite a
-    , runningRight : Sprite a
-    , runningLeft : Sprite a
-    , jumpingRight : Sprite a
-    , jumpingLeft : Sprite a
+type alias AvatarSprites =
+    { standingRight : Sprite
+    , standingLeft : Sprite
+    , runningRight : Sprite
+    , runningLeft : Sprite
+    , jumpingRight : Sprite
+    , jumpingLeft : Sprite
     }
 
 
-single : Sprite a -> AvatarSprites a
+single : Sprite -> AvatarSprites
 single sprite =
     { standingRight = sprite
     , standingLeft = sprite

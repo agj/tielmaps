@@ -5,6 +5,8 @@ module Array2d exposing
     , fromList
     , get
     , height
+    , indexedFoldl
+    , map
     , repeat
     , set
     , toUnidimensional
@@ -12,6 +14,7 @@ module Array2d exposing
     )
 
 import Array exposing (Array)
+import List.Extra
 
 
 type Array2d a
@@ -150,6 +153,33 @@ set x y item ((Array2d ({ width_, height_, array } as data)) as array2d) =
 toUnidimensional : Array2d a -> Array a
 toUnidimensional (Array2d { array }) =
     array
+
+
+map : (a -> b) -> Array2d a -> Array2d b
+map mapper (Array2d { width_, height_, array }) =
+    Array2d
+        { width_ = width_
+        , height_ = height_
+        , array = Array.map mapper array
+        }
+
+
+indexedFoldl : (Int -> Int -> a -> b -> b) -> b -> Array2d a -> b
+indexedFoldl mapper init (Array2d { width_, array }) =
+    array
+        |> Array.toList
+        |> List.Extra.indexedFoldl
+            (\index a b ->
+                let
+                    x =
+                        index |> modBy width_
+
+                    y =
+                        index // width_
+                in
+                mapper x y a b
+            )
+            init
 
 
 

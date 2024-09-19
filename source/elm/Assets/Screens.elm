@@ -1,17 +1,17 @@
 module Assets.Screens exposing (testScreen1, testScreen2, testScreen3, testScreen4, testScreen5, testScreen6)
 
-import Assets.Tiles as Tiles
 import CollisionLayer
 import Colors exposing (Colors)
-import Dict
+import Dict exposing (Dict)
+import Graphic exposing (Graphic)
 import Levers
 import Palette
 import Screen exposing (Screen)
-import Size exposing (Size22x22, Size8x8)
+import Size exposing (Size22x22)
 import Tilemap
 
 
-testScreen6 : Screen Size22x22 Size8x8
+testScreen6 : Screen Size22x22
 testScreen6 =
     """
     . . . . . . . . . . . . . ▒ ▒ ▒ ▒ ▒ ▒ ▒ ▒ ▒
@@ -40,7 +40,7 @@ testScreen6 =
         |> toScreen Palette.deepBlueSet
 
 
-testScreen5 : Screen Size22x22 Size8x8
+testScreen5 : Screen Size22x22
 testScreen5 =
     """
     ▓ . . . . . ▓ ▓ ▓ ▓ ▓ ▓ ▓ . . ▓ ▓ ▓ ▓ ▓ ▓ ▓
@@ -69,7 +69,7 @@ testScreen5 =
         |> toScreen Palette.deepBlueSet
 
 
-testScreen4 : Screen Size22x22 Size8x8
+testScreen4 : Screen Size22x22
 testScreen4 =
     """
     ▓ . . ▓ . . . . . ▚ ▚ ▚ ▚ . . ▚ ▚ ▚ ▚ ▚ ▚ ▚
@@ -98,7 +98,7 @@ testScreen4 =
         |> toScreen Palette.sunsetSet
 
 
-testScreen3 : Screen Size22x22 Size8x8
+testScreen3 : Screen Size22x22
 testScreen3 =
     """
     . . . . . . . . . . . ▀ ▀ ▀ ▀ . . . . . . .
@@ -127,7 +127,7 @@ testScreen3 =
         |> toScreen Palette.sunsetSet
 
 
-testScreen2 : Screen Size22x22 Size8x8
+testScreen2 : Screen Size22x22
 testScreen2 =
     """
     . . ▓ ▒ ▒ ▒ ▒ . . . . . . . . . . . . . . .
@@ -156,7 +156,7 @@ testScreen2 =
         |> toScreen Palette.caveSet
 
 
-testScreen1 : Screen Size22x22 Size8x8
+testScreen1 : Screen Size22x22
 testScreen1 =
     """
     . . . ▒ ▒ ▒ ▒ ▓ . . . . . . . . . . . . . .
@@ -189,13 +189,13 @@ testScreen1 =
 -- INTERNAL
 
 
-toScreen : Colors -> String -> Screen Size22x22 Size8x8
+toScreen : Colors -> String -> Screen Size22x22
 toScreen colors string =
     let
         tilemap =
             string
                 |> Tilemap.fromString charTiles
-                |> Maybe.withDefault (Tilemap.empty8x8Tile 0 0)
+                |> Maybe.withDefault (Tilemap.empty 0 0)
 
         collisionLayer =
             string
@@ -209,19 +209,20 @@ toScreen colors string =
         |> Maybe.withDefault Screen.error22x22
 
 
+charTiles : Dict Char Graphic
 charTiles =
     Dict.fromList
-        [ ( '.', Tiles.empty )
-        , ( '▓', Tiles.dirt )
-        , ( '▒', Tiles.brick )
-        , ( '▀', Tiles.grass )
-        , ( '▚', Tiles.stone )
-        , ( '╥', Tiles.pillarTop )
-        , ( '║', Tiles.pillarMiddle )
-        , ( '╨', Tiles.pillarBottom )
-        , ( '◍', Tiles.bush )
-        , ( '△', Tiles.doorTop )
-        , ( '▯', Tiles.doorBottom )
+        [ ( '.', Graphic.Empty )
+        , ( '▓', Graphic.TileDirt )
+        , ( '▒', Graphic.TileBrick )
+        , ( '▀', Graphic.TileGrass )
+        , ( '▚', Graphic.TileStone )
+        , ( '╥', Graphic.TilePillarTop )
+        , ( '║', Graphic.TilePillarMiddle )
+        , ( '╨', Graphic.TilePillarBottom )
+        , ( '◍', Graphic.TileBush )
+        , ( '△', Graphic.TileDoorTop )
+        , ( '▯', Graphic.TileDoorBottom )
         ]
 
 

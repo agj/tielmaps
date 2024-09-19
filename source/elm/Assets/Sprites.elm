@@ -1,15 +1,13 @@
-module Assets.Sprites exposing (avatarSprites, jumpingLeft, runningLeft, standingLeft)
+module Assets.Sprites exposing (avatarSprites)
 
 import Avatar.AvatarSprites exposing (AvatarSprites)
-import Bitmap exposing (Bitmap)
-import Bitmap.Color as Color
-import Size exposing (Size8x8)
+import Graphic
+import Levers
 import Sprite exposing (Sprite)
-import Sprite.Frame as Frame exposing (Frame)
-import Tile exposing (Tile)
+import Sprite.HeldFrame as HeldFrame
 
 
-avatarSprites : AvatarSprites Size8x8
+avatarSprites : AvatarSprites
 avatarSprites =
     { runningRight = runningRight
     , runningLeft = runningLeft
@@ -24,123 +22,49 @@ avatarSprites =
 -- INTERNAL
 
 
-pictures =
-    { airborne =
-        toBitmap
-            """
-            █ █ █ █ █ █ █ █
-            █ . . . . . . █
-            █ . . █ . █ . █
-            █ . . . . . . █
-            █ █ █ █ █ █ █ █
-            / █ / / █ █ / /
-            █ █ / / / / █ /
-            / / / / / / / /
-            """
-    , hop =
-        toBitmap
-            """
-            █ █ █ █ █ █ █ █
-            █ . . . . . . █
-            █ . . █ . █ . █
-            █ . . . . . . █
-            █ █ █ █ █ █ █ █
-            / / █ / █ / / /
-            / / █ █ / / / /
-            / / / / / / / /
-            """
-    , standing =
-        toBitmap
-            """
-            / / / / / / / /
-            █ █ █ █ █ █ █ █
-            █ . . . . . . █
-            █ . . █ . █ . █
-            █ . . . . . . █
-            █ █ █ █ █ █ █ █
-            / █ / / / █ / /
-            / █ / / / █ / /
-            """
-    , bob =
-        toBitmap
-            """
-            █ █ █ █ █ █ █ █
-            █ . . . . . . █
-            █ . . █ . █ . █
-            █ . . . . . . █
-            █ █ █ █ █ █ █ █
-            / █ / / / █ / /
-            / █ / / / █ / /
-            / █ / / / █ / /
-            """
-    }
-
-
-standingRight : Sprite Size8x8
+standingRight : Sprite
 standingRight =
     Sprite.animated
-        (frame 7 pictures.standing)
-        [ frame 7 pictures.bob
+        (HeldFrame.make (Levers.durationGiven60Fps 14) Graphic.AvatarStandingRight)
+        [ HeldFrame.make (Levers.durationGiven60Fps 14) Graphic.AvatarBobRight
         ]
 
 
-standingLeft : Sprite Size8x8
+standingLeft : Sprite
 standingLeft =
     Sprite.animated
-        (frame 7 (Bitmap.flipX pictures.standing))
-        [ frame 7 (Bitmap.flipX pictures.bob)
+        (HeldFrame.make (Levers.durationGiven60Fps 14) Graphic.AvatarStandingLeft)
+        [ HeldFrame.make (Levers.durationGiven60Fps 14) Graphic.AvatarBobLeft
         ]
 
 
-runningRight : Sprite Size8x8
+runningRight : Sprite
 runningRight =
     Sprite.animated
-        (frame 4 pictures.airborne)
-        [ frame 4 pictures.standing
-        , frame 4 pictures.hop
-        , frame 4 pictures.standing
+        (HeldFrame.make (Levers.durationGiven60Fps 4) Graphic.AvatarAirborneRight)
+        [ HeldFrame.make (Levers.durationGiven60Fps 4) Graphic.AvatarStandingRight
+        , HeldFrame.make (Levers.durationGiven60Fps 4) Graphic.AvatarHopRight
+        , HeldFrame.make (Levers.durationGiven60Fps 4) Graphic.AvatarStandingRight
         ]
 
 
-runningLeft : Sprite Size8x8
+runningLeft : Sprite
 runningLeft =
     Sprite.animated
-        (frame 4 (Bitmap.flipX pictures.airborne))
-        [ frame 4 (Bitmap.flipX pictures.standing)
-        , frame 4 (Bitmap.flipX pictures.hop)
-        , frame 4 (Bitmap.flipX pictures.standing)
+        (HeldFrame.make (Levers.durationGiven60Fps 4) Graphic.AvatarAirborneLeft)
+        [ HeldFrame.make (Levers.durationGiven60Fps 4) Graphic.AvatarStandingLeft
+        , HeldFrame.make (Levers.durationGiven60Fps 4) Graphic.AvatarHopLeft
+        , HeldFrame.make (Levers.durationGiven60Fps 4) Graphic.AvatarStandingLeft
         ]
 
 
-jumpingRight : Sprite Size8x8
+jumpingRight : Sprite
 jumpingRight =
-    pictures.airborne
-        |> toTile
+    Graphic.AvatarAirborneRight
         |> Sprite.static
 
 
-jumpingLeft : Sprite Size8x8
+jumpingLeft : Sprite
 jumpingLeft =
-    pictures.airborne
-        |> Bitmap.flipX
-        |> toTile
+    Graphic.AvatarAirborneLeft
         |> Sprite.static
-
-
-frame : Int -> Bitmap -> Frame Size8x8
-frame n bm =
-    bm
-        |> toTile
-        |> Frame.make n
-
-
-toBitmap : String -> Bitmap
-toBitmap str =
-    str
-        |> Bitmap.fromString Color.defaultMap
-        |> Maybe.withDefault Bitmap.error
-
-
-toTile : Bitmap -> Tile Size8x8
-toTile =
-    Tile.make8x8 >> Maybe.withDefault Tile.error8x8

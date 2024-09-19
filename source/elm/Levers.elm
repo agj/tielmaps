@@ -1,5 +1,5 @@
 module Levers exposing
-    ( canvasId
+    ( durationGiven60Fps
     , framesPerSecond
     , gravity
     , jumpDuration
@@ -9,6 +9,7 @@ module Levers exposing
     , screenHeightInTiles
     , screenWidth
     , screenWidthInTiles
+    , speedGiven60Fps
     , tileHeight
     , tileWidth
     )
@@ -24,7 +25,7 @@ type alias Frames =
 
 framesPerSecond : Int
 framesPerSecond =
-    30
+    60
 
 
 tileWidth : Int
@@ -59,24 +60,29 @@ screenHeight =
 
 gravity : FramesPerSecond
 gravity =
-    3
+    speedGiven60Fps 1
 
 
 runSpeed : FramesPerSecond
 runSpeed =
-    2
+    speedGiven60Fps 1
 
 
 jumpSpeed : FramesPerSecond
 jumpSpeed =
-    2
+    speedGiven60Fps 1
 
 
 jumpDuration : Frames
 jumpDuration =
-    12
+    durationGiven60Fps 24
 
 
-canvasId : String
-canvasId =
-    "canvas"
+speedGiven60Fps : Float -> FramesPerSecond
+speedGiven60Fps n =
+    round (n * 60 / toFloat framesPerSecond)
+
+
+durationGiven60Fps : Float -> FramesPerSecond
+durationGiven60Fps n =
+    round (n * toFloat framesPerSecond / 60)

@@ -2,10 +2,10 @@ module Avatar exposing
     ( Avatar
     , baseX
     , baseY
-    , bitmap
     , collide
     , fromSprite
     , fromSprites
+    , graphic
     , repositionTopLeft
     , tick
     , topLeftX
@@ -14,15 +14,15 @@ module Avatar exposing
 
 import Avatar.AvatarSprites as AvatarSprites exposing (AvatarSprites)
 import Avatar.Padding exposing (Padding)
-import Bitmap exposing (Bitmap)
 import Collider.Interface exposing (Collider)
+import Graphic exposing (Graphic)
 import Keys exposing (Keys)
 import Levers
 import Sprite exposing (Sprite)
 
 
-type Avatar a
-    = Avatar (Data a)
+type Avatar
+    = Avatar Data
 
 
 type Motion
@@ -39,8 +39,8 @@ type CanJumpStatus
     | CannotJump
 
 
-type alias Data a =
-    { sprites_ : AvatarSprites a
+type alias Data =
+    { sprites_ : AvatarSprites
     , x : Int
     , y : Int
     , prevX : Int
@@ -75,7 +75,7 @@ type Facing
 You also need to supply a Padding, which defines
 how far into the Sprite should the collision box be calculated.
 -}
-fromSprite : Padding -> Sprite a -> Avatar a
+fromSprite : Padding -> Sprite -> Avatar
 fromSprite padding spr =
     fromSprites padding (AvatarSprites.single spr)
 
@@ -85,7 +85,7 @@ which defines a Sprite for each possible state the Avatar can be in.
 You also need to supply a Padding, which defines
 how far into the Sprite should the collision box be calculated.
 -}
-fromSprites : Padding -> AvatarSprites a -> Avatar a
+fromSprites : Padding -> AvatarSprites -> Avatar
 fromSprites padding sprs =
     let
         width_ =
@@ -115,27 +115,28 @@ fromSprites padding sprs =
 -- ACCESSORS
 
 
-bitmap : Avatar a -> Bitmap
-bitmap avatar =
-    Sprite.bitmap (currentSprite avatar)
+graphic : Avatar -> Graphic
+graphic avatar =
+    currentSprite avatar
+        |> Sprite.graphic
 
 
-topLeftX : Avatar a -> Int
+topLeftX : Avatar -> Int
 topLeftX (Avatar { x }) =
     x
 
 
-topLeftY : Avatar a -> Int
+topLeftY : Avatar -> Int
 topLeftY (Avatar { y }) =
     y
 
 
-baseX : Avatar a -> Int
+baseX : Avatar -> Int
 baseX (Avatar { x, baseOffsetX }) =
     x + baseOffsetX
 
 
-baseY : Avatar a -> Int
+baseY : Avatar -> Int
 baseY (Avatar { y, baseOffsetY }) =
     y + baseOffsetY
 
@@ -147,7 +148,7 @@ baseY (Avatar { y, baseOffsetY }) =
 {-| Call every tick with the current input to move the Avatar around.
 Takes care of gravity, jumping and left-right movement.
 -}
-tick : Keys -> Avatar a -> Avatar a
+tick : Keys -> Avatar -> Avatar
 tick keys (Avatar ({ y, x, prevX, motion, facing } as data)) =
     let
         newX =
@@ -222,7 +223,7 @@ tick keys (Avatar ({ y, x, prevX, motion, facing } as data)) =
 
 {-| Moves the Avatar to a new point given its x and y coordinates.
 -}
-repositionTopLeft : Int -> Int -> Avatar a -> Avatar a
+repositionTopLeft : Int -> Int -> Avatar -> Avatar
 repositionTopLeft newX newY (Avatar data) =
     Avatar
         { data
@@ -237,7 +238,7 @@ repositionTopLeft newX newY (Avatar data) =
 It should normally be called from within `Collider.collideAvatar`,
 which you should call every tick after calling `tick`.
 -}
-collide : Collider -> Avatar b -> Avatar b
+collide : Collider -> Avatar -> Avatar
 collide collider (Avatar ({ x, y, prevX, prevY, width_, height_, motion, padding } as data)) =
     let
         ( newXPre, newYPre ) =
@@ -289,7 +290,7 @@ collide collider (Avatar ({ x, y, prevX, prevY, width_, height_, motion, padding
 -- INTERNAL
 
 
-currentSprite : Avatar a -> Sprite a
+currentSprite : Avatar -> Sprite
 currentSprite (Avatar { sprites_, pose, facing }) =
     case ( pose, facing ) of
         ( PoseStanding, FacingRight ) ->
@@ -311,7 +312,7 @@ currentSprite (Avatar { sprites_, pose, facing }) =
             sprites_.jumpingLeft
 
 
-mapCurrentSprite : (Sprite a -> Sprite a) -> Avatar a -> Avatar a
+mapCurrentSprite : (Sprite -> Sprite) -> Avatar -> Avatar
 mapCurrentSprite mapper (Avatar ({ sprites_, pose, facing } as data)) =
     Avatar
         { data
