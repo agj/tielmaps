@@ -12,15 +12,15 @@
   "type": "module",
   "private": true,
   "devDependencies": {
-    "@parcel/config-default": "^2.8.3",
-    "@parcel/transformer-elm": "^2.8.3",
-    "@parcel/transformer-typescript-tsc": "^2.8.3",
-    "elm": "~0.19.1-5",
-    "elm-format": "~0.8.5",
+    "@parcel/config-default": "^2.12.0",
+    "@parcel/transformer-elm": "^2.12.0",
+    "@parcel/transformer-typescript-tsc": "^2.12.0",
+    "elm": "~0.19.1-6",
+    "elm-format": "~0.8.7",
     "elm-test": "~0.19.1-revision7",
-    "elm-verify-examples": "^5.2.0",
-    "gh-pages": "^5.0.0",
-    "parcel": "^2.8.3",
-    "typescript": "^4.9.5"
+    "elm-verify-examples": "^6.0.3",
+    "gh-pages": "^6.1.1",
+    "parcel": "^2.12.0",
+    "typescript": "^5.6.2"
   }
 }
