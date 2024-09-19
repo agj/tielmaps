@@ -18,7 +18,7 @@ import NoUnused.Exports
 import NoUnused.Parameters
 import NoUnused.Patterns
 import NoUnused.Variables
-import Review.Rule exposing (Rule)
+import Review.Rule as Rule exposing (Rule)
 import Simplify
 
 
@@ -31,5 +31,6 @@ config =
     , NoUnused.Parameters.rule
     , NoUnused.Patterns.rule
     , NoUnused.Variables.rule
+        |> Rule.ignoreErrorsForDirectories [ "tests/" ]
     , Simplify.rule Simplify.defaults
     ]
