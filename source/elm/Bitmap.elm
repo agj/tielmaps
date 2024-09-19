@@ -20,7 +20,6 @@ module Bitmap exposing
 import Array2d exposing (Array2d)
 import Bitmap.Color as Color exposing (Color(..), ColorMap)
 import Helper
-import Json.Encode as Encode exposing (Value)
 import Size exposing (Size8x8, SizeAny)
 
 

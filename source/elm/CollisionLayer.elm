@@ -8,7 +8,6 @@ module CollisionLayer exposing
     , width
     )
 
-import Array exposing (Array)
 import Array2d exposing (Array2d)
 import Helper
 

@@ -1,7 +1,7 @@
 module Array2dTest exposing (..)
 
 import Array
-import Array2d exposing (Array2d)
+import Array2d
 import Expect
 import Test exposing (..)
 import Utils exposing (..)

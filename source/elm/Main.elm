@@ -5,7 +5,6 @@ import Assets.Sprites as Sprites
 import Assets.Worlds as Worlds
 import Avatar exposing (Avatar)
 import Avatar.Padding exposing (zero)
-import Bitmap exposing (Bitmap)
 import Bitmap.Stamp exposing (BitmapStamp)
 import Browser
 import Browser.Events
@@ -23,9 +22,8 @@ import Keys exposing (Keys)
 import Keys.Key as Key exposing (Key)
 import Levers
 import PixelRenderer
-import Screen exposing (Screen)
+import Screen
 import Size exposing (Size22x22)
-import Sprite exposing (Sprite)
 import Tilemap exposing (Tilemap)
 import Time
 import Viewport exposing (Viewport)
@@ -93,7 +91,7 @@ init flags =
 
 
 type Msg
-    = Ticked Time.Posix
+    = Ticked
     | Resized Viewport
     | PressedKey Key
     | ReleasedKey Key
@@ -107,7 +105,7 @@ update msg model =
             ( model, Cmd.none )
     in
     case msg of
-        Ticked _ ->
+        Ticked ->
             let
                 newCharacter =
                     model.character
@@ -243,7 +241,7 @@ subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.batch
         [ Browser.Events.onResize (\w h -> Resized (Viewport w h))
-        , Time.every (1000 / toFloat Levers.framesPerSecond) Ticked
+        , Time.every (1000 / toFloat Levers.framesPerSecond) (\_ -> Ticked)
         , Browser.Events.onKeyDown (decodeKeyWith PressedKey)
         , Browser.Events.onKeyUp (decodeKeyWith ReleasedKey)
         ]

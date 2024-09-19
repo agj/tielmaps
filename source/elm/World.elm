@@ -15,7 +15,6 @@ module World exposing
 import Array2d exposing (Array2d)
 import Avatar exposing (Avatar)
 import Collider.Interface as Collider
-import Maybe.Extra as Maybe
 import Screen exposing (Screen)
 
 
