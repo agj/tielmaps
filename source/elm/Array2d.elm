@@ -29,6 +29,8 @@ type Array2d a
 -- CONSTRUCTION
 
 
+{-| Constructs an empty `Array2d`.
+-}
 empty : Array2d a
 empty =
     Array2d
@@ -38,6 +40,9 @@ empty =
         }
 
 
+{-| Constructs an `Array2d` of the given width and height by repeating a value for
+every row and column.
+-}
 repeat : Int -> Int -> a -> Array2d a
 repeat width_ height_ item =
     if isInvalidSize width_ || isInvalidSize height_ then
@@ -51,6 +56,10 @@ repeat width_ height_ item =
             }
 
 
+{-| Constructs an `Array2d` given a list and a desired width. If the list can't
+be split into even rows given the width, or if the width is not 1 or larger, it
+returns `Nothing`.
+-}
 fromList : Int -> List a -> Maybe (Array2d a)
 fromList width_ list =
     if isInvalidSize width_ then
@@ -79,6 +88,11 @@ fromList width_ list =
             Nothing
 
 
+{-| The same as `fromList`, however this function also takes a `filler` value
+that will be used to fill up the last row in case the list is not divisible
+neatly by the width. If the width is an invalid value, this returns an empty
+`Array2d`.
+-}
 forceFromList : Int -> a -> List a -> Array2d a
 forceFromList width_ filler list =
     if isInvalidSize width_ then
@@ -125,6 +139,8 @@ forceFromList width_ filler list =
 -- ACCESSORS
 
 
+{-| Get a value in an `Array2d` given `x` and `y` coordinates.
+-}
 get : Int -> Int -> Array2d a -> Maybe a
 get x y (Array2d { width_, height_, array }) =
     if areValidCoords x y width_ height_ then
@@ -134,11 +150,15 @@ get x y (Array2d { width_, height_, array }) =
         Nothing
 
 
+{-| Returns the width of an `Array2d`.
+-}
 width : Array2d a -> Int
 width (Array2d { width_ }) =
     width_
 
 
+{-| Returns the height of an `Array2d`.
+-}
 height : Array2d a -> Int
 height (Array2d { height_ }) =
     height_
@@ -148,6 +168,9 @@ height (Array2d { height_ }) =
 -- MODIFICATION
 
 
+{-| Sets the value in an `Array2d` given x and y coordinates. If the coordinates
+are invalid, the same `Array2d` is returned.
+-}
 set : Int -> Int -> a -> Array2d a -> Array2d a
 set x y item ((Array2d ({ width_, height_, array } as data)) as array2d) =
     if areValidCoords x y width_ height_ then
@@ -157,11 +180,15 @@ set x y item ((Array2d ({ width_, height_, array } as data)) as array2d) =
         array2d
 
 
+{-| Converts an `Array2d` into a plain `Array`.
+-}
 toUnidimensional : Array2d a -> Array a
 toUnidimensional (Array2d { array }) =
     array
 
 
+{-| Transforms all values in an `Array2d` according to a `mapper` function.
+-}
 map : (a -> b) -> Array2d a -> Array2d b
 map mapper (Array2d { width_, height_, array }) =
     Array2d
@@ -171,6 +198,9 @@ map mapper (Array2d { width_, height_, array }) =
         }
 
 
+{-| Transforms an `Array2d` by iterating through all of its values and their x
+and y coordinates, to build up a result value using the `mapper` function.
+-}
 indexedFoldl : (Int -> Int -> a -> b -> b) -> b -> Array2d a -> b
 indexedFoldl mapper init (Array2d { width_, array }) =
     array
@@ -195,16 +225,24 @@ indexedFoldl mapper init (Array2d { width_, array }) =
 -- INTERNAL
 
 
+{-| Converts a width and x/y coordinates into an index in an unidimensional
+`Array`.
+-}
 pos : Int -> Int -> Int -> Int
 pos w x y =
     x + (w * y)
 
 
+{-| Determines whether a number is an appropriate width or height value.
+-}
 isInvalidSize : Int -> Bool
 isInvalidSize n =
     n <= 0
 
 
+{-| Determines whether x and y coordinates are valid according to a width and
+a height.
+-}
 areValidCoords : Int -> Int -> Int -> Int -> Bool
 areValidCoords x y w h =
     x >= 0 && y >= 0 && x < w && y < h
