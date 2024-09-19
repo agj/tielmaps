@@ -1,12 +1,8 @@
 {
   "scripts": {
-    "start": "node server.js",
-    "prestart": "npm run build",
-    "build": "parcel build source/html/index.html --public-url ./",
-    "prebuild": "rm -rf dist",
+    "build": "rm -rf dist && parcel build source/html/index.html --public-url ./",
     "develop": "parcel source/html/index.html",
-    "deploy": "gh-pages -d dist",
-    "predeploy": "npm run build",
+    "deploy": "npm run build && gh-pages -d dist",
     "test": "npx elm-verify-examples && npx elm-test",
     "benchmark": "cd benchmarks/ && npx elm reactor"
   },
@@ -23,7 +19,6 @@
     "elm-format": "~0.8.5",
     "elm-test": "~0.19.1-revision7",
     "elm-verify-examples": "^5.2.0",
-    "express": "^4.18.2",
     "gh-pages": "^5.0.0",
     "parcel": "^2.8.3",
     "typescript": "^4.9.5"
