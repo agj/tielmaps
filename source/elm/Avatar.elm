@@ -341,15 +341,9 @@ mapCurrentSprite mapper (Avatar ({ sprites_, pose, facing } as data)) =
 getPose : Motion -> Int -> Int -> Pose
 getPose motion x_ prevX =
     let
-        rightNotLeft =
-            x_ > prevX
-
         onGround =
             if x_ == prevX then
                 PoseStanding
-
-            else if rightNotLeft then
-                PoseRunning
 
             else
                 PoseRunning
@@ -370,14 +364,10 @@ getPose motion x_ prevX =
 
 getFacing : Facing -> Int -> Int -> Facing
 getFacing previous x_ prevX =
-    let
-        rightNotLeft =
-            x_ > prevX
-    in
     if x_ == prevX then
         previous
 
-    else if rightNotLeft then
+    else if x_ > prevX then
         FacingRight
 
     else
