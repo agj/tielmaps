@@ -11,7 +11,6 @@ import Array2d exposing (Array2d)
 import Dict exposing (Dict)
 import Graphic exposing (Graphic)
 import Helper
-import Maybe.Extra as Maybe
 
 
 type Tilemap

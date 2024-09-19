@@ -1,4 +1,4 @@
-module Main exposing (Msg(..), main, update, view)
+module Main exposing (main)
 
 import Array2d
 import Assets.Sprites as Sprites
@@ -11,20 +11,20 @@ import Browser
 import Browser.Events
 import Collider
 import Colors exposing (Colors)
-import Css exposing (alignItems, backgroundColor, center, displayFlex, hsl, justifyContent, margin, padding, pct, px, scale)
+import Css exposing (alignItems, backgroundColor, center, displayFlex, hsl, justifyContent, margin, padding, pct, px)
 import Css.Global exposing (global, selector)
 import Graphic
 import Html exposing (Attribute)
 import Html.Attributes
 import Html.Styled exposing (Html, div, toUnstyled)
-import Html.Styled.Attributes exposing (css, height, width)
+import Html.Styled.Attributes exposing (css)
 import Json.Decode as D
 import Keys exposing (Keys)
 import Keys.Key as Key exposing (Key)
 import Levers
 import PixelRenderer
 import Screen exposing (Screen)
-import Size exposing (Size22x22, Size8x8)
+import Size exposing (Size22x22)
 import Sprite exposing (Sprite)
 import Tilemap exposing (Tilemap)
 import Time
@@ -240,7 +240,7 @@ mainView { world, character, scale } =
 
 
 subscriptions : Model -> Sub Msg
-subscriptions model =
+subscriptions _ =
     Sub.batch
         [ Browser.Events.onResize (\w h -> Resized (Viewport w h))
         , Time.every (1000 / toFloat Levers.framesPerSecond) Ticked

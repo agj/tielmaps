@@ -1,21 +1,16 @@
 module PixelRenderer exposing (element)
 
-import Array exposing (Array)
+import Array
 import Array2d exposing (Array2d)
-import Avatar exposing (Avatar)
 import Bitmap exposing (Bitmap)
 import Bitmap.Color
 import Bitmap.Stamp exposing (BitmapStamp)
 import Color exposing (Color)
-import Color.Gradient exposing (Palette)
 import Colors exposing (Colors)
-import Graphic exposing (Graphic)
 import Html exposing (Html)
 import Html.Attributes
 import Json.Encode
 import Palette
-import Size exposing (Size8x8)
-import Tilemap exposing (Tilemap)
 
 
 element : Int -> Int -> Colors -> List (Bitmap a) -> List BitmapStamp -> List (Html.Attribute msg) -> Html msg

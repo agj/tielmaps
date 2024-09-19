@@ -2,14 +2,11 @@ module Bitmap exposing
     ( Bitmap
     , empty8x8
     , emptyAnySize
-    , encode
     , error8x8
     , flipX
     , flipY
     , fromString8x8
     , height
-    , paintBitmap
-    , paintPixel
     , pixel
     , pixels
     , rotate180
@@ -24,7 +21,6 @@ import Array2d exposing (Array2d)
 import Bitmap.Color as Color exposing (Color(..), ColorMap)
 import Helper
 import Json.Encode as Encode exposing (Value)
-import Maybe.Extra as Maybe
 import Size exposing (Size8x8, SizeAny)
 
 
@@ -136,19 +132,6 @@ pixels (Bitmap _ _ pixels_) =
     pixels_
 
 
-encode : Bitmap a -> Value
-encode (Bitmap w h pixels_) =
-    Encode.object
-        [ ( "width", Encode.int w )
-        , ( "height", Encode.int h )
-        , ( "pixels"
-          , pixels_
-                |> Array2d.toUnidimensional
-                |> Encode.array colorEncoder
-          )
-        ]
-
-
 
 -- SETTERS
 
@@ -162,63 +145,6 @@ paintPixel x y color ((Bitmap w h pixels_) as bm) =
 
     else
         bm
-
-
-paintBitmap : Int -> Int -> Bitmap a -> Bitmap b -> Bitmap b
-paintBitmap x y source target =
-    let
-        sourceW =
-            width source
-
-        sourceH =
-            height source
-
-        targetW =
-            width target
-
-        targetH =
-            height target
-
-        iterator row col bm =
-            let
-                nextRow =
-                    if row >= sourceW - 1 then
-                        0
-
-                    else
-                        row + 1
-
-                nextCol =
-                    if nextRow == 0 then
-                        col + 1
-
-                    else
-                        col
-
-                color =
-                    pixel row col source
-                        |> Maybe.withDefault Transparent
-
-                setX =
-                    x + row
-
-                setY =
-                    y + col
-
-                newBm =
-                    if color /= Transparent && setX < targetW && setY < targetH && setX >= 0 && setY >= 0 then
-                        paintPixel setX setY color bm
-
-                    else
-                        bm
-            in
-            if nextCol >= sourceH then
-                newBm
-
-            else
-                iterator nextRow nextCol newBm
-    in
-    iterator 0 0 target
 
 
 rotateClockwise : Bitmap a -> Bitmap a
@@ -302,17 +228,3 @@ transform fn ((Bitmap w h _) as bitmap) =
 solid : Int -> Int -> Color -> Bitmap a
 solid w h color =
     Bitmap w h (Array2d.repeat w h color)
-
-
-colorEncoder : Color -> Value
-colorEncoder value =
-    Encode.int <|
-        case value of
-            Dark ->
-                0
-
-            Light ->
-                1
-
-            Transparent ->
-                -1

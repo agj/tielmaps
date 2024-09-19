@@ -2,14 +2,11 @@ module Graphic exposing
     ( Graphic(..)
     , all
     , bitmap
-    , height
     , index
-    , width
     )
 
 import Assets.Bitmaps as Bitmaps
 import Bitmap exposing (Bitmap)
-import Bitmap.Color exposing (Color(..))
 import List.Extra
 import Size exposing (Size8x8)
 
@@ -166,15 +163,3 @@ index graphic =
     all
         |> List.Extra.findIndex ((==) graphic)
         |> Maybe.withDefault 0
-
-
-width : Graphic -> Int
-width tile =
-    bitmap tile
-        |> Bitmap.width
-
-
-height : Graphic -> Int
-height tile =
-    bitmap tile
-        |> Bitmap.height

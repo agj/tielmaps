@@ -82,7 +82,7 @@ listAndDimensions =
 
 listOfIntsFuzzer : Int -> Fuzzer (List Int)
 listOfIntsFuzzer length =
-    Fuzz.listOfLength length (Fuzz.intRange 0 99)
+    Fuzz.listOfLength length positiveInt
 
 
 sizeFuzzer : Fuzzer Int

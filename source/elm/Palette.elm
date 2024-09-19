@@ -1,14 +1,11 @@
 module Palette exposing
-    ( cave
-    , caveSet
-    , deepBlue
+    ( caveSet
     , deepBlueSet
-    , sunset
     , sunsetSet
     , transparent
     )
 
-import Color exposing (Color, hsla, rgba)
+import Color exposing (Color, rgba)
 import Color.Manipulate as Color
 import Colors exposing (Colors)
 
