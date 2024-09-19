@@ -21,6 +21,7 @@ import NoMissingTypeExpose
 import NoRedundantlyQualifiedType
 import NoSimpleLetBody
 import NoUnnecessaryTrailingUnderscore
+import NoUnoptimizedRecursion exposing (optOutWithComment)
 import NoUnused.CustomTypeConstructorArgs
 import NoUnused.CustomTypeConstructors
 import NoUnused.Dependencies
@@ -56,5 +57,6 @@ config =
     , NoRedundantlyQualifiedType.rule
     , NoUnnecessaryTrailingUnderscore.rule
     , NoSimpleLetBody.rule
+    , NoUnoptimizedRecursion.rule (optOutWithComment "not tail-call optimized")
     ]
         |> List.map (Rule.ignoreErrorsForDirectories [ "tests/VerifyExamples" ])
