@@ -45,7 +45,7 @@ type Bitmap size
     / █ █ █ █ /
     / / / / / /
     """
-        |> Bitmap.fromString Bitmap.Color.defaultMap
+        |> Bitmap.fromString8x8 Bitmap.Color.defaultMap
         |> Maybe.andThen (Bitmap.pixel 1 1)
 
     --> Just Bitmap.Color.Dark
