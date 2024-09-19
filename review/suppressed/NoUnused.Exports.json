@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "automatically created by": "elm-review suppress",
+  "learn more": "elm-review suppress --help",
+  "suppressions": [
+    { "count": 6, "filePath": "source/elm/Bitmap.elm" },
+    { "count": 1, "filePath": "source/elm/Array2d.elm" },
+    { "count": 1, "filePath": "source/elm/Avatar.elm" },
+    { "count": 1, "filePath": "source/elm/CollisionLayer.elm" },
+    { "count": 1, "filePath": "source/elm/Levers.elm" },
+    { "count": 1, "filePath": "source/elm/Screen.elm" },
+    { "count": 1, "filePath": "source/elm/World.elm" }
+  ]
+}
