@@ -3,8 +3,8 @@
     "build": "rm -rf dist && parcel build source/html/index.html --public-url ./",
     "develop": "parcel source/html/index.html",
     "deploy": "npm run build && gh-pages -d dist",
-    "test": "npx elm-verify-examples && npx elm-test",
-    "benchmark": "cd benchmarks/ && npx elm reactor"
+    "test": "elm-verify-examples && elm-test",
+    "benchmark": "cd benchmarks/ && elm reactor"
   },
   "engines": {
     "node": ">=14.x"
