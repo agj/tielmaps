@@ -176,9 +176,10 @@ tick keys (Avatar ({ y, x, prevX, motion, facing } as data)) =
 
         newMotion : Motion
         newMotion =
-            -- The next position is always either Jumping or Falling.
+            -- The next motion is always either Jumping or Falling.
             -- It's set as OnGround only when colliding against the floor!
             if Keys.jumping keys then
+                -- Jump key is pressed.
                 case motion of
                     OnGround CanJump ->
                         Jumping 0
@@ -201,6 +202,7 @@ tick keys (Avatar ({ y, x, prevX, motion, facing } as data)) =
                             Falling CannotJump
 
             else
+                -- Jump key is not pressed.
                 case motion of
                     OnGround _ ->
                         -- Was on the ground and the jump key isn't held,
@@ -276,7 +278,8 @@ collide collider (Avatar ({ x, y, prevX, prevY, width_, height_, motion, padding
                         OnGround canJumpStatus
 
                     Jumping _ ->
-                        -- Normally, this should never occur.
+                        -- Normally, this should never occur. When jumping we move upward,
+                        -- and the collider should not prop us further up.
                         OnGround CannotJump
 
             else if newY > y then
