@@ -80,7 +80,7 @@ Some less relevant parts you can safely ignore:
 
 ## Hack it
 
-To start, you'll need [Node][node] 14 or higher installed.
+To start, you'll need [Node][node] 18 or higher installed.
 
 After downloading or cloning this repository into your computer, go into that directory in a terminal and run `npm install`. This will install other dependencies, like the [Parcel][parcel] bundler.
 
