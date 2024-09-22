@@ -1,8 +1,7 @@
 module Utils exposing (..)
 
+import Basics.Extra exposing (minSafeInteger)
 import Fuzz exposing (Fuzzer)
-import Random
-import Shrink
 
 
 positiveInt : Fuzzer Int
@@ -27,15 +26,15 @@ twoOrGreater =
 
 zeroOrLess : Fuzzer Int
 zeroOrLess =
-    Fuzz.intRange Random.minInt 0
+    Fuzz.intRange minSafeInteger 0
 
 
 zeroOrLessTwice : Fuzzer ( Int, Int )
 zeroOrLessTwice =
     Fuzz.oneOf
-        [ Fuzz.tuple ( zeroOrLess, oneOrGreater )
-        , Fuzz.tuple ( oneOrGreater, zeroOrLess )
-        , Fuzz.tuple ( zeroOrLess, zeroOrLess )
+        [ Fuzz.pair zeroOrLess oneOrGreater
+        , Fuzz.pair oneOrGreater zeroOrLess
+        , Fuzz.pair zeroOrLess zeroOrLess
         ]
 
 
@@ -66,33 +65,26 @@ sizeAndInvalidPos =
 sizeAndInvalidPos2 : Fuzzer ( ( Int, Int ), ( Int, Int ) )
 sizeAndInvalidPos2 =
     Fuzz.oneOf
-        [ Fuzz.tuple ( sizeAndPos, sizeAndInvalidPos )
-        , Fuzz.tuple ( sizeAndInvalidPos, sizeAndPos )
+        [ Fuzz.pair sizeAndPos sizeAndInvalidPos
+        , Fuzz.pair sizeAndInvalidPos sizeAndPos
         ]
 
 
 listAndDimensions : Fuzzer ( List Int, Int, Int )
 listAndDimensions =
-    Fuzz.custom
-        randomListAndDimensions
-        Shrink.noShrink
-
-
-randomListAndDimensions : Random.Generator ( List Int, Int, Int )
-randomListAndDimensions =
-    Random.pair randomSize randomSize
-        |> Random.andThen
+    Fuzz.pair sizeFuzzer sizeFuzzer
+        |> Fuzz.andThen
             (\( w, h ) ->
-                randomList (w * h)
-                    |> Random.map (\list -> ( list, w, h ))
+                listOfIntsFuzzer (w * h)
+                    |> Fuzz.map (\list -> ( list, w, h ))
             )
 
 
-randomList : Int -> Random.Generator (List Int)
-randomList length =
-    Random.list length (Random.int 0 99)
+listOfIntsFuzzer : Int -> Fuzzer (List Int)
+listOfIntsFuzzer length =
+    Fuzz.listOfLength length positiveInt
 
 
-randomSize : Random.Generator Int
-randomSize =
-    Random.int 1 99
+sizeFuzzer : Fuzzer Int
+sizeFuzzer =
+    Fuzz.intRange 1 70

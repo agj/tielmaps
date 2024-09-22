@@ -6,15 +6,18 @@ import Point exposing (Point)
 import World exposing (World)
 
 
-collideAvatar : World a b -> Avatar c -> Avatar c
+collideAvatar : World a -> Avatar -> Avatar
 collideAvatar world avatar =
     let
+        pointChecker : Int -> Int -> Bool
         pointChecker =
             World.collider world
 
+        tw : Int
         tw =
             World.tileWidth world
 
+        th : Int
         th =
             World.tileHeight world
     in
@@ -39,20 +42,25 @@ collider collidesAt tileWidth tileHeight ({ x, y, prevX, prevY, width, height } 
         { checkXPoint, checkYPoint, needsChecksPoint } =
             getPointsToCheck avatar
 
+        stopX : Bool
         stopX =
             collidesAt (Point.x checkXPoint) (Point.y checkXPoint)
 
+        stopY : Bool
         stopY =
             collidesAt (Point.x checkYPoint) (Point.y checkYPoint)
 
+        needsFurtherChecks : Bool
         needsFurtherChecks =
             collidesAt (Point.x needsChecksPoint) (Point.y needsChecksPoint)
     in
     if stopX || stopY || needsFurtherChecks then
         let
+            xCorrection : Int
             xCorrection =
                 getAxisCorrection x prevX width tileWidth
 
+            yCorrection : Int
             yCorrection =
                 getAxisCorrection y prevY height tileHeight
         in
@@ -85,21 +93,27 @@ if the moving object needs to stop moving on the x or y axis.
 getPointsToCheck : Position -> { checkXPoint : Point, checkYPoint : Point, needsChecksPoint : Point }
 getPointsToCheck { x, y, width, height, prevX, prevY } =
     let
+        movingRight : Bool
         movingRight =
             goingPositive x prevX
 
+        movingDown : Bool
         movingDown =
             goingPositive y prevY
 
+        topLeft : ( Int, Int )
         topLeft =
             ( x, y )
 
+        topRight : ( Int, Int )
         topRight =
             ( x + width - 1, y )
 
+        bottomLeft : ( Int, Int )
         bottomLeft =
             ( x, y + height - 1 )
 
+        bottomRight : ( Int, Int )
         bottomRight =
             ( x + width - 1, y + height - 1 )
     in
@@ -146,9 +160,11 @@ on the x or y axes. True is x, False is y.
 shouldStopXNotY : Position -> Int -> Int -> Bool
 shouldStopXNotY { x, y, prevX, prevY, width, height } tw th =
     let
+        shouldStopX : Bool
         shouldStopX =
             shouldStopAxis x prevX width tw
 
+        shouldStopY : Bool
         shouldStopY =
             shouldStopAxis y prevY height th
     in

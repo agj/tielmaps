@@ -1,109 +1,94 @@
 module Sprite exposing
     ( Sprite
     , animated
-    , bitmap
+    , graphic
     , height
     , static
     , tick
     , width
     )
 
-import Bitmap exposing (Bitmap)
-import List.Nonempty as Nonempty exposing (Nonempty)
-import Sprite.Frame as Frame exposing (Frame)
-import Tile exposing (Tile)
+import Graphic exposing (Graphic)
+import List.Nonempty exposing (Nonempty)
+import Sprite.HeldFrame as HeldFrame exposing (HeldFrame)
 
 
-type Sprite size
-    = Sprite
-        { width_ : Int
-        , height_ : Int
-        , animation : Animation size
-        }
+type Sprite
+    = Static Graphic
+    | Animated Int (Nonempty HeldFrame)
 
 
-type Animation size
-    = Static Bitmap
-    | Animated Int (Nonempty (Frame size))
+static : Graphic -> Sprite
+static frame =
+    Static frame
 
 
-static : Tile a -> Sprite a
-static tile =
-    Sprite
-        { width_ = Tile.width tile
-        , height_ = Tile.height tile
-        , animation = Static (Tile.bitmap tile)
-        }
-
-
-animated : Frame a -> List (Frame a) -> Sprite a
+animated : HeldFrame -> List HeldFrame -> Sprite
 animated firstFrame frames =
-    Sprite
-        { width_ = Frame.width firstFrame
-        , height_ = Frame.height firstFrame
-        , animation =
-            Animated 0
-                (Nonempty.singleton firstFrame
-                    |> Nonempty.replaceTail frames
-                )
-        }
+    Animated 0
+        (List.Nonempty.singleton firstFrame
+            |> List.Nonempty.replaceTail frames
+        )
 
 
-tick : Sprite a -> Sprite a
-tick ((Sprite state) as sprite) =
-    case state.animation of
+tick : Sprite -> Sprite
+tick sprite =
+    case sprite of
         Static _ ->
             sprite
 
         Animated ticks frames ->
             let
+                newTicks : Int
                 newTicks =
                     ticks + 1
             in
             if newTicks >= totalTicks frames then
-                Sprite { state | animation = Animated 0 frames }
+                Animated 0 frames
 
             else
-                Sprite { state | animation = Animated newTicks frames }
+                Animated newTicks frames
 
 
-bitmap : Sprite a -> Bitmap
-bitmap (Sprite { animation }) =
-    case animation of
-        Static bm ->
-            bm
+graphic : Sprite -> Graphic
+graphic sprite =
+    case sprite of
+        Static frame ->
+            frame
 
         Animated ticks frames ->
             currentFrame ticks frames
-                |> Frame.bitmap
+                |> HeldFrame.frame
 
 
-width : Sprite a -> Int
-width (Sprite { width_ }) =
-    width_
+width : Sprite -> Int
+width _ =
+    8
 
 
-height : Sprite a -> Int
-height (Sprite { height_ }) =
-    height_
+height : Sprite -> Int
+height _ =
+    8
 
 
 
 -- INTERNAL
 
 
-totalTicks : Nonempty (Frame a) -> Int
+totalTicks : Nonempty HeldFrame -> Int
 totalTicks frames =
-    Nonempty.foldl (\f acc -> Frame.duration f + acc) 0 frames
+    List.Nonempty.foldl (\f acc -> HeldFrame.duration f + acc) 0 frames
 
 
-currentFrame : Int -> Nonempty (Frame a) -> Frame a
+currentFrame : Int -> Nonempty HeldFrame -> HeldFrame
 currentFrame ticks frames =
     let
+        iterate : Int -> HeldFrame -> List HeldFrame -> HeldFrame
         iterate n f fs =
             let
+                currentFrameDuration : Int
                 currentFrameDuration =
-                    Frame.duration f
+                    HeldFrame.duration f
             in
             if n < currentFrameDuration then
                 f
@@ -117,5 +102,5 @@ currentFrame ticks frames =
                         f
     in
     iterate ticks
-        (Nonempty.head frames)
-        (Nonempty.tail frames)
+        (List.Nonempty.head frames)
+        (List.Nonempty.tail frames)

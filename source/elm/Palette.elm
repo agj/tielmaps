@@ -1,13 +1,11 @@
 module Palette exposing
-    ( cave
-    , caveSet
-    , deepBlue
+    ( caveSet
     , deepBlueSet
-    , sunset
     , sunsetSet
+    , transparent
     )
 
-import Color exposing (Color)
+import Color exposing (Color, rgba)
 import Color.Manipulate as Color
 import Colors exposing (Colors)
 
@@ -21,10 +19,12 @@ caveSet =
     standardSet cave
 
 
+deepBlueSet : Colors
 deepBlueSet =
     standardSet deepBlue
 
 
+sunsetSet : Colors
 sunsetSet =
     standardSet sunset
 
@@ -48,10 +48,16 @@ sunset =
     hsl 21 93 48
 
 
+transparent : Color
+transparent =
+    rgba 0 0 0 0
+
+
 
 -- INTERNAL
 
 
+standardSet : Color -> Colors
 standardSet color =
     { darkColor = color
     , lightColor = lighten 0.7 color

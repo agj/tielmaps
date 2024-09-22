@@ -1,28 +1,29 @@
-module Main exposing (Msg(..), main, update, view)
+module Main exposing (main)
 
-import Assets.Screens as Screens
+import Array2d
 import Assets.Sprites as Sprites
 import Assets.Worlds as Worlds
 import Avatar exposing (Avatar)
-import Avatar.Padding as Padding exposing (zero)
-import Bitmap exposing (Bitmap)
+import Avatar.Padding exposing (zero)
+import Bitmap.Stamp exposing (BitmapStamp)
 import Browser
 import Browser.Events
 import Collider
-import Colors
-import Css exposing (alignItems, backgroundColor, center, display, displayFlex, hsl, justifyContent, margin, padding, pc, pct, property, px, scale, transform)
+import Colors exposing (Colors)
+import Css exposing (alignItems, backgroundColor, center, displayFlex, hsl, justifyContent, margin, padding, pct, px)
 import Css.Global exposing (global, selector)
-import Html.Styled exposing (Html, canvas, div, text, toUnstyled)
-import Html.Styled.Attributes exposing (css, height, id, style, width)
-import Html.Styled.Lazy exposing (lazy)
-import Js
+import Graphic
+import Html exposing (Attribute)
+import Html.Attributes
+import Html.Styled exposing (Html, div, toUnstyled)
+import Html.Styled.Attributes exposing (css)
 import Json.Decode as D
 import Keys exposing (Keys)
 import Keys.Key as Key exposing (Key)
 import Levers
-import Screen exposing (Screen)
-import Size exposing (Size22x22, Size8x8)
-import Sprite exposing (Sprite)
+import PixelRenderer
+import Screen
+import Size exposing (Size22x22)
 import Tilemap exposing (Tilemap)
 import Time
 import Viewport exposing (Viewport)
@@ -48,8 +49,8 @@ main =
 
 
 type alias Model =
-    { world : World Size22x22 Size8x8
-    , character : Avatar Size8x8
+    { world : World Size22x22
+    , character : Avatar
     , keys : Keys
     , scale : Int
     }
@@ -90,7 +91,7 @@ init flags =
 
 
 type Msg
-    = Ticked Time.Posix
+    = Ticked
     | Resized Viewport
     | PressedKey Key
     | ReleasedKey Key
@@ -100,35 +101,21 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     let
+        ignore : ( Model, Cmd msg )
         ignore =
             ( model, Cmd.none )
     in
     case msg of
-        Ticked _ ->
+        Ticked ->
             let
+                newCharacter : Avatar
                 newCharacter =
                     model.character
                         |> Avatar.tick model.keys
                         |> Collider.collideAvatar model.world
-
-                ( bitmap, newWorld ) =
-                    model.world
-                        |> World.render newCharacter
-
-                colors =
-                    model.world
-                        |> World.currentScreen (Avatar.baseX newCharacter) (Avatar.baseY newCharacter)
-                        |> Maybe.map Screen.colors
-                        |> Maybe.withDefault Colors.default
             in
-            ( { model
-                | character = newCharacter
-                , world = newWorld
-              }
-            , Js.paintCanvas
-                colors.lightColor
-                colors.darkColor
-                bitmap
+            ( { model | character = newCharacter }
+            , Cmd.none
             )
 
         PressedKey key ->
@@ -160,7 +147,7 @@ view model =
     , body =
         List.map toUnstyled <|
             [ globalStyles
-            , lazy mainView model.scale
+            , mainView model
             ]
     }
 
@@ -176,8 +163,55 @@ globalStyles =
         ]
 
 
-mainView : Int -> Html Msg
-mainView scale_ =
+mainView : Model -> Html Msg
+mainView { world, character, scale } =
+    let
+        colors : Colors
+        colors =
+            world
+                |> World.screenAt (Avatar.baseX character) (Avatar.baseY character)
+                |> Maybe.map Screen.colors
+                |> Maybe.withDefault Colors.default
+
+        tilemap : Tilemap
+        tilemap =
+            world
+                |> World.currentScreen character
+                |> Maybe.map Screen.tilemap
+                |> Maybe.withDefault (Tilemap.empty Levers.screenWidthInTiles Levers.screenHeightInTiles)
+
+        ( avatarX, avatarY ) =
+            World.avatarPositionOnScreen character world
+
+        tilemapBitmapStamps : List BitmapStamp
+        tilemapBitmapStamps =
+            tilemap
+                |> Tilemap.tiles
+                |> Array2d.indexedFoldl
+                    (\x y graphic acc ->
+                        { x = x * 8
+                        , y = y * 8
+                        , bitmapIndex = Graphic.getIndex graphic
+                        }
+                            :: acc
+                    )
+                    []
+
+        avatarBitmapStamp : BitmapStamp
+        avatarBitmapStamp =
+            { x = avatarX
+            , y = avatarY
+            , bitmapIndex = Avatar.graphic character |> Graphic.getIndex
+            }
+
+        pixelRendererAttributes : List (Attribute msg)
+        pixelRendererAttributes =
+            [ Html.Attributes.style "transform"
+                ("scale({scale})"
+                    |> String.replace "{scale}" (String.fromInt scale)
+                )
+            ]
+    in
     div
         [ css
             [ displayFlex
@@ -190,17 +224,14 @@ mainView scale_ =
             , backgroundColor (hsl 0 0 0.97)
             ]
         ]
-        [ canvas
-            [ id Levers.canvasId
-            , width Levers.screenWidth
-            , height Levers.screenHeight
-            , css
-                [ transform (scale (toFloat scale_))
-                , property "image-rendering" "crisp-edges"
-                , property "image-rendering" "pixelated"
-                ]
-            ]
-            []
+        [ PixelRenderer.element
+            Levers.screenWidth
+            Levers.screenHeight
+            colors
+            (Graphic.all |> List.map Graphic.toBitmap)
+            (avatarBitmapStamp :: tilemapBitmapStamps |> List.reverse)
+            pixelRendererAttributes
+            |> Html.Styled.fromUnstyled
         ]
 
 
@@ -209,10 +240,10 @@ mainView scale_ =
 
 
 subscriptions : Model -> Sub Msg
-subscriptions model =
+subscriptions _ =
     Sub.batch
         [ Browser.Events.onResize (\w h -> Resized (Viewport w h))
-        , Time.every (toFloat Levers.framesPerSecond) Ticked
+        , Time.every (1000 / toFloat Levers.framesPerSecond) (\_ -> Ticked)
         , Browser.Events.onKeyDown (decodeKeyWith PressedKey)
         , Browser.Events.onKeyUp (decodeKeyWith ReleasedKey)
         ]
@@ -239,9 +270,11 @@ decodeKeyWith msg =
 getScale : Viewport -> Int
 getScale { width, height } =
     let
+        scaleX : Int
         scaleX =
             width // Levers.screenWidth
 
+        scaleY : Int
         scaleY =
             height // Levers.screenHeight
     in

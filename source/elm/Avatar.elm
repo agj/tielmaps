@@ -2,10 +2,10 @@ module Avatar exposing
     ( Avatar
     , baseX
     , baseY
-    , bitmap
     , collide
     , fromSprite
     , fromSprites
+    , graphic
     , repositionTopLeft
     , tick
     , topLeftX
@@ -14,15 +14,15 @@ module Avatar exposing
 
 import Avatar.AvatarSprites as AvatarSprites exposing (AvatarSprites)
 import Avatar.Padding exposing (Padding)
-import Bitmap exposing (Bitmap)
 import Collider.Interface exposing (Collider)
+import Graphic exposing (Graphic)
 import Keys exposing (Keys)
 import Levers
 import Sprite exposing (Sprite)
 
 
-type Avatar a
-    = Avatar (Data a)
+type Avatar
+    = Avatar Data
 
 
 type Motion
@@ -39,8 +39,8 @@ type CanJumpStatus
     | CannotJump
 
 
-type alias Data a =
-    { sprites_ : AvatarSprites a
+type alias Data =
+    { sprites_ : AvatarSprites
     , x : Int
     , y : Int
     , prevX : Int
@@ -75,7 +75,7 @@ type Facing
 You also need to supply a Padding, which defines
 how far into the Sprite should the collision box be calculated.
 -}
-fromSprite : Padding -> Sprite a -> Avatar a
+fromSprite : Padding -> Sprite -> Avatar
 fromSprite padding spr =
     fromSprites padding (AvatarSprites.single spr)
 
@@ -85,13 +85,15 @@ which defines a Sprite for each possible state the Avatar can be in.
 You also need to supply a Padding, which defines
 how far into the Sprite should the collision box be calculated.
 -}
-fromSprites : Padding -> AvatarSprites a -> Avatar a
+fromSprites : Padding -> AvatarSprites -> Avatar
 fromSprites padding sprs =
     let
-        width_ =
+        width : Int
+        width =
             Sprite.width sprs.standingRight
 
-        height_ =
+        height : Int
+        height =
             Sprite.height sprs.standingRight
     in
     Avatar
@@ -100,10 +102,10 @@ fromSprites padding sprs =
         , y = 0
         , prevX = 0
         , prevY = 0
-        , width_ = width_
-        , height_ = height_
-        , baseOffsetX = padding.left + round (toFloat (width_ - padding.left - padding.right) / 2)
-        , baseOffsetY = height_ - padding.bottom
+        , width_ = width
+        , height_ = height
+        , baseOffsetX = padding.left + round (toFloat (width - padding.left - padding.right) / 2)
+        , baseOffsetY = height - padding.bottom
         , padding = padding
         , motion = Falling CanJump
         , pose = PoseStanding
@@ -115,27 +117,28 @@ fromSprites padding sprs =
 -- ACCESSORS
 
 
-bitmap : Avatar a -> Bitmap
-bitmap avatar =
-    Sprite.bitmap (currentSprite avatar)
+graphic : Avatar -> Graphic
+graphic avatar =
+    currentSprite avatar
+        |> Sprite.graphic
 
 
-topLeftX : Avatar a -> Int
+topLeftX : Avatar -> Int
 topLeftX (Avatar { x }) =
     x
 
 
-topLeftY : Avatar a -> Int
+topLeftY : Avatar -> Int
 topLeftY (Avatar { y }) =
     y
 
 
-baseX : Avatar a -> Int
+baseX : Avatar -> Int
 baseX (Avatar { x, baseOffsetX }) =
     x + baseOffsetX
 
 
-baseY : Avatar a -> Int
+baseY : Avatar -> Int
 baseY (Avatar { y, baseOffsetY }) =
     y + baseOffsetY
 
@@ -147,9 +150,10 @@ baseY (Avatar { y, baseOffsetY }) =
 {-| Call every tick with the current input to move the Avatar around.
 Takes care of gravity, jumping and left-right movement.
 -}
-tick : Keys -> Avatar a -> Avatar a
+tick : Keys -> Avatar -> Avatar
 tick keys (Avatar ({ y, x, prevX, motion, facing } as data)) =
     let
+        newX : Int
         newX =
             case Keys.direction keys of
                 Keys.Static ->
@@ -161,6 +165,7 @@ tick keys (Avatar ({ y, x, prevX, motion, facing } as data)) =
                 Keys.Right ->
                     x + Levers.runSpeed
 
+        newY : Int
         newY =
             case newMotion of
                 Jumping _ ->
@@ -169,10 +174,12 @@ tick keys (Avatar ({ y, x, prevX, motion, facing } as data)) =
                 _ ->
                     y + Levers.gravity
 
+        newMotion : Motion
         newMotion =
-            -- The next position is always either Jumping or Falling.
+            -- The next motion is always either Jumping or Falling.
             -- It's set as OnGround only when colliding against the floor!
             if Keys.jumping keys then
+                -- Jump key is pressed.
                 case motion of
                     OnGround CanJump ->
                         Jumping 0
@@ -195,6 +202,7 @@ tick keys (Avatar ({ y, x, prevX, motion, facing } as data)) =
                             Falling CannotJump
 
             else
+                -- Jump key is not pressed.
                 case motion of
                     OnGround _ ->
                         -- Was on the ground and the jump key isn't held,
@@ -222,7 +230,7 @@ tick keys (Avatar ({ y, x, prevX, motion, facing } as data)) =
 
 {-| Moves the Avatar to a new point given its x and y coordinates.
 -}
-repositionTopLeft : Int -> Int -> Avatar a -> Avatar a
+repositionTopLeft : Int -> Int -> Avatar -> Avatar
 repositionTopLeft newX newY (Avatar data) =
     Avatar
         { data
@@ -237,7 +245,7 @@ repositionTopLeft newX newY (Avatar data) =
 It should normally be called from within `Collider.collideAvatar`,
 which you should call every tick after calling `tick`.
 -}
-collide : Collider -> Avatar b -> Avatar b
+collide : Collider -> Avatar -> Avatar
 collide collider (Avatar ({ x, y, prevX, prevY, width_, height_, motion, padding } as data)) =
     let
         ( newXPre, newYPre ) =
@@ -250,11 +258,36 @@ collide collider (Avatar ({ x, y, prevX, prevY, width_, height_, motion, padding
                 , height = height_ - padding.top - padding.bottom
                 }
 
+        newX : Int
         newX =
             newXPre - padding.left
 
+        newY : Int
         newY =
             newYPre - padding.top
+
+        newMotion : Motion
+        newMotion =
+            if newY < y then
+                -- Collider bounced us back up.
+                case motion of
+                    OnGround canJumpStatus ->
+                        OnGround canJumpStatus
+
+                    Falling canJumpStatus ->
+                        OnGround canJumpStatus
+
+                    Jumping _ ->
+                        -- Normally, this should never occur. When jumping we move upward,
+                        -- and the collider should not prop us further up.
+                        OnGround CannotJump
+
+            else if newY > y then
+                -- Collider bounced us back down.
+                Falling CannotJump
+
+            else
+                motion
     in
     Avatar
         { data
@@ -262,26 +295,7 @@ collide collider (Avatar ({ x, y, prevX, prevY, width_, height_, motion, padding
             , y = newY
             , prevX = newX
             , prevY = newY
-            , motion =
-                if newY < y then
-                    -- Collider bounced us back up.
-                    case motion of
-                        OnGround canJumpStatus ->
-                            OnGround canJumpStatus
-
-                        Falling canJumpStatus ->
-                            OnGround canJumpStatus
-
-                        Jumping _ ->
-                            -- Normally, this should never occur.
-                            OnGround CannotJump
-
-                else if newY > y then
-                    -- Collider bounced us back down.
-                    Falling CannotJump
-
-                else
-                    motion
+            , motion = newMotion
         }
 
 
@@ -289,7 +303,7 @@ collide collider (Avatar ({ x, y, prevX, prevY, width_, height_, motion, padding
 -- INTERNAL
 
 
-currentSprite : Avatar a -> Sprite a
+currentSprite : Avatar -> Sprite
 currentSprite (Avatar { sprites_, pose, facing }) =
     case ( pose, facing ) of
         ( PoseStanding, FacingRight ) ->
@@ -311,7 +325,7 @@ currentSprite (Avatar { sprites_, pose, facing }) =
             sprites_.jumpingLeft
 
 
-mapCurrentSprite : (Sprite a -> Sprite a) -> Avatar a -> Avatar a
+mapCurrentSprite : (Sprite -> Sprite) -> Avatar -> Avatar
 mapCurrentSprite mapper (Avatar ({ sprites_, pose, facing } as data)) =
     Avatar
         { data
@@ -340,15 +354,10 @@ mapCurrentSprite mapper (Avatar ({ sprites_, pose, facing } as data)) =
 getPose : Motion -> Int -> Int -> Pose
 getPose motion x_ prevX =
     let
-        rightNotLeft =
-            x_ > prevX
-
+        onGround : Pose
         onGround =
             if x_ == prevX then
                 PoseStanding
-
-            else if rightNotLeft then
-                PoseRunning
 
             else
                 PoseRunning
@@ -369,14 +378,10 @@ getPose motion x_ prevX =
 
 getFacing : Facing -> Int -> Int -> Facing
 getFacing previous x_ prevX =
-    let
-        rightNotLeft =
-            x_ > prevX
-    in
     if x_ == prevX then
         previous
 
-    else if rightNotLeft then
+    else if x_ > prevX then
         FacingRight
 
     else

@@ -1,7 +1,7 @@
 module Array2dTest exposing (..)
 
 import Array
-import Array2d exposing (Array2d)
+import Array2d
 import Expect
 import Test exposing (..)
 import Utils exposing (..)
@@ -148,4 +148,19 @@ toUnidimensional =
                     |> Array2d.toUnidimensional
                     |> Expect.equal
                         (Array.fromList list)
+        ]
+
+
+indexedFoldl : Test
+indexedFoldl =
+    describe "indexedFoldl"
+        [ test "Passes items in in rows and columns" <|
+            \_ ->
+                Array2d.repeat 3 3 True
+                    |> Array2d.indexedFoldl
+                        (\x y _ acc -> ( x, y ) :: acc)
+                        []
+                    |> List.reverse
+                    |> Expect.equal
+                        [ ( 0, 0 ), ( 1, 0 ), ( 2, 0 ), ( 0, 1 ), ( 1, 1 ), ( 2, 1 ), ( 0, 2 ), ( 1, 2 ), ( 2, 2 ) ]
         ]

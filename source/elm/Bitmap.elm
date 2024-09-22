@@ -1,19 +1,18 @@
 module Bitmap exposing
     ( Bitmap
-    , empty
-    , encode
-    , error
+    , empty8x8
+    , emptyAnySize
+    , error8x8
     , flipX
     , flipY
-    , fromString
+    , fromString8x8
     , height
-    , paintBitmap
-    , paintPixel
     , pixel
+    , pixels
     , rotate180
     , rotateClockwise
     , rotateCounterClockwise
-    , solid
+    , solid8x8
     , transform
     , width
     )
@@ -21,11 +20,10 @@ module Bitmap exposing
 import Array2d exposing (Array2d)
 import Bitmap.Color as Color exposing (Color(..), ColorMap)
 import Helper
-import Json.Encode as Encode exposing (Value)
-import Maybe.Extra as Maybe
+import Size exposing (Size8x8, SizeAny)
 
 
-type Bitmap
+type Bitmap size
     = Bitmap Int Int (Array2d Color)
 
 
@@ -42,7 +40,7 @@ type Bitmap
     / █ █ █ █ /
     / / / / / /
     """
-        |> Bitmap.fromString Bitmap.Color.defaultMap
+        |> Bitmap.fromString8x8 Bitmap.Color.defaultMap
         |> Maybe.andThen (Bitmap.pixel 1 1)
 
     --> Just Bitmap.Color.Dark
@@ -53,9 +51,10 @@ The spaces are always ignored, but the other characters need to be specified
 by passing a Bitmap.Color.ColorMap which defines which character is which color.
 
 -}
-fromString : ColorMap -> String -> Maybe Bitmap
-fromString cMap str =
+fromString8x8 : ColorMap -> String -> Maybe (Bitmap Size8x8)
+fromString8x8 cMap str =
     let
+        mapper : Char -> Maybe Color
         mapper ch =
             if ch == cMap.dark then
                 Just Dark
@@ -69,26 +68,32 @@ fromString cMap str =
             else
                 Nothing
 
+        maybeResult : Maybe (Array2d Color)
         maybeResult =
             Helper.stringToArray2d mapper str
     in
     maybeResult
         |> Maybe.map
-            (\r -> Bitmap r.width r.height r.array2d)
+            (\array2d -> Bitmap (Array2d.width array2d) (Array2d.height array2d) array2d)
 
 
-empty : Int -> Int -> Bitmap
-empty w h =
-    solid Transparent w h
+empty8x8 : Bitmap Size8x8
+empty8x8 =
+    solid8x8 Transparent
 
 
-solid : Color -> Int -> Int -> Bitmap
-solid color w h =
-    Bitmap w h (Array2d.repeat w h color)
+emptyAnySize : Int -> Int -> Bitmap SizeAny
+emptyAnySize w h =
+    solid w h Transparent
 
 
-error : Bitmap
-error =
+solid8x8 : Color -> Bitmap Size8x8
+solid8x8 color =
+    Bitmap 8 8 (Array2d.repeat 8 8 color)
+
+
+error8x8 : Bitmap Size8x8
+error8x8 =
     """
 █ . . . . . . █
 . █ . . . . █ .
@@ -99,51 +104,43 @@ error =
 . █ . . . . █ .
 █ . . . . . . █
 """
-        |> fromString Color.defaultMap
-        |> Maybe.withDefault (empty 8 8)
+        |> fromString8x8 Color.defaultMap
+        |> Maybe.withDefault empty8x8
 
 
 
 -- ACCESSORS
 
 
-width : Bitmap -> Int
+width : Bitmap a -> Int
 width (Bitmap w _ _) =
     w
 
 
-height : Bitmap -> Int
+height : Bitmap a -> Int
 height (Bitmap _ h _) =
     h
 
 
-pixel : Int -> Int -> Bitmap -> Maybe Color
-pixel x y (Bitmap w h pixels) =
-    pixels
+pixel : Int -> Int -> Bitmap a -> Maybe Color
+pixel x y (Bitmap _ _ pixels_) =
+    pixels_
         |> Array2d.get x y
 
 
-encode : Bitmap -> Value
-encode (Bitmap w h pixels) =
-    Encode.object
-        [ ( "width", Encode.int w )
-        , ( "height", Encode.int h )
-        , ( "pixels"
-          , pixels
-                |> Array2d.toUnidimensional
-                |> Encode.array colorEncoder
-          )
-        ]
+pixels : Bitmap a -> Array2d Color
+pixels (Bitmap _ _ pixels_) =
+    pixels_
 
 
 
 -- SETTERS
 
 
-paintPixel : Int -> Int -> Color -> Bitmap -> Bitmap
-paintPixel x y color ((Bitmap w h pixels) as bm) =
+paintPixel : Int -> Int -> Color -> Bitmap a -> Bitmap a
+paintPixel x y color ((Bitmap w h pixels_) as bm) =
     if x < w && y < h && x >= 0 && y >= 0 then
-        pixels
+        pixels_
             |> Array2d.set x y color
             |> Bitmap w h
 
@@ -151,103 +148,48 @@ paintPixel x y color ((Bitmap w h pixels) as bm) =
         bm
 
 
-paintBitmap : Int -> Int -> Bitmap -> Bitmap -> Bitmap
-paintBitmap x y source target =
-    let
-        sourceW =
-            width source
-
-        sourceH =
-            height source
-
-        targetW =
-            width target
-
-        targetH =
-            height target
-
-        iterator row col bm =
-            let
-                nextRow =
-                    if row >= sourceW - 1 then
-                        0
-
-                    else
-                        row + 1
-
-                nextCol =
-                    if nextRow == 0 then
-                        col + 1
-
-                    else
-                        col
-
-                color =
-                    pixel row col source
-                        |> Maybe.withDefault Transparent
-
-                setX =
-                    x + row
-
-                setY =
-                    y + col
-
-                newBm =
-                    if color /= Transparent && setX < targetW && setY < targetH && setX >= 0 && setY >= 0 then
-                        paintPixel setX setY color bm
-
-                    else
-                        bm
-            in
-            if nextCol >= sourceH then
-                newBm
-
-            else
-                iterator nextRow nextCol newBm
-    in
-    iterator 0 0 target
-
-
-rotateClockwise : Bitmap -> Bitmap
+rotateClockwise : Bitmap a -> Bitmap a
 rotateClockwise ((Bitmap w _ _) as bm) =
     bm
         |> transform
             (\x y -> ( w - y - 1, x ))
 
 
-rotateCounterClockwise : Bitmap -> Bitmap
+rotateCounterClockwise : Bitmap a -> Bitmap a
 rotateCounterClockwise ((Bitmap _ h _) as bm) =
     bm
         |> transform
             (\x y -> ( y, h - x - 1 ))
 
 
-rotate180 : Bitmap -> Bitmap
+rotate180 : Bitmap a -> Bitmap a
 rotate180 ((Bitmap w h _) as bm) =
     bm
         |> transform
             (\x y -> ( w - x - 1, h - y - 1 ))
 
 
-flipX : Bitmap -> Bitmap
+flipX : Bitmap a -> Bitmap a
 flipX ((Bitmap w _ _) as bm) =
     bm
         |> transform
             (\x y -> ( w - x - 1, y ))
 
 
-flipY : Bitmap -> Bitmap
+flipY : Bitmap a -> Bitmap a
 flipY ((Bitmap _ h _) as bm) =
     bm
         |> transform
             (\x y -> ( x, h - y - 1 ))
 
 
-transform : (Int -> Int -> ( Int, Int )) -> Bitmap -> Bitmap
+transform : (Int -> Int -> ( Int, Int )) -> Bitmap a -> Bitmap a
 transform fn ((Bitmap w h _) as bitmap) =
     let
+        iterator : Int -> Int -> Bitmap b -> Bitmap b
         iterator x y bm =
             let
+                nextX : Int
                 nextX =
                     if x >= w - 1 then
                         0
@@ -255,6 +197,7 @@ transform fn ((Bitmap w h _) as bitmap) =
                     else
                         x + 1
 
+                nextY : Int
                 nextY =
                     if nextX == 0 then
                         y + 1
@@ -265,6 +208,7 @@ transform fn ((Bitmap w h _) as bitmap) =
                 ( tx, ty ) =
                     fn x y
 
+                newBm : Bitmap b
                 newBm =
                     paintPixel
                         tx
@@ -278,7 +222,7 @@ transform fn ((Bitmap w h _) as bitmap) =
             else
                 iterator nextX nextY newBm
     in
-    empty w h
+    solid w h Transparent
         |> iterator 0 0
 
 
@@ -286,15 +230,6 @@ transform fn ((Bitmap w h _) as bitmap) =
 -- INTERNAL
 
 
-colorEncoder : Color -> Value
-colorEncoder value =
-    Encode.int <|
-        case value of
-            Dark ->
-                0
-
-            Light ->
-                1
-
-            Transparent ->
-                -1
+solid : Int -> Int -> Color -> Bitmap a
+solid w h color =
+    Bitmap w h (Array2d.repeat w h color)

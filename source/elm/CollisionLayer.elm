@@ -8,7 +8,6 @@ module CollisionLayer exposing
     , width
     )
 
-import Array exposing (Array)
 import Array2d exposing (Array2d)
 import Helper
 
@@ -30,15 +29,17 @@ solid w h =
 fromString : List Char -> String -> Maybe CollisionLayer
 fromString solids str =
     let
+        mapper : Char -> Maybe Bool
         mapper ch =
             Just (List.member ch solids)
 
+        mapped : Maybe (Array2d Bool)
         mapped =
             Helper.stringToArray2d mapper str
     in
     mapped
         |> Maybe.map
-            (\r -> CollisionLayer r.width r.height r.array2d)
+            (\array2d -> CollisionLayer (Array2d.width array2d) (Array2d.height array2d) array2d)
 
 
 width : CollisionLayer -> Int
