@@ -51,25 +51,32 @@ I myself am learning through this process, so I don't claim I have the right app
 [packagejson]: https://nodejs.org/en/knowledge/getting-started/npm/what-is-the-file-package-json/
 [tsconfig]: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html
 [envvar]: https://en.wikipedia.org/wiki/Environment_variable
+[elm-review]: https://github.com/jfmengels/elm-review
 
 ## The code
 
-The files are organized this way:
+Here's the more important bits of the repo to check out:
 
-- `source/` holds all the source files.
-  - `elm/` holds the Elm code that does all the magic.
-    - `Main.elm` is the Elm entry point. **Start looking here!**
-    - `Assets/` has files with pictures of tiles, sprites and tilemaps, which are used in the demo level.
-    - `Main.d.ts` is a TypeScript types declaration file. Basically just makes the Elm code more understandable to TypeScript code.
-  - `ts/index.ts` holds some wrapping TypeScript code for the Elm stuff. The few lines of code that receive data from the Elm side and actually place pixels on the screen are here.
-  - `html/index.html` is just the single HTML file that will hold all the other stuff.
-- `tests/` has some unit tests. Not very important unless you care about those.
-- `benchmarks/` has some code that checks how fast or slow some code is. Also not very important. This folder is set up as a separate Elm project with its own dependencies.
-- `elm.json` has all the [Elm configuration][elmjson] in it, like the packages this project depends on.
-- `package.json` has the [Node configuration][packagejson], including its package dependencies. Defines some scripts to simplify development (read more about that in the following section).
-- `ts-config.json` has the [TypeScript configuration][tsconfig]; basically some rules on how to interpret the code and convert to JavaScript.
-- `.parcelrc` tells Parcel that it should use the TypeScript compiler for the TypeScript code.
-- `.env` contains [environment variables][envvar], specifically one that tells Parcel not to use the Elm debugger, because it sadly slows down this application due to its many events per second.
+- `source/`
+  - `elm/` — Elm code.
+    - `Main.elm` — The Elm entry point. **Start looking here!**
+    - `Assets/` — Graphics and level maps used in the demo level.
+    - `Main.d.ts` — TypeScript types declaration file. Just makes the Elm code more understandable to TypeScript code.
+  - `ts/` — TypeScript code.
+    - `index.ts` — Initializes stuff, including the Elm runtime.
+    - `element.ts` — Custom element (also known as “web component”) that the Elm code uses to render pixels.
+    - `types.ts` — TS type definitions.
+  - `html/index.html` — The singular HTML file that holds all the other stuff.
+- `elm.json` — [Elm configuration][elmjson]. Lists the packages this project depends on.
+- `package.json` — [Node configuration][packagejson]. Mainly package dependencies and some scripts to aid in development (more about that in the following section).
+- `ts-config.json` — [TypeScript configuration][tsconfig].
+
+Some less relevant parts you can safely ignore:
+
+- `tests/` — A few unit tests.
+- `review/` — Linter ([elm-review][elm-review]) configuration. Set up as a separate Elm project.
+- `benchmarks/` — Performance checks for some parts of the Elm code. Set up as a separate Elm project.
+- `.env` — [Environment variables][envvar], specifically one that tells Parcel not to use the Elm debugger, because it sadly slows down this application due to its many events per second.
 
 ## Hack it
 
@@ -83,7 +90,11 @@ Running the `npm run build` command will create the output HTML and JS files ins
 
 To develop, use the `npm run develop` command. It will allow you to see changes in your browser as you modify the files. After you run the command, and provided the code has no errors, a URL will get displayed, which you can then open in your browser to see the game live. To stop it, press ctrl+C in the terminal. After you make some big changes, you might need to refresh the browser.
 
-Other (less important) commands are `npm test` to run unit tests, and `npm benchmark` to see some benchmarks.
+Other (less important) commands are:
+
+- `npm run test` to run unit tests.
+- `npm run lint` to run some checks on code style.
+- `npm run benchmark` to see some performance benchmarks.
 
 ## Unlicense
 
